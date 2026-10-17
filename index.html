@@ -26,11 +26,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
 th{font-size:13px;color:var(--mut)}.off td{color:var(--mut);text-decoration:line-through}
 .hide{display:none}small{color:var(--mut)}
-.nav{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}.nav button{background:transparent;color:var(--pri-d)}.nav button.on{background:var(--pri);color:#fff}
+.nav,.nav2{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}.nav button,.nav2 button{background:transparent;color:var(--pri-d)}.nav button.on,.nav2 button.on{background:var(--pri);color:#fff}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;max-width:560px}.cal b{font-size:12px;color:var(--mut);text-align:center}
 .d{aspect-ratio:1.3;display:flex;align-items:flex-start;justify-content:flex-end;padding:4px 6px;border-radius:4px;background:var(--bg);font-size:13px}
 .d.f{color:var(--mut)}.d.Feriado{background:#f6dca0;color:#4a3300}.d.Interrupção{background:#bfe3cf;color:#0d3a24}.d.Marco{background:#b9d4f0;color:#0d2c4d}
 .lg{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0;font-size:13px}.lg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%;max-width:640px}#rlist .row{justify-content:space-between;border-bottom:1px solid var(--line);padding:6px 0}
 </style>
 </head>
 <body>
@@ -45,7 +46,7 @@ th{font-size:13px;color:var(--mut)}.off td{color:var(--mut);text-decoration:line
 </section>
 
 <section id="app" class="hide">
-  <div class="nav"><button data-t="alunos" class="on">Alunos</button><button data-t="disc">Disciplinas</button><button data-t="cal">Calendário</button></div>
+  <div class="nav"><button data-t="alunos" class="on">Alunos</button><button data-t="reg">Registo</button><button data-t="res">Resumo</button><button data-t="disc">Disciplinas</button><button data-t="cal">Calendário</button></div>
 <div id="t-alunos">
   <div class="card">
     <h2>Importar alunos</h2>
@@ -65,8 +66,19 @@ th{font-size:13px;color:var(--mut)}.off td{color:var(--mut);text-decoration:line
     <div id="cnt" class="msg"><small></small></div>
   </div>
 </div>
+<div id="t-reg" class="hide"><div class="card"><h2>Registo de aula</h2>
+  <div class="row"><select id="rt" aria-label="Turma"></select><select id="rb" aria-label="Disciplina / UFCD"></select></div>
+  <div class="row" style="margin-top:8px"><input id="rd" type="date" style="max-width:170px" aria-label="Data"><label for="rl" style="margin:0">Lição nº</label><input id="rl" type="number" min="1" style="max-width:80px"></div>
+  <div class="nav2" style="margin:12px 0"><button data-r="sum" class="on">Sumário</button><button data-r="fal">Falta</button><button data-r="com">Comportamento</button></div>
+  <div id="r-sum"><label for="rs">Sumário</label><textarea id="rs" rows="3"></textarea><label for="ro">Observações</label><input id="ro" style="max-width:640px"></div>
+  <div id="r-al" class="hide"><div class="row"><select id="ra" aria-label="Aluno"></select><select id="rk" aria-label="Tipo"></select></div><label for="rob">Observação</label><input id="rob" style="max-width:640px"></div>
+  <div class="row" style="margin-top:12px"><button id="gr">Guardar sumário</button></div>
+  <div id="rmsg" class="msg"></div><h2 style="margin-top:14px">Últimos registos</h2><div id="rlist"></div></div></div>
+<div id="t-res" class="hide"><div class="card"><h2>Resumo por aluno</h2>
+  <div class="row"><select id="st" aria-label="Turma"></select><select id="sd" aria-label="Disciplina"></select></div>
+  <div class="tw"><table><thead><tr><th>Nº</th><th>Nome</th><th>FI</th><th>FM</th><th>FP</th><th>FJ</th><th>Faltas</th><th>Comp. +</th><th>Comp. –</th></tr></thead><tbody id="tr"></tbody></table></div><div id="rsm" class="msg"></div></div></div>
 <div id="t-disc" class="hide"><div class="card"><h2>Disciplinas / UFCD</h2>
-  <div class="tw"><table><thead><tr><th>Turma</th><th>Código</th><th>Designação</th><th>Horas</th><th>Dias</th></tr></thead><tbody id="tdisc"></tbody></table></div><div id="dmsg" class="msg"></div></div></div>
+  <div class="tw"><table><thead><tr><th>Turma</th><th>Disciplina</th><th>Código</th><th>Designação</th><th>Horas</th><th>Dias</th></tr></thead><tbody id="tdisc"></tbody></table></div><div id="dmsg" class="msg"></div></div></div>
 <div id="t-cal" class="hide"><div class="card"><h2>Calendário escolar</h2>
   <div class="row"><button id="mp" class="sec" aria-label="Mês anterior">‹</button><b id="mt" style="min-width:150px;text-align:center"></b><button id="mn" class="sec" aria-label="Mês seguinte">›</button><button id="ics" class="sec">Descarregar .ics</button></div>
   <div class="lg"><span><i style="background:#f6dca0"></i>Feriado</span><span><i style="background:#bfe3cf"></i>Interrupção</span><span><i style="background:#b9d4f0"></i>Marco de período</span></div>
@@ -105,7 +117,7 @@ async function carregar(){
   if(t.error||a.error){say("cnt","Erro ao ler a base de dados. Confirma se executaste o schema.sql.","err");return}
   turmas=t.data; todos=a.data;
   const sel=$("ft"), v=sel.value; sel.replaceChildren(new Option("Todas",""));
-  turmas.forEach(x=>sel.add(new Option(x.nome||x.codigo,x.id))); sel.value=v; lista();
+  turmas.forEach(x=>sel.add(new Option(x.nome||x.codigo,x.id))); sel.value=v; lista(); fillReg(); fillRes();
 }
 function lista(){
   const f=$("ft").value, tb=$("tb"); tb.replaceChildren();
@@ -165,16 +177,17 @@ $("exp").onclick=async()=>{
   const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Alunos"); XLSX.writeFile(wb,"modelo_alunos.xlsx");
 };
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("on",x===b));
-  ["alunos","disc","cal"].forEach(t=>$("t-"+t).classList.toggle("hide",t!==b.dataset.t))});
+  ["alunos","reg","res","disc","cal"].forEach(t=>$("t-"+t).classList.toggle("hide",t!==b.dataset.t));if(b.dataset.t==="res")resumo()});
 $("subu").textContent=location.origin+location.pathname.replace(/[^/]*$/,"")+"calendario.ics";
 let cal=[], mes=new Date(2026,8,1);
 const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 async function carregarDisc(){
-  const b=await db.from("blocos").select("codigo,designacao,horas,dias,turmas(codigo)").order("codigo"); const tb=$("tdisc"); tb.replaceChildren();
-  if(b.error||!b.data.length){say("dmsg","Ainda não há disciplinas. Executa o seed.sql no Supabase.","err");return}
-  say("dmsg","");
-  b.data.sort((x,y)=>(x.turmas.codigo+x.codigo).localeCompare(y.turmas.codigo+y.codigo)).forEach(r=>{const tr=tb.insertRow();[r.turmas.codigo,r.codigo,r.designacao,r.horas,r.dias].forEach(v=>tr.insertCell().textContent=v??"")});
+  const b=await db.from("blocos").select("id,codigo,designacao,horas,dias,disciplina,disciplina_nome,turmas(id,codigo)"); const tb=$("tdisc"); tb.replaceChildren();
+  if(b.error||!b.data.length){say("dmsg","Ainda não há disciplinas. Executa o seed.sql (e o fase3.sql) no Supabase.","err");return}
+  say("dmsg",""); BL=b.data; const dn=r=>r.disciplina_nome||r.disciplina||"";
+  [...BL].sort((x,y)=>(x.turmas.codigo+dn(x)+x.codigo).localeCompare(y.turmas.codigo+dn(y)+y.codigo)).forEach(r=>{const tr=tb.insertRow();[r.turmas.codigo,dn(r),r.codigo,r.designacao,r.horas,r.dias].forEach(v=>tr.insertCell().textContent=v??"")});
+  fillReg(); fillRes();
 }
 async function carregarCal(){
   const c=await db.from("calendario").select("inicio,fim,tipo,descricao").order("inicio"); cal=c.data||[]; desenhaCal();
@@ -199,6 +212,66 @@ $("ics").onclick=()=>{
   cal.forEach((e,i)=>L.push("BEGIN:VEVENT","UID:cal"+i+"@caderno-digital","DTSTAMP:"+f(ymd(new Date()))+"T120000Z","DTSTART;VALUE=DATE:"+f(e.inicio),"DTEND;VALUE=DATE:"+nx(e.fim),"SUMMARY:"+(e.tipo+": "+e.descricao).replace(/,/g,"\\,"),"TRANSP:TRANSPARENT","END:VEVENT"));
   L.push("END:VCALENDAR"); const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([L.join("\r\n")],{type:"text/calendar"})); a.download="calendario.ics"; a.click();
 };
+let BL=[], rk="sum";
+const hoje=()=>ymd(new Date()), fmtd=x=>x?x.slice(8)+"/"+x.slice(5,7)+"/"+x.slice(0,4):"", dnome=b=>b.disciplina_nome||b.disciplina||"Outras";
+async function todosDe(t,cols){let o=[],i=0;for(;;){const r=await db.from(t).select(cols).range(i,i+999);if(r.error)throw r.error;o=o.concat(r.data);if(r.data.length<1000)return o;i+=1000}}
+function fillReg(){
+  const st=$("rt"),v=st.value; st.replaceChildren(); turmas.forEach(t=>st.add(new Option(t.nome||t.codigo,t.id))); if(v)st.value=v; fillBloco();
+}
+function fillBloco(){
+  const sb=$("rb"),v=sb.value; sb.replaceChildren(); const g={};
+  BL.filter(b=>b.turmas.id===$("rt").value).sort((x,y)=>x.codigo.localeCompare(y.codigo)).forEach(b=>(g[dnome(b)]=g[dnome(b)]||[]).push(b));
+  for(const n in g){const og=document.createElement("optgroup");og.label=n;g[n].forEach(b=>og.append(new Option(b.codigo+" – "+b.designacao,b.id)));sb.append(og)}
+  if(v&&[...sb.options].some(o=>o.value===v))sb.value=v;
+  const sa=$("ra"); sa.replaceChildren();
+  todos.filter(a=>a.turma_id===$("rt").value&&a.ativo).sort((x,y)=>x.numero-y.numero).forEach(a=>sa.add(new Option(a.numero+" – "+a.nome,a.id)));
+  refReg();
+}
+function listaReg(rows,t){const d=$("rlist");d.replaceChildren();rows.forEach(([id,txt])=>{const r=document.createElement("div");r.className="row";const s=document.createElement("span");s.textContent=txt;
+  const b=document.createElement("button");b.className="sec";b.textContent="Apagar";b.onclick=async()=>{if(confirm("Apagar este registo?")){await db.from(t).delete().eq("id",id);refReg()}};r.append(s,b);d.append(r)})}
+async function refReg(){
+  const b=$("rb").value; $("rlist").replaceChildren(); if(!b)return;
+  const nm=Object.fromEntries(todos.map(a=>[a.id,a.numero+" – "+a.nome]));
+  const s=await db.from("sumarios").select("id,licao,data,sumario").eq("bloco_id",b).order("licao",{ascending:false});
+  const mx=s.data&&s.data.length?Math.max(...s.data.map(x=>x.licao||0)):0; $("rl").value=rk==="sum"?mx+1:(mx||"");
+  if(rk==="sum"){listaReg((s.data||[]).slice(0,10).map(x=>[x.id,"Lição "+x.licao+" · "+fmtd(x.data)+" · "+x.sumario]),"sumarios");return}
+  const t=rk==="fal"?"faltas":"comportamento", r=await db.from(t).select("id,data,tipo,obs,aluno_id").eq("bloco_id",b).order("data",{ascending:false}).limit(10);
+  listaReg((r.data||[]).map(x=>[x.id,fmtd(x.data)+" · "+(nm[x.aluno_id]||"")+" · "+x.tipo+(x.obs?" · "+x.obs:"")]),t);
+}
+document.querySelectorAll(".nav2 button").forEach(b=>b.onclick=()=>{
+  rk=b.dataset.r; document.querySelectorAll(".nav2 button").forEach(x=>x.classList.toggle("on",x===b));
+  $("r-sum").classList.toggle("hide",rk!=="sum"); $("r-al").classList.toggle("hide",rk==="sum");
+  const k=$("rk"); k.replaceChildren(...(rk==="fal"?["FI","FM","FP","FJ"]:["Positivo","Negativo"]).map(x=>new Option(x,x)));
+  $("gr").textContent={sum:"Guardar sumário",fal:"Registar falta",com:"Registar comportamento"}[rk]; say("rmsg",""); refReg();
+});
+$("rd").value=hoje(); $("rt").onchange=fillBloco; $("rb").onchange=refReg;
+$("gr").onclick=async()=>{
+  const b=$("rb").value,d=$("rd").value,l=parseInt($("rl").value,10)||null; if(!b||!d){say("rmsg","Escolhe a disciplina e a data.","err");return}
+  let r;
+  if(rk==="sum"){const s=$("rs").value.trim(); if(!s){say("rmsg","Escreve o sumário.","err");return}
+    r=await db.from("sumarios").insert({bloco_id:b,licao:l,data:d,sumario:s,obs:$("ro").value.trim()||null});}
+  else{if(!$("ra").value){say("rmsg","Escolhe o aluno.","err");return}
+    const row={aluno_id:$("ra").value,bloco_id:b,data:d,tipo:$("rk").value,obs:$("rob").value.trim()||null}; if(rk==="fal")row.licao=l;
+    r=await db.from(rk==="fal"?"faltas":"comportamento").insert(row);}
+  if(r.error){say("rmsg","Não foi possível guardar: "+r.error.message,"err");return}
+  say("rmsg","Guardado.","ok"); $("rs").value="";$("ro").value="";$("rob").value=""; refReg();
+};
+function fillRes(){
+  const st=$("st"),v=st.value; st.replaceChildren(); turmas.forEach(t=>st.add(new Option(t.nome||t.codigo,t.id))); if(v)st.value=v;
+  const sd=$("sd"),w=sd.value; sd.replaceChildren(new Option("Todas as disciplinas",""));
+  [...new Set(BL.filter(b=>b.turmas.id===st.value).map(dnome))].forEach(n=>sd.add(new Option(n,n))); if(w&&[...sd.options].some(o=>o.value===w))sd.value=w;
+}
+async function resumo(){
+  const tid=$("st").value, dn=$("sd").value, tb=$("tr"); tb.replaceChildren(); if(!tid)return;
+  const ids=new Set(BL.filter(b=>b.turmas.id===tid&&(!dn||dnome(b)===dn)).map(b=>b.id));
+  let f,c; try{[f,c]=await Promise.all([todosDe("faltas","aluno_id,tipo,bloco_id"),todosDe("comportamento","aluno_id,tipo,bloco_id")])}catch(e){say("rsm","Erro ao ler os registos.","err");return}
+  say("rsm",""); const ok=x=>dn?ids.has(x.bloco_id):true;
+  todos.filter(a=>a.turma_id===tid&&a.ativo).sort((x,y)=>x.numero-y.numero).forEach(a=>{
+    const ff=f.filter(x=>x.aluno_id===a.id&&ok(x)),n=t=>ff.filter(x=>x.tipo===t).length,cc=c.filter(x=>x.aluno_id===a.id&&ok(x));
+    const tr=tb.insertRow();[a.numero,a.nome,n("FI"),n("FM"),n("FP"),n("FJ"),ff.length,cc.filter(x=>x.tipo==="Positivo").length,cc.filter(x=>x.tipo==="Negativo").length].forEach(v=>tr.insertCell().textContent=v)});
+}
+$("st").onchange=()=>{fillRes();resumo()}; $("sd").onchange=resumo;
+$("rk").replaceChildren(...["Positivo","Negativo"].map(x=>new Option(x,x)));
 estado();
 </script>
 </body>

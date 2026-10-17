@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caderno digital</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+:root{--bg:#f4f7f6;--card:#fff;--ink:#14302f;--mut:#5d7170;--line:#d5dfdd;--pri:#0f5c5a;--pri-d:#0a4543;--acc:#e8a317;--err:#b3261e;--ok:#1d7a4b}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1a19;--card:#17262a;--ink:#e6f0ee;--mut:#9bb0ad;--line:#2b4043;--pri:#4fb3ae;--pri-d:#7fd0cb;--acc:#f0b73c;--err:#ff8a80;--ok:#6fd49c}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{background:var(--pri);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid var(--acc)}
+header h1{font-size:18px;margin:0;font-weight:600}
+main{max-width:980px;margin:0 auto;padding:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:18px}
+h2{font-size:16px;margin:0 0 10px}
+label{display:block;font-weight:600;margin:10px 0 4px}
+input,select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%;max-width:340px}
+button{font:inherit;font-weight:600;padding:8px 14px;border-radius:4px;border:1px solid var(--pri);background:var(--pri);color:#fff;cursor:pointer}
+button.sec{background:transparent;color:var(--pri-d)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:1px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{margin-top:10px;min-height:1.4em}.err{color:var(--err)}.ok{color:var(--ok)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
+th{font-size:13px;color:var(--mut)}.off td{color:var(--mut);text-decoration:line-through}
+.hide{display:none}small{color:var(--mut)}
+</style>
+</head>
+<body>
+<header><h1>Caderno digital 2026/2027</h1><button id="sair" class="sec hide" style="color:#fff;border-color:#fff">Terminar sessão</button></header>
+<main>
+<section id="login" class="card hide">
+  <h2>Iniciar sessão</h2>
+  <label for="em">Email</label><input id="em" type="email" autocomplete="username">
+  <label for="pw">Palavra-passe</label><input id="pw" type="password" autocomplete="current-password">
+  <div class="row" style="margin-top:14px"><button id="entrar">Entrar</button></div>
+  <div id="lmsg" class="msg"></div>
+</section>
+
+<section id="app" class="hide">
+  <div class="card">
+    <h2>Importar alunos</h2>
+    <p><small>Ficheiro Excel com as colunas <b>Turma</b>, <b>Nº</b>, <b>Nome</b> e <b>Nº Processo</b> (podes usar a folha "Alunos" do Caderno_Digital_LC2627.xlsx ou o modelo abaixo). Alunos já existentes são atualizados; os que não vierem no ficheiro só são desativados se confirmares.</small></p>
+    <div class="row">
+      <input id="fx" type="file" accept=".xlsx,.xls,.csv">
+      <button id="exp" class="sec">Descarregar modelo com a lista atual</button>
+    </div>
+    <div id="prev" class="msg"></div>
+    <div class="row hide" id="confrow"><button id="grav">Gravar importação</button><button id="canc" class="sec">Cancelar</button></div>
+    <div id="imsg" class="msg"></div>
+  </div>
+  <div class="card">
+    <h2>Alunos</h2>
+    <div class="row"><label for="ft" style="margin:0">Turma</label><select id="ft"></select></div>
+    <div class="tw"><table><thead><tr><th>Turma</th><th>Nº</th><th>Nome</th><th>Nº Processo</th></tr></thead><tbody id="tb"></tbody></table></div>
+    <div id="cnt" class="msg"><small></small></div>
+  </div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const SUPABASE_URL="https://djoqxulosrhxxdfdbyzn.supabase.co";
+const SUPABASE_KEY="sb_publishable_pYw3-K7GJ5jlAvyat9Omag_m8WVVvo5";
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+const NOMES={TMEC11G:"11.º G – TMEC",TEAC11H:"11.º H – TEAC",TEAC12F:"12.º F – TEAC",TMEC12F:"12.º F – TMEC"};
+let pend=null, todos=[], turmas=[];
+const say=(id,t,cls)=>{const e=$(id);e.textContent=t;e.className="msg "+(cls||"")};
+
+async function estado(){
+  const {data:{session}}=await db.auth.getSession();
+  $("login").classList.toggle("hide",!!session); $("app").classList.toggle("hide",!session); $("sair").classList.toggle("hide",!session);
+  if(session) carregar();
+}
+$("entrar").onclick=async()=>{
+  say("lmsg","A entrar…");
+  const {error}=await db.auth.signInWithPassword({email:$("em").value.trim(),password:$("pw").value});
+  if(error) say("lmsg","Não foi possível entrar: email ou palavra-passe incorretos.","err"); else {say("lmsg","");estado();}
+};
+$("pw").onkeydown=e=>{if(e.key==="Enter")$("entrar").click()};
+$("sair").onclick=async()=>{await db.auth.signOut();estado()};
+
+async function carregar(){
+  const t=await db.from("turmas").select("id,codigo,nome").order("codigo");
+  const a=await db.from("alunos").select("id,numero,nome,n_processo,ativo,turma_id").order("numero");
+  if(t.error||a.error){say("cnt","Erro ao ler a base de dados. Confirma se executaste o schema.sql.","err");return}
+  turmas=t.data; todos=a.data;
+  const sel=$("ft"), v=sel.value; sel.replaceChildren(new Option("Todas",""));
+  turmas.forEach(x=>sel.add(new Option(x.nome||x.codigo,x.id))); sel.value=v; lista();
+}
+function lista(){
+  const f=$("ft").value, tb=$("tb"); tb.replaceChildren();
+  const m=Object.fromEntries(turmas.map(t=>[t.id,t]));
+  const rows=todos.filter(a=>!f||a.turma_id===f).sort((x,y)=>(m[x.turma_id].codigo+String(x.numero).padStart(3,"0")).localeCompare(m[y.turma_id].codigo+String(y.numero).padStart(3,"0")));
+  rows.forEach(a=>{const tr=tb.insertRow(); if(!a.ativo)tr.className="off";
+    [m[a.turma_id].codigo,a.numero,a.nome,a.n_processo||""].forEach(v=>tr.insertCell().textContent=v)});
+  $("cnt").textContent=rows.length?`${rows.length} aluno(s).`:"Ainda não há alunos. Importa um ficheiro Excel.";
+}
+$("ft").onchange=lista;
+
+const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+$("fx").onchange=async e=>{
+  pend=null; $("confrow").classList.add("hide"); say("imsg",""); const f=e.target.files[0]; if(!f)return;
+  try{
+    const wb=XLSX.read(await f.arrayBuffer()), ws=wb.Sheets[wb.SheetNames.includes("Alunos")?"Alunos":wb.SheetNames[0]];
+    const raw=XLSX.utils.sheet_to_json(ws,{defval:""}); const rows=[], erros=[], vistos=new Set();
+    raw.forEach((r,i)=>{
+      const k={}; for(const c in r)k[norm(c)]=r[c];
+      const turma=String(k.turma??k.turmaid??"").trim(), num=parseInt(k.n??k.no??k.numero,10), nome=String(k.nome??k.nomedoaluno??"").trim(), proc=String(k.nprocesso??k.processo??"").trim();
+      if(!turma&&!nome) return;
+      if(!nome) return;                                   // linhas de reserva sem nome
+      if(!turma||!Number.isInteger(num)){erros.push(`Linha ${i+2}: falta turma ou número.`);return}
+      const ch=turma+"|"+num; if(vistos.has(ch)){erros.push(`Linha ${i+2}: número ${num} repetido na turma ${turma}.`);return} vistos.add(ch);
+      rows.push({turma,numero:num,nome,n_processo:proc||null});
+    });
+    if(erros.length){say("prev",erros.slice(0,5).join(" "),"err");return}
+    if(!rows.length){say("prev","Não encontrei alunos no ficheiro. Verifica os nomes das colunas.","err");return}
+    pend=rows; const nt=new Set(rows.map(r=>r.turma)).size;
+    say("prev",`Pronto a importar ${rows.length} aluno(s) de ${nt} turma(s).`); $("confrow").classList.remove("hide");
+  }catch(x){say("prev","Não consegui ler o ficheiro. Usa .xlsx ou .csv.","err")}
+};
+$("canc").onclick=()=>{pend=null;$("fx").value="";$("confrow").classList.add("hide");say("prev","")};
+$("grav").onclick=async()=>{
+  if(!pend)return; say("imsg","A gravar…");
+  const codigos=[...new Set(pend.map(r=>r.turma))];
+  let r=await db.from("turmas").upsert(codigos.map(c=>({codigo:c,nome:NOMES[c]||c})),{onConflict:"user_id,codigo",ignoreDuplicates:true});
+  if(r.error){say("imsg","Erro ao criar turmas: "+r.error.message,"err");return}
+  const t=await db.from("turmas").select("id,codigo").in("codigo",codigos); const id=Object.fromEntries(t.data.map(x=>[x.codigo,x.id]));
+  r=await db.from("alunos").upsert(pend.map(p=>({turma_id:id[p.turma],numero:p.numero,nome:p.nome,n_processo:p.n_processo,ativo:true})),{onConflict:"turma_id,numero"});
+  if(r.error){say("imsg","Erro ao gravar alunos: "+r.error.message,"err");return}
+  const chaves=new Set(pend.map(p=>id[p.turma]+"|"+p.numero));
+  const a=await db.from("alunos").select("id,numero,nome,turma_id,ativo").in("turma_id",Object.values(id));
+  const falta=(a.data||[]).filter(x=>x.ativo&&!chaves.has(x.turma_id+"|"+x.numero));
+  let extra="";
+  if(falta.length&&confirm(`${falta.length} aluno(s) existem na base de dados mas não estão no ficheiro:\n${falta.slice(0,8).map(x=>x.numero+" – "+x.nome).join("\n")}\n\nDesativar estes alunos? (Os registos deles não são apagados.)`)){
+    const d=await db.from("alunos").update({ativo:false}).in("id",falta.map(x=>x.id)); extra=d.error?" Não consegui desativar os que faltavam.":` ${falta.length} desativado(s).`;
+  }
+  say("imsg",`Importação concluída: ${pend.length} aluno(s).${extra}`,"ok"); pend=null; $("fx").value=""; $("confrow").classList.add("hide"); say("prev",""); carregar();
+};
+$("exp").onclick=async()=>{
+  const m=Object.fromEntries(turmas.map(t=>[t.id,t.codigo]));
+  const rows=todos.filter(a=>a.ativo).sort((x,y)=>(m[x.turma_id]+String(x.numero).padStart(3,"0")).localeCompare(m[y.turma_id]+String(y.numero).padStart(3,"0")))
+    .map(a=>({"Turma":m[a.turma_id],"Nº":a.numero,"Nome":a.nome,"Nº Processo":a.n_processo||""}));
+  if(!rows.length) rows.push({"Turma":"TMEC11G","Nº":1,"Nome":"Nome do aluno (exemplo – apagar)","Nº Processo":""});
+  const ws=XLSX.utils.json_to_sheet(rows); ws["!cols"]=[{wch:12},{wch:6},{wch:42},{wch:14}];
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Alunos"); XLSX.writeFile(wb,"modelo_alunos.xlsx");
+};
+estado();
+</script>
+</body>
+</html>

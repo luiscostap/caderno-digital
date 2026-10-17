@@ -26,6 +26,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
 th{font-size:13px;color:var(--mut)}.off td{color:var(--mut);text-decoration:line-through}
 .hide{display:none}small{color:var(--mut)}
+.nav{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}.nav button{background:transparent;color:var(--pri-d)}.nav button.on{background:var(--pri);color:#fff}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;max-width:560px}.cal b{font-size:12px;color:var(--mut);text-align:center}
+.d{aspect-ratio:1.3;display:flex;align-items:flex-start;justify-content:flex-end;padding:4px 6px;border-radius:4px;background:var(--bg);font-size:13px}
+.d.f{color:var(--mut)}.d.Feriado{background:#f6dca0;color:#4a3300}.d.Interrupção{background:#bfe3cf;color:#0d3a24}.d.Marco{background:#b9d4f0;color:#0d2c4d}
+.lg{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0;font-size:13px}.lg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 </style>
 </head>
 <body>
@@ -40,6 +45,8 @@ th{font-size:13px;color:var(--mut)}.off td{color:var(--mut);text-decoration:line
 </section>
 
 <section id="app" class="hide">
+  <div class="nav"><button data-t="alunos" class="on">Alunos</button><button data-t="disc">Disciplinas</button><button data-t="cal">Calendário</button></div>
+<div id="t-alunos">
   <div class="card">
     <h2>Importar alunos</h2>
     <p><small>Ficheiro Excel com as colunas <b>Turma</b>, <b>Nº</b>, <b>Nome</b> e <b>Nº Processo</b> (podes usar a folha "Alunos" do Caderno_Digital_LC2627.xlsx ou o modelo abaixo). Alunos já existentes são atualizados; os que não vierem no ficheiro só são desativados se confirmares.</small></p>
@@ -57,6 +64,14 @@ th{font-size:13px;color:var(--mut)}.off td{color:var(--mut);text-decoration:line
     <div class="tw"><table><thead><tr><th>Turma</th><th>Nº</th><th>Nome</th><th>Nº Processo</th></tr></thead><tbody id="tb"></tbody></table></div>
     <div id="cnt" class="msg"><small></small></div>
   </div>
+</div>
+<div id="t-disc" class="hide"><div class="card"><h2>Disciplinas / UFCD</h2>
+  <div class="tw"><table><thead><tr><th>Turma</th><th>Código</th><th>Designação</th><th>Horas</th><th>Dias</th></tr></thead><tbody id="tdisc"></tbody></table></div><div id="dmsg" class="msg"></div></div></div>
+<div id="t-cal" class="hide"><div class="card"><h2>Calendário escolar</h2>
+  <div class="row"><button id="mp" class="sec" aria-label="Mês anterior">‹</button><b id="mt" style="min-width:150px;text-align:center"></b><button id="mn" class="sec" aria-label="Mês seguinte">›</button><button id="ics" class="sec">Descarregar .ics</button></div>
+  <div class="lg"><span><i style="background:#f6dca0"></i>Feriado</span><span><i style="background:#bfe3cf"></i>Interrupção</span><span><i style="background:#b9d4f0"></i>Marco de período</span></div>
+  <div class="cal" id="cg"></div><div id="cl" style="margin-top:12px"></div>
+  <p><small>Subscrever no Outlook/Teams: <b id="subu"></b> (Outlook na web → Adicionar calendário → Subscrever da Web).</small></p></div></div>
 </section>
 </main>
 
@@ -74,7 +89,7 @@ const say=(id,t,cls)=>{const e=$(id);e.textContent=t;e.className="msg "+(cls||""
 async function estado(){
   const {data:{session}}=await db.auth.getSession();
   $("login").classList.toggle("hide",!!session); $("app").classList.toggle("hide",!session); $("sair").classList.toggle("hide",!session);
-  if(session) carregar();
+  if(session){carregar();carregarDisc();carregarCal()}
 }
 $("entrar").onclick=async()=>{
   say("lmsg","A entrar…");
@@ -148,6 +163,41 @@ $("exp").onclick=async()=>{
   if(!rows.length) rows.push({"Turma":"TMEC11G","Nº":1,"Nome":"Nome do aluno (exemplo – apagar)","Nº Processo":""});
   const ws=XLSX.utils.json_to_sheet(rows); ws["!cols"]=[{wch:12},{wch:6},{wch:42},{wch:14}];
   const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Alunos"); XLSX.writeFile(wb,"modelo_alunos.xlsx");
+};
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("on",x===b));
+  ["alunos","disc","cal"].forEach(t=>$("t-"+t).classList.toggle("hide",t!==b.dataset.t))});
+$("subu").textContent=location.origin+location.pathname.replace(/[^/]*$/,"")+"calendario.ics";
+let cal=[], mes=new Date(2026,8,1);
+const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+async function carregarDisc(){
+  const b=await db.from("blocos").select("codigo,designacao,horas,dias,turmas(codigo)").order("codigo"); const tb=$("tdisc"); tb.replaceChildren();
+  if(b.error||!b.data.length){say("dmsg","Ainda não há disciplinas. Executa o seed.sql no Supabase.","err");return}
+  say("dmsg","");
+  b.data.sort((x,y)=>(x.turmas.codigo+x.codigo).localeCompare(y.turmas.codigo+y.codigo)).forEach(r=>{const tr=tb.insertRow();[r.turmas.codigo,r.codigo,r.designacao,r.horas,r.dias].forEach(v=>tr.insertCell().textContent=v??"")});
+}
+async function carregarCal(){
+  const c=await db.from("calendario").select("inicio,fim,tipo,descricao").order("inicio"); cal=c.data||[]; desenhaCal();
+}
+function tipoDia(k){let t=null;for(const e of cal){if(k>=e.inicio&&k<=e.fim){const x=e.tipo.startsWith("Marco")?"Marco":e.tipo;if(x==="Feriado")return x;if(x==="Interrupção"||!t)t=x}}return t}
+function desenhaCal(){
+  $("mt").textContent=MESES[mes.getMonth()]+" "+mes.getFullYear(); const g=$("cg"); g.replaceChildren();
+  "STQQSSD".split("").forEach(l=>{const e=document.createElement("b");e.textContent=l;g.append(e)});
+  const lead=(new Date(mes.getFullYear(),mes.getMonth(),1).getDay()+6)%7, n=new Date(mes.getFullYear(),mes.getMonth()+1,0).getDate();
+  for(let i=0;i<lead;i++)g.append(document.createElement("span"));
+  for(let d=1;d<=n;d++){const dt=new Date(mes.getFullYear(),mes.getMonth(),d),e=document.createElement("div"),t=tipoDia(ymd(dt));
+    e.className="d"+(dt.getDay()%6===0?" f":"")+(t?" "+t:""); e.textContent=d; g.append(e)}
+  const p=ymd(new Date(mes.getFullYear(),mes.getMonth(),1)), q=ymd(new Date(mes.getFullYear(),mes.getMonth(),n)), fmt=x=>x.slice(8)+"/"+x.slice(5,7);
+  const ev=cal.filter(e=>e.fim>=p&&e.inicio<=q); const l=$("cl"); l.replaceChildren();
+  ev.forEach(e=>{const r=document.createElement("div");r.textContent=(e.inicio===e.fim?fmt(e.inicio):fmt(e.inicio)+" a "+fmt(e.fim))+" – "+e.descricao;l.append(r)});
+}
+$("mp").onclick=()=>{mes=new Date(mes.getFullYear(),mes.getMonth()-1,1);desenhaCal()};
+$("mn").onclick=()=>{mes=new Date(mes.getFullYear(),mes.getMonth()+1,1);desenhaCal()};
+$("ics").onclick=()=>{
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Caderno digital//PT","X-WR-CALNAME:Calendário Escolar 2026/2027"];
+  const f=x=>x.replace(/-/g,""), nx=x=>{const d=new Date(x+"T12:00:00");d.setDate(d.getDate()+1);return f(ymd(d))};
+  cal.forEach((e,i)=>L.push("BEGIN:VEVENT","UID:cal"+i+"@caderno-digital","DTSTAMP:"+f(ymd(new Date()))+"T120000Z","DTSTART;VALUE=DATE:"+f(e.inicio),"DTEND;VALUE=DATE:"+nx(e.fim),"SUMMARY:"+(e.tipo+": "+e.descricao).replace(/,/g,"\\,"),"TRANSP:TRANSPARENT","END:VEVENT"));
+  L.push("END:VCALENDAR"); const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([L.join("\r\n")],{type:"text/calendar"})); a.download="calendario.ics"; a.click();
 };
 estado();
 </script>

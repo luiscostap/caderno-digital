@@ -6,18 +6,18 @@
 <title>Caderno digital</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap">
 <style>
-:root{--bg:#f4f7f6;--card:#fff;--ink:#14302f;--mut:#5d7170;--line:#d5dfdd;--pri:#0f5c5a;--pri-d:#0a4543;--acc:#e8a317;--err:#b3261e;--ok:#1d7a4b}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1a19;--card:#17262a;--ink:#e6f0ee;--mut:#9bb0ad;--line:#2b4043;--pri:#4fb3ae;--pri-d:#7fd0cb;--acc:#f0b73c;--err:#ff8a80;--ok:#6fd49c}}
+:root{--bg:#f2ebdf;--card:#fbf8f1;--ink:#1c2a35;--mut:#6b6558;--line:#dccfb9;--pri:#1f4f7a;--pri-d:#173d5f;--acc:#a9703a;--hd:#0a1d29;--err:#a3281f;--ok:#2d6a4f}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1a23;--card:#15252f;--ink:#ece4d4;--mut:#a89f8d;--line:#2d4250;--pri:#6aa6d6;--pri-d:#9cc6e8;--acc:#c98f55;--hd:#07131b;--err:#ff8f84;--ok:#7fd1a4}}
 *{box-sizing:border-box}
 body{margin:0;font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-header{background:var(--pri);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid var(--acc)}
+header{background:var(--hd);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid var(--acc)}
 header h1{font-size:18px;margin:0;font-weight:600}
 main{max-width:980px;margin:0 auto;padding:20px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:18px}
 h2{font-size:16px;margin:0 0 10px}
 label{display:block;font-weight:600;margin:10px 0 4px}
 input,select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%;max-width:340px}
-button{font:inherit;font-weight:600;padding:8px 14px;border-radius:4px;border:1px solid var(--pri);background:var(--pri);color:#fff;cursor:pointer}
+button{font:inherit;font-weight:600;padding:8px 14px;border-radius:4px;border:1px solid var(--pri);background:var(--pri);color:#fff;cursor:pointer}@media (prefers-color-scheme:dark){button{color:#07131b}.nav button.on,.nav2 button.on{color:#07131b}}
 button.sec{background:transparent;color:var(--pri-d)}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:1px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -29,7 +29,7 @@ th{font-size:13px;color:var(--mut)}.off td{color:var(--mut);text-decoration:line
 .nav,.nav2{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}.nav button,.nav2 button{background:transparent;color:var(--pri-d)}.nav button.on,.nav2 button.on{background:var(--pri);color:#fff}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;max-width:560px}.cal b{font-size:12px;color:var(--mut);text-align:center}
 .d{aspect-ratio:1.3;display:flex;align-items:flex-start;justify-content:flex-end;padding:4px 6px;border-radius:4px;background:var(--bg);font-size:13px}
-.d.f{color:var(--mut)}.d.Feriado{background:#f6dca0;color:#4a3300}.d.Interrupção{background:#bfe3cf;color:#0d3a24}.d.Marco{background:#b9d4f0;color:#0d2c4d}
+.d.f{color:var(--mut)}.d.Feriado{background:#e6c79a;color:#4a2f10}.d.Interrupção{background:#cfdcc4;color:#25391d}.d.Marco{background:#b7cde4;color:#0d2c4d}
 .lg{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0;font-size:13px}.lg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%;max-width:640px}#rlist .row{justify-content:space-between;border-bottom:1px solid var(--line);padding:6px 0}
 </style>
@@ -81,7 +81,7 @@ textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radiu
   <div class="tw"><table><thead><tr><th>Turma</th><th>Disciplina</th><th>Código</th><th>Designação</th><th>Horas</th><th>Dias</th></tr></thead><tbody id="tdisc"></tbody></table></div><div id="dmsg" class="msg"></div></div></div>
 <div id="t-cal" class="hide"><div class="card"><h2>Calendário escolar</h2>
   <div class="row"><button id="mp" class="sec" aria-label="Mês anterior">‹</button><b id="mt" style="min-width:150px;text-align:center"></b><button id="mn" class="sec" aria-label="Mês seguinte">›</button><button id="ics" class="sec">Descarregar .ics</button></div>
-  <div class="lg"><span><i style="background:#f6dca0"></i>Feriado</span><span><i style="background:#bfe3cf"></i>Interrupção</span><span><i style="background:#b9d4f0"></i>Marco de período</span></div>
+  <div class="lg"><span><i style="background:#e6c79a"></i>Feriado</span><span><i style="background:#cfdcc4"></i>Interrupção</span><span><i style="background:#b7cde4"></i>Marco de período</span></div>
   <div class="cal" id="cg"></div><div id="cl" style="margin-top:12px"></div>
   <p><small>Subscrever no Outlook/Teams: <b id="subu"></b> (Outlook na web → Adicionar calendário → Subscrever da Web).</small></p></div></div>
 </section>

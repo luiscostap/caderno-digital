@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Caderno digital</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
 :root{--bg:#f2ebdf;--card:#fbf8f1;--ink:#1c2a35;--mut:#6b6558;--line:#dccfb9;--pri:#1f4f7a;--pri-d:#173d5f;--acc:#a9703a;--hd:#0a1d29;--err:#a3281f;--ok:#2d6a4f}
 @media (prefers-color-scheme:dark){:root{--bg:#0e1a23;--card:#15252f;--ink:#ece4d4;--mut:#a89f8d;--line:#2d4250;--pri:#6aa6d6;--pri-d:#9cc6e8;--acc:#c98f55;--hd:#07131b;--err:#ff8f84;--ok:#7fd1a4}}
 *{box-sizing:border-box}
-body{margin:0;font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+body{margin:0;font:15px/1.5 Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 header{background:var(--hd);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid var(--acc)}
 header h1{font-size:18px;margin:0;font-weight:600}
 main{max-width:980px;margin:0 auto;padding:20px}
@@ -32,10 +32,26 @@ th{font-size:13px;color:var(--mut)}.off td{color:var(--mut);text-decoration:line
 .d.f{color:var(--mut)}.d.Feriado{background:#e6c79a;color:#4a2f10}.d.Interrupção{background:#cfdcc4;color:#25391d}.d.Marco{background:#b7cde4;color:#0d2c4d}
 .lg{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0;font-size:13px}.lg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%;max-width:640px}#rlist .row{justify-content:space-between;border-bottom:1px solid var(--line);padding:6px 0}
+#shell{display:flex;min-height:100vh}#side{width:250px;flex:none;background:linear-gradient(180deg,var(--hd),#10334a);color:#f2ebdf;padding:16px 14px;display:flex;flex-direction:column;gap:8px;position:sticky;top:0;height:100vh;overflow:auto}
+#side .brand{border:1px solid #2f5a78;border-radius:10px;padding:12px;background:rgba(106,166,214,.12);margin-bottom:10px}#side .brand b{display:block}#side .brand span{font-size:12px;color:#c9b99d}
+#side .nav{flex-direction:column;margin:0}#side .nav button{text-align:left;color:#f2ebdf;border:0;padding:10px 12px;border-radius:8px}#side .nav button.on{background:rgba(201,143,85,.25);color:#fff;box-shadow:inset 3px 0 0 #c98f55}
+#side>button{color:#f2ebdf;border-color:#2f5a78;text-align:left}.sp{flex:1}
+#cont{flex:1;min-width:0}#top{background:var(--card);border-bottom:1px solid var(--line);padding:14px 28px}#top h1{margin:2px 0 0;font-size:20px}
+.mono{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.14em;color:var(--pri)}
+.hero{border-radius:14px;padding:26px 28px;margin-bottom:18px;color:#f2ebdf;background:linear-gradient(135deg,#0a1d29,#14405c 70%,#7a4f2a);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 1px,transparent 1px 28px)}
+.hero>*{position:relative;z-index:1}.hero h2{font-size:30px;margin:6px 0}.hero .mono{color:#e0b887}.hero p{margin:0 0 12px;max-width:560px;color:#e7dcc8}
+.pill{display:inline-block;border:1px solid #4d7592;border-radius:99px;padding:4px 12px;margin:0 6px 6px 0;font-weight:600;font-size:13px;background:rgba(10,29,41,.5)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;border-top:3px solid var(--pri)}.stat:nth-child(2){border-top-color:var(--acc)}.stat:nth-child(3){border-top-color:#8a6a3d}.stat:nth-child(4){border-top-color:#5b86a8}
+.stat b{display:block;font-size:34px;line-height:1.1}.stat span{color:var(--mut)}
+@media (max-width:760px){#shell{flex-direction:column}#side{width:auto;height:auto;position:static}#side .nav{flex-direction:row;flex-wrap:wrap}.hide{display:none}}
 </style>
 </head>
 <body>
-<header><h1>Caderno digital 2026/2027</h1><button id="sair" class="sec hide" style="color:#fff;border-color:#fff">Terminar sessão</button></header>
+<div id="shell"><aside id="side" class="hide"><div class="brand"><b>Caderno digital</b><span>Professor · 2026/2027</span></div>
+<div class="nav"><button data-t="vis" class="on">Visão geral</button><button data-t="alunos">Alunos</button><button data-t="reg">Registo</button><button data-t="res">Resumo</button><button data-t="disc">Disciplinas</button><button data-t="cal">Calendário</button></div>
+<div class="sp"></div><button id="atu" class="sec">Atualizar dados</button><button id="sair" class="sec">Terminar sessão</button></aside>
+<div id="cont"><div id="top"><span class="mono">AGRUPAMENTO DE ESCOLAS D. ANTÓNIO TAIPA · FREAMUNDE</span><h1>Caderno do professor</h1></div>
 <main>
 <section id="login" class="card hide">
   <h2>Iniciar sessão</h2>
@@ -46,8 +62,9 @@ textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radiu
 </section>
 
 <section id="app" class="hide">
-  <div class="nav"><button data-t="alunos" class="on">Alunos</button><button data-t="reg">Registo</button><button data-t="res">Resumo</button><button data-t="disc">Disciplinas</button><button data-t="cal">Calendário</button></div>
-<div id="t-alunos">
+  <div id="t-vis"><div class="hero"><span class="mono">ÁREA DE TRABALHO DO PROFESSOR</span><h2>Caderno digital</h2><p>Sumários, faltas, comportamento, avaliação, PAP e estágios das tuas turmas, num só lugar.</p><span class="pill">Registo</span><span class="pill">Resumo</span><span class="pill">Calendário</span></div>
+  <div class="stats"><div class="stat"><b id="s1">–</b><span>Alunos ativos</span></div><div class="stat"><b id="s2">–</b><span>Turmas</span></div><div class="stat"><b id="s3">–</b><span>Disciplinas / UFCD</span></div><div class="stat"><b id="s4">–</b><span>Lições registadas</span></div></div></div>
+<div id="t-alunos" class="hide">
   <div class="card">
     <h2>Importar alunos</h2>
     <p><small>Ficheiro Excel com as colunas <b>Turma</b>, <b>Nº</b>, <b>Nome</b> e <b>Nº Processo</b> (podes usar a folha "Alunos" do Caderno_Digital_LC2627.xlsx ou o modelo abaixo). Alunos já existentes são atualizados; os que não vierem no ficheiro só são desativados se confirmares.</small></p>
@@ -85,7 +102,7 @@ textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radiu
   <div class="cal" id="cg"></div><div id="cl" style="margin-top:12px"></div>
   <p><small>Subscrever no Outlook/Teams: <b id="subu"></b> (Outlook na web → Adicionar calendário → Subscrever da Web).</small></p></div></div>
 </section>
-</main>
+</main></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -100,7 +117,7 @@ const say=(id,t,cls)=>{const e=$(id);e.textContent=t;e.className="msg "+(cls||""
 
 async function estado(){
   const {data:{session}}=await db.auth.getSession();
-  $("login").classList.toggle("hide",!!session); $("app").classList.toggle("hide",!session); $("sair").classList.toggle("hide",!session);
+  $("login").classList.toggle("hide",!!session); $("app").classList.toggle("hide",!session); $("side").classList.toggle("hide",!session);
   if(session){carregar();carregarDisc();carregarCal()}
 }
 $("entrar").onclick=async()=>{
@@ -109,7 +126,7 @@ $("entrar").onclick=async()=>{
   if(error) say("lmsg","Não foi possível entrar: email ou palavra-passe incorretos.","err"); else {say("lmsg","");estado();}
 };
 $("pw").onkeydown=e=>{if(e.key==="Enter")$("entrar").click()};
-$("sair").onclick=async()=>{await db.auth.signOut();estado()};
+$("sair").onclick=async()=>{await db.auth.signOut();estado()};$("atu").onclick=()=>{carregar();carregarDisc();carregarCal()};
 
 async function carregar(){
   const t=await db.from("turmas").select("id,codigo,nome").order("codigo");
@@ -117,7 +134,7 @@ async function carregar(){
   if(t.error||a.error){say("cnt","Erro ao ler a base de dados. Confirma se executaste o schema.sql.","err");return}
   turmas=t.data; todos=a.data;
   const sel=$("ft"), v=sel.value; sel.replaceChildren(new Option("Todas",""));
-  turmas.forEach(x=>sel.add(new Option(x.nome||x.codigo,x.id))); sel.value=v; lista(); fillReg(); fillRes();
+  turmas.forEach(x=>sel.add(new Option(x.nome||x.codigo,x.id))); sel.value=v; lista(); fillReg(); fillRes(); visao();
 }
 function lista(){
   const f=$("ft").value, tb=$("tb"); tb.replaceChildren();
@@ -177,7 +194,7 @@ $("exp").onclick=async()=>{
   const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Alunos"); XLSX.writeFile(wb,"modelo_alunos.xlsx");
 };
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("on",x===b));
-  ["alunos","reg","res","disc","cal"].forEach(t=>$("t-"+t).classList.toggle("hide",t!==b.dataset.t));if(b.dataset.t==="res")resumo()});
+  ["vis","alunos","reg","res","disc","cal"].forEach(t=>$("t-"+t).classList.toggle("hide",t!==b.dataset.t));if(b.dataset.t==="res")resumo()});
 $("subu").textContent=location.origin+location.pathname.replace(/[^/]*$/,"")+"calendario.ics";
 let cal=[], mes=new Date(2026,8,1);
 const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
@@ -187,7 +204,7 @@ async function carregarDisc(){
   if(b.error||!b.data.length){say("dmsg","Ainda não há disciplinas. Executa o seed.sql (e o fase3.sql) no Supabase.","err");return}
   say("dmsg",""); BL=b.data; const dn=r=>r.disciplina_nome||r.disciplina||"";
   [...BL].sort((x,y)=>(x.turmas.codigo+dn(x)+x.codigo).localeCompare(y.turmas.codigo+dn(y)+y.codigo)).forEach(r=>{const tr=tb.insertRow();[r.turmas.codigo,dn(r),r.codigo,r.designacao,r.horas,r.dias].forEach(v=>tr.insertCell().textContent=v??"")});
-  fillReg(); fillRes();
+  fillReg(); fillRes(); visao();
 }
 async function carregarCal(){
   const c=await db.from("calendario").select("inicio,fim,tipo,descricao").order("inicio"); cal=c.data||[]; desenhaCal();
@@ -213,6 +230,7 @@ $("ics").onclick=()=>{
   L.push("END:VCALENDAR"); const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([L.join("\r\n")],{type:"text/calendar"})); a.download="calendario.ics"; a.click();
 };
 let BL=[], rk="sum";
+async function visao(){$("s1").textContent=todos.filter(a=>a.ativo).length;$("s2").textContent=turmas.length;$("s3").textContent=BL.length;const r=await db.from("sumarios").select("id",{count:"exact",head:true});$("s4").textContent=r.count??0}
 const hoje=()=>ymd(new Date()), fmtd=x=>x?x.slice(8)+"/"+x.slice(5,7)+"/"+x.slice(0,4):"", dnome=b=>b.disciplina_nome||b.disciplina||"Outras";
 async function todosDe(t,cols){let o=[],i=0;for(;;){const r=await db.from(t).select(cols).range(i,i+999);if(r.error)throw r.error;o=o.concat(r.data);if(r.data.length<1000)return o;i+=1000}}
 function fillReg(){

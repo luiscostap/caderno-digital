@@ -351,7 +351,7 @@ async function carregaAula(novo){
   const l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);
   $("rs").value=cur?cur.sumario||"":"";$("ro").value=cur?cur.obs||"":"";if(cur){$("rd").value=cur.data||$("rd").value;setHora((cur.hora||"").slice(0,5))}
   PV=[...SA].filter(x=>x.licao<l).pop()||null;
-  $("sant").textContent=PV?PV.sumario:"(ainda não há sumários anteriores nesta UFCD)";$("sanh").textContent=PV?"Lição "+PV.licao+" · "+fmtd(PV.data)+((PV.hora||"")?" · "+PV.hora.slice(0,5):""):"";$("imp").disabled=!PV;
+  $("sant").textContent=PV?PV.sumario:"(ainda não há sumários anteriores nesta UFCD)";$("sanh").textContent=PV?"Lição "+PV.licao+" · "+fmtd(PV.data)+((PV.hora||"")?" · "+hr(PV.hora):""):"";$("imp").disabled=!PV;
   $("rtag").textContent=cur?"Aula já registada – a editar":"Nova aula";$("gdel").disabled=!cur;chips();
   const f=await db.from("faltas").select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l),c=await db.from("comportamento").select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l);
   EX={f:f.data||[],c:c.data||[]};
@@ -404,14 +404,25 @@ $("cpd").onclick=async()=>{
   if(!confirm("Copiar tudo da aula das "+h1+" ("+bl.codigo+") para esta aula?\n\nSubstitui o sumário, os grupos e as marcas atuais (só fica gravado quando clicares em Guardar aula)."))return;
   $("rs").value=s.sumario||"";$("ro").value=s.obs||"";const ok=new Set(alunosT().map(a=>a.id));GR=(s.grupos||[]).map(g=>({n:g.n,a:g.a.filter(id=>ok.has(id))}));desenhaGrupos();
   const [f,c]=await Promise.all([db.from("faltas").select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao),db.from("comportamento").select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao)]);
-  aplicaMarcas(f.data||[],c.data||[]);say("rmsg","Copiado da aula das "+h1+". Confirma e clica em Guardar aula.","ok");
+  aplicaMarcas(f.data||[],c.data||[]);let extra="";
+  if(!SA.find(x=>x.licao===l)){const mx=SA.length?Math.max(...SA.map(x=>x.licao||0)):0;$("rl").value=mx+1;
+    const hs=(r.data||[]).filter(x=>!(x.bloco_id===b&&x.licao===l)&&x.hora).map(x=>x.hora.slice(0,5)).sort(),nx=hs.length?TT.find(t=>t[0]>hs[hs.length-1]):null;
+    if(nx)setHora(nx[0]);extra=" Assumi a lição "+(mx+1)+(nx?" e a hora "+nx[0]+" – "+nx[1]:"")+" (podes alterar).";}
+  say("rmsg","Copiado da aula das "+h1+"."+extra+" Confirma e clica em Guardar aula.","ok");
 };
-const TEMPOS=["08:00","08:50","09:55","10:45","11:50","12:40","14:30","15:20","16:20","17:10"];
+const TT=[["08:00","08:50"],["08:50","09:40"],["09:55","10:45"],["10:45","11:35"],["11:50","12:40"],["12:40","13:30"],["14:30","15:20"],["15:20","16:10"],["16:20","17:10"],["17:10","18:00"]];
+const hr=h=>{h=(h||"").slice(0,5);const t=TT.find(x=>x[0]===h);return t?t[0]+" – "+t[1]:h};
+async function proximaHora(){
+  const d=$("rd").value,b=$("rb").value,l=parseInt($("rl").value,10);if(!d)return"";
+  const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,hora").eq("data",d).in("bloco_id",ids);
+  const hs=(r.data||[]).filter(x=>x.hora&&!(x.bloco_id===b&&x.licao===l)).map(x=>x.hora.slice(0,5)).sort();if(!hs.length)return"";
+  const n=TT.find(t=>t[0]>hs[hs.length-1]);return n?n[0]:"";
+}
 function setHora(v){const s=$("rh");if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v,v));s.value=v||""}
 function fillHoras(){
   const s=$("rh"),v=s.value;s.replaceChildren(new Option("— hora —",""));const d=$("rd").value;
-  if(d){const wd=new Date(d+"T12:00:00").getDay(),og=document.createElement("optgroup");og.label="Aulas deste dia";HOR.filter(h=>h.d===wd&&h.t).forEach(h=>og.append(new Option(h.i+" · "+h.t+" "+h.disc,h.i)));if(og.children.length)s.append(og)}
-  const o2=document.createElement("optgroup");o2.label="Todos os tempos";TEMPOS.forEach(t=>o2.append(new Option(t,t)));s.append(o2);setHora(v);
+  if(d){const wd=new Date(d+"T12:00:00").getDay(),og=document.createElement("optgroup");og.label="Aulas deste dia";HOR.filter(h=>h.d===wd&&h.t).forEach(h=>TT.filter(t=>t[0]>=h.i&&t[1]<=h.f).forEach(t=>og.append(new Option(t[0]+" – "+t[1]+" · "+h.t+" "+h.disc,t[0]))));if(og.children.length)s.append(og)}
+  const o2=document.createElement("optgroup");o2.label="Todos os tempos";TT.forEach(t=>o2.append(new Option(t[0]+" – "+t[1],t[0])));s.append(o2);setHora(v);
 }
 let dpm=new Date();
 function abreDP(){const v=$("rd").value;dpm=v?new Date(v+"T12:00:00"):new Date();dpm.setDate(1);desenhaDP();const r=$("rd").getBoundingClientRect(),p=$("dpop");p.style.left=Math.max(4,Math.min(r.left,innerWidth-272))+"px";p.style.top=Math.max(4,Math.min(r.bottom+4,innerHeight-330))+"px";p.classList.remove("hide")}
@@ -434,7 +445,7 @@ $("rd").onclick=abreDP;$("rd").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.
 document.addEventListener("click",e=>{if(!e.target.closest("#dpop")&&e.target!==$("rd")&&!e.target.closest("#rdb"))$("dpop").classList.add("hide")});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")$("dpop").classList.add("hide")});
 $("rd").value=hoje();chips();$("rd").onchange=chips;$("rt").onchange=()=>fillBloco();$("rb").onchange=()=>carregaAula(true);$("rl").onchange=()=>carregaAula(false);
-$("lp").onclick=()=>{$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);carregaAula(false)};$("ln").onclick=()=>{$("rl").value=(parseInt($("rl").value,10)||0)+1;carregaAula(false)};$("lnew").onclick=()=>carregaAula(true);
+$("lp").onclick=()=>{$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);carregaAula(false)};$("ln").onclick=()=>{$("rl").value=(parseInt($("rl").value,10)||0)+1;carregaAula(false)};$("lnew").onclick=async()=>{await carregaAula(true);const h=await proximaHora();if(h)setHora(h)};
 $("imp").onclick=()=>{if(!PV)return;if($("rs").value.trim()&&!confirm("Substituir o sumário atual pelo anterior?"))return;$("rs").value=PV.sumario||"";$("ro").value=PV.obs||""};
 $("gdel").onclick=async()=>{
   const b=$("rb").value,l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);if(!cur||!confirm("Apagar a lição "+l+" (sumário, grupos, faltas e comportamento desta aula)?"))return;

@@ -99,6 +99,10 @@ button.go{background:#f6ecd3;border-color:#8b4f1d;color:var(--hd)}button.go:hove
 .tl{display:flex;align-items:center;gap:12px}.tl img{height:46px;width:auto;background:#fffaf0;border-radius:6px;padding:2px 4px;flex:none}
 #sumb{grid-template-columns:minmax(310px,31%) 1fr!important}.prevt{font-size:13px!important;max-height:72px!important}
 #sanh{font-size:12.5px!important}
+#ctb{display:flex;flex-wrap:wrap;gap:5px}#ctb.ed{display:block}#ctb.hide{display:none}
+button.ctc{display:inline-block;border:1px solid var(--line);background:var(--stripe);color:var(--ink);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:500;text-align:left}
+button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1d;color:var(--hd);font-weight:700;opacity:1}button.ctc.nx{border:1px dashed var(--pri2);font-weight:600}
+.cte{display:flex;gap:4px;margin-bottom:3px}.cte input{flex:1}
 </style>
 </head>
 <body>
@@ -158,6 +162,7 @@ button.go{background:#f6ecd3;border-color:#8b4f1d;color:var(--hd)}button.go:hove
    <div><div class="ch" style="margin-bottom:3px"><b style="font-size:13px">Sumário anterior</b><span class="sp"></span><button id="imp" class="sec mini" data-i="copy">Usar</button></div><div id="sanh" class="mut" style="font-size:11.5px;white-space:nowrap;margin-bottom:3px"></div><div id="sant" class="prevt"></div></div>
    <div><label for="rs" style="margin-top:0">Sumário desta aula</label><textarea id="rs" rows="2"></textarea><label for="ro" style="margin-top:4px">Observações da aula</label><textarea id="ro" rows="1"></textarea></div>
   </div></div>
+ <div class="card" id="ctcard"><div class="ch" style="margin:0 0 4px"><h2>Conteúdos da UFCD</h2><span id="ctp" class="mut"></span><button id="cts" class="sec mini" data-i="plus">Sugerir próximo</button><button id="cte" class="sec mini" data-i="edit">Editar</button><button id="ctt" class="sec mini" data-i="up">Encolher</button></div><div id="ctb"></div></div>
  <div class="card gcard"><div class="ch" style="margin:0"><h2>Grupos</h2><button id="gadd" class="sec mini" data-i="plus">Grupo</button><span class="mut" id="gmut"></span><button id="gtg" class="sec mini" data-i="up">Encolher</button></div><div id="grps"></div></div>
  <div class="card"><div class="ch"><h2>Alunos</h2><label for="tt" style="margin:0">Tarefa para todos</label><select id="tt"></select><input id="tn" placeholder="nº" style="width:50px" aria-label="Número da tarefa"><button id="tall" class="sec mini" data-i="check">Aplicar a todos</button><button id="tta" class="sec mini sq" data-i="plus" aria-label="Novo tipo de trabalho" title="Novo tipo de trabalho"></button><label for="cn" style="margin:0 0 0 10px">Copiar notas de</label><select id="cn"></select><button id="cnb" class="sec mini" data-i="copy">Copiar para nova tarefa</button><span class="mut">Sem marcas = presente · Tarefa = tipo + nº (ex.: TP01) · Con./Cap./Ati. = níveis 1–5</span><span id="raviso" class="err" style="font-size:11.5px"></span></div>
   <div class="tw"><table id="gt"><thead><tr><th class="n">Nº</th><th>Nome</th><th class="k">Gr.</th><th class="k fi" title="Falta injustificada">FI</th><th class="k fm" title="Falta de material">FM</th><th class="k fp" title="Falta de pontualidade">FP</th><th class="k fj" title="Falta justificada">FJ</th><th class="k cp" title="Comportamento positivo">+</th><th class="k cn" title="Comportamento negativo">–</th><th class="av tcol">Tarefa</th><th class="k ev av" title="Conhecimentos (1–5)">Con.</th><th class="k ev av" title="Capacidades (1–5)">Cap.</th><th class="k ev av" title="Atitudes (1–5)">Ati.</th><th class="k av ncol" title="Nota 0–20 = média dos níveis × 4">Nota</th><th>Observação</th></tr></thead><tbody id="gb"></tbody></table></div>
@@ -406,12 +411,12 @@ async function escolheAula(h){
 }
 async function carregaAula(novo){
   const b=$("rb").value,gb=$("gb");if(!b){gb.replaceChildren();$("sant").textContent="";return}
-  const s=await db.from("sumarios").select("id,licao,data,hora,sumario,obs,grupos").eq("bloco_id",b).order("licao");
-  if(s.error){say("rmsg","Erro: "+s.error.message+" (já executaste o fase5.sql?)","err");return}SA=s.data||[];
+  const s=await db.from("sumarios").select("id,licao,data,hora,sumario,obs,grupos,topicos").eq("bloco_id",b).order("licao");
+  if(s.error){say("rmsg","Erro: "+s.error.message+" (já executaste o fase5.sql e o fase10.sql?)","err");return}SA=s.data||[];
   const mx=SA.length?Math.max(...SA.map(x=>x.licao||0)):0;if(novo||!$("rl").value)$("rl").value=mx+1;
   const l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);
   $("rs").value=cur?cur.sumario||"":"";$("ro").value=cur?cur.obs||"":"";if(cur){$("rd").value=cur.data||$("rd").value;setHora((cur.hora||"").slice(0,5))}
-  PV=[...SA].filter(x=>x.licao<l).pop()||null;
+  PV=[...SA].filter(x=>x.licao<l).pop()||null;TOP=new Set(cur&&cur.topicos?cur.topicos:[]);COV=new Set(SA.filter(x=>x.licao!==l).flatMap(x=>x.topicos||[]));
   $("sant").textContent=PV?PV.sumario:"(ainda não há sumários anteriores nesta UFCD)";$("sanh").textContent=PV?"Lição "+PV.licao+" · "+fmtd(PV.data)+((PV.hora||"")?" · "+hr(PV.hora):""):"";$("imp").disabled=!PV;
   $("rtag").textContent=cur?"Aula já registada – a editar":"Nova aula";$("gdel").disabled=!cur;chips();
   const q=t=>db.from(t).select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l);
@@ -422,10 +427,37 @@ async function carregaAula(novo){
   let g=cur?cur.grupos:(PV&&PV.grupos&&PV.grupos.length?PV.grupos:null);
   if(!cur&&!g){const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),w=await db.from("sumarios").select("grupos,data").in("bloco_id",ids).order("data",{ascending:false}).limit(30);const z=(w.data||[]).find(x=>x.grupos&&x.grupos.length);g=z?z.grupos:null}
   const ok=new Set(alunosT().map(a=>a.id));GR=(g||[]).map(x=>({n:x.n,a:x.a.filter(id=>ok.has(id))}));
-  desenhaGrelha();desenhaGrupos();resumoSum();pesoAviso(b);
+  desenhaGrelha();desenhaGrupos();resumoSum();pesoAviso(b);carregaCT();
 }
 async function pesoAviso(b){const w=await db.from("tarefas_peso").select("pontos").eq("bloco_id",b),e=$("raviso");if(w.error){e.textContent="";return}const t=(w.data||[]).reduce((p,q)=>p+ +q.pontos,0);e.textContent=Math.abs(t-20)<0.001?"":"⚠ Pesos das tarefas desta UFCD: "+(+t.toFixed(2))+"/20 – não totaliza 20 (ver separador Tarefas)"}
-let TD={},TH=[];
+let TD={},TH=[],CT=[],ctCod=null,CTED=false,TOP=new Set(),COV=new Set();
+async function carregaCT(force){
+  const b=BL.find(x=>x.id===$("rb").value);if(!b){CT=[];ctCod=null;renderCT();return}
+  if(force||ctCod!==b.codigo){const r=await db.from("ufcd_conteudos").select("id,ordem,texto").eq("codigo",b.codigo).order("ordem");CT=r.error?[]:r.data;ctCod=b.codigo}
+  renderCT();
+}
+function togTop(c){const t=$("rs"),line="• "+c.texto;
+  if(TOP.has(c.id)){TOP.delete(c.id);t.value=t.value.split("\n").filter(l=>l.trim()!==line).join("\n")}
+  else{TOP.add(c.id);if(!t.value.split("\n").some(l=>l.trim()===line))t.value=(t.value&&!t.value.endsWith("\n")?t.value+"\n":t.value)+line}
+  renderCT();resumoSum()}
+function renderCT(){
+  const box=$("ctb"),n=CT.length,done=CT.filter(c=>COV.has(c.id)||TOP.has(c.id)).length;box.replaceChildren();box.classList.toggle("ed",CTED);
+  $("ctp").textContent=n?done+" / "+n+" lecionados":"";
+  if(CTED){
+    CT.forEach(c=>{const r=document.createElement("div");r.className="cte";const i=document.createElement("input");i.value=c.texto;
+      i.onchange=async()=>{const t=i.value.trim();if(!t)return;const x=await db.from("ufcd_conteudos").update({texto:t}).eq("id",c.id);x.error?say("rmsg","Erro: "+x.error.message,"err"):c.texto=t};
+      r.append(i,mini("Eliminar",async()=>{if(!confirm("Eliminar este conteúdo da UFCD?"))return;const x=await db.from("ufcd_conteudos").delete().eq("id",c.id);if(x.error){say("rmsg","Erro: "+x.error.message,"err");return}CT=CT.filter(y=>y.id!==c.id);renderCT()}));box.append(r)});
+    const a=document.createElement("div");a.className="cte";const ni=document.createElement("input");ni.placeholder="Novo conteúdo…";
+    const add=async()=>{const t=ni.value.trim();if(!t||!ctCod)return;const o=CT.length?Math.max(...CT.map(c=>c.ordem))+1:1;const x=await db.from("ufcd_conteudos").insert({codigo:ctCod,ordem:o,texto:t}).select("id,ordem,texto");if(x.error){say("rmsg","Erro: "+x.error.message+" (já executaste o fase10.sql?)","err");return}CT.push(x.data[0]);renderCT()};
+    ni.onkeydown=e=>{if(e.key==="Enter")add()};const ab=document.createElement("button");ab.className="mini go";ab.append(ic("plus"),"Adicionar");ab.onclick=add;a.append(ni,ab);box.append(a);return}
+  if(!n){box.textContent="(sem conteúdos para esta UFCD – clica em Editar para os acrescentar)";return}
+  const nx=CT.find(c=>!COV.has(c.id)&&!TOP.has(c.id));
+  CT.forEach(c=>{const b=document.createElement("button"),t=TOP.has(c.id),v=COV.has(c.id);b.className="ctc"+(t?" now":v?" cov":"")+(nx&&nx.id===c.id?" nx":"");
+    b.textContent=(t?"✔ ":v?"✓ ":"")+c.texto;b.title=t?"Neste sumário (clica para tirar)":v?"Já lecionado numa aula anterior":"Clica para acrescentar ao sumário";b.onclick=()=>togTop(c);box.append(b)});
+}
+$("cts").onclick=()=>{const n=CT.find(c=>!COV.has(c.id)&&!TOP.has(c.id));if(!n){say("rmsg","Todos os conteúdos desta UFCD já foram lecionados.","ok");return}togTop(n)};
+$("cte").onclick=()=>{CTED=!CTED;$("cte").replaceChildren(ic(CTED?"check":"edit"),CTED?"Concluir":"Editar");renderCT()};
+$("ctt").onclick=()=>{const h=$("ctb").classList.toggle("hide"),b=$("ctt");b.replaceChildren(ic(h?"down":"up"),h?"Expandir":"Encolher")};
 const RP=[1,1,1];  // pesos Conhecimentos / Capacidades / Atitudes (ajusta se necessário)
 const TIPOS0=[["T","Tarefa"],["TP","Trabalho prático"],["Te","Teste"],["TI","Trabalho individual"],["TG","Trabalho de grupo"],["P/PAP","Projeto / PAP"],["AO","Avaliação oral"]];
 let TIPOS=TIPOS0.map(([codigo,nome])=>({codigo,nome})),TIPOSDB=false;
@@ -511,13 +543,13 @@ function aplicaTarefas(rr){document.querySelectorAll("#gb tr").forEach(tr=>{cons
 function aplicaMarcas(f,c,rr,semFP){document.querySelectorAll("#gb tr").forEach(tr=>{let ob="";tr.querySelectorAll("input[type=checkbox]").forEach(cb=>{if(semFP&&cb.dataset.t==="FP"){cb.checked=false;return}const L=cb.dataset.k==="f"?f:c,h=L.find(x=>x.aluno_id===cb.dataset.a&&x.tipo===cb.dataset.t);cb.checked=!!h;if(h&&h.obs&&!ob)ob=h.obs});tr.querySelector(".ob").value=ob;const e=(rr||[]).find(x=>x.aluno_id===tr.dataset.a);tr.querySelectorAll("td.ev select").forEach(sl=>sl.value=e&&e[sl.dataset.r]?e[sl.dataset.r]:"");nota(tr);marca(tr)});aplicaTarefas(rr)}
 $("cpd").onclick=async()=>{
   const d=$("rd").value,b=$("rb").value,l=parseInt($("rl").value,10),hh=$("rh").value;if(!d||!b){say("rmsg","Escolhe a UFCD e a data.","err");return}
-  const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,data,hora,sumario,obs,grupos").eq("data",d).in("bloco_id",ids);
+  const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,data,hora,sumario,obs,grupos,topicos").eq("data",d).in("bloco_id",ids);
   let L=(r.data||[]).filter(x=>!(x.bloco_id===b&&x.licao===l));if(hh)L=L.filter(x=>x.hora&&x.hora.slice(0,5)<hh);
   L.sort((x,y)=>(y.hora||"").localeCompare(x.hora||"")||y.licao-x.licao);
   if(L.length){   // mesmo dia: copia tudo, exceto a falta de pontualidade
     const s=L[0],bl=BL.find(x=>x.id===s.bloco_id),h1=(s.hora||"").slice(0,5)||"?";
     if(!confirm("Copiar da aula das "+h1+" ("+bl.codigo+") – mesmo dia?\n\nCopia sumário, observações, grupos, tarefas, marcas e avaliações, EXCETO a falta de pontualidade. Substitui o que está no ecrã (só grava ao clicar em Guardar aula)."))return;
-    $("rs").value=s.sumario||"";$("ro").value=s.obs||"";const ok=new Set(alunosT().map(a=>a.id));GR=(s.grupos||[]).map(g=>({n:g.n,a:g.a.filter(id=>ok.has(id))}));desenhaGrupos();
+    $("rs").value=s.sumario||"";$("ro").value=s.obs||"";TOP=new Set(s.topicos||[]);renderCT();const ok=new Set(alunosT().map(a=>a.id));GR=(s.grupos||[]).map(g=>({n:g.n,a:g.a.filter(id=>ok.has(id))}));desenhaGrupos();
     const q=t=>db.from(t).select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao);
     const [f,c,rb]=await Promise.all([q("faltas"),q("comportamento"),db.from("rubrica_obs").select("aluno_id,tarefa,conhecimentos,capacidades,atitudes").eq("bloco_id",s.bloco_id).eq("licao",s.licao)]);
     aplicaMarcas(f.data||[],c.data||[],rb.data||[],true);let extra="";
@@ -636,7 +668,7 @@ $("gdel").onclick=async()=>{
 $("gr").onclick=async()=>{
   const b=$("rb").value,d=$("rd").value,l=parseInt($("rl").value,10);if(!b||!d||!l){say("rmsg","Escolhe a UFCD, a lição e a data.","err");return}
   say("rmsg","A guardar…");const txt=$("rs").value.trim(),cur=SA.find(x=>x.licao===l),gr=GR.filter(g=>g.a.length);
-  if(txt||cur||gr.length){const row={bloco_id:b,licao:l,data:d,hora:$("rh").value||null,sumario:txt,obs:$("ro").value.trim()||null,grupos:gr};
+  if(txt||cur||gr.length||TOP.size){const row={bloco_id:b,licao:l,data:d,hora:$("rh").value||null,sumario:txt,obs:$("ro").value.trim()||null,grupos:gr,topicos:[...TOP]};
     const r=cur?await db.from("sumarios").update(row).eq("id",cur.id):await db.from("sumarios").insert(row);if(r.error){say("rmsg","Erro no sumário: "+r.error.message,"err");return}}
   const ins={f:[],c:[]},del={f:[],c:[]},up=[],RI=[],RD=[],RU=[];let sem=0;
   document.querySelectorAll("#gb tr").forEach(tr=>{const cbs=[...tr.querySelectorAll("input[type=checkbox]")],aid=tr.dataset.a,ob=tr.querySelector(".ob").value.trim()||null;

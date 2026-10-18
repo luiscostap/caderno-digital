@@ -75,10 +75,12 @@ td input.ob{width:100%;min-width:90px;padding:2px 5px}.pb{padding:2px 5px!import
 .dpd{display:block;padding:5px 0;font-size:12.5px;font-weight:500;background:var(--stripe);color:var(--ink);border:1px solid transparent;border-radius:5px;justify-content:center}.dpd:hover{filter:none;border-color:var(--pri2)}
 .dpd.f{color:var(--mut)}.dpd.Feriado{background:#e6c79a;color:#4a2f10}.dpd.Interrupção{background:#cfdcc4;color:#25391d}.dpd.Marco{background:#b7cde4;color:#0d2c4d}
 .dpd.al{box-shadow:inset 0 -3px var(--pri2);font-weight:700}.dpd.hj{border-color:var(--acc)}.dpd.sel{background:var(--pri);color:var(--on)}
+.gcard{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 12px}.gcard h2{margin:0}#grps{display:flex;flex-wrap:wrap;gap:6px}#grps .grp{border:1px solid var(--line);border-radius:8px;padding:2px 6px;background:var(--stripe)}.gcard .mut{flex:1}
+td.ev select{padding:1px 0;width:38px;font-size:12px}td.nt{font-weight:700}summary{cursor:pointer;font-weight:600;padding:4px 0}.rl2 td{white-space:normal!important;vertical-align:top;font-size:11.5px;min-width:150px}.rl2 th{position:static}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol><symbol id="i-edit" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol><symbol id="i-left" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></symbol><symbol id="i-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-clip" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><polyline points="9 14 11 16 15 12"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol><symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol><symbol id="i-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol><symbol id="i-edit" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol><symbol id="i-left" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></symbol><symbol id="i-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-clip" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><polyline points="9 14 11 16 15 12"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol><symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol><symbol id="i-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol><symbol id="i-up" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></symbol></svg>
 <div id="shell"><aside id="side" class="hide"><div class="brand"><b>Caderno digital</b><span>Professor · 2026/2027</span></div>
 <div class="nav"><button data-t="vis" data-i="home" class="on">Visão geral</button><button data-t="reg" data-i="clip">Registo de aula</button><button data-t="res" data-i="chart">Resumo</button><button data-t="alunos" data-i="users">Alunos</button><button data-t="disc" data-i="book">Disciplinas</button><button data-t="cal" data-i="cal">Calendário</button><button data-t="hor" data-i="clock">Horário</button></div>
 <div class="sp"></div><button id="atu" data-i="refresh">Atualizar dados</button><button id="sair" data-i="logout">Terminar sessão</button></aside>
@@ -118,26 +120,26 @@ td input.ob{width:100%;min-width:90px;padding:2px 5px}.pb{padding:2px 5px!import
   </div>
 </div>
 <div id="t-reg" class="hide">
+ <div class="card"><div class="row" style="gap:10px"><label for="rd" style="margin:0">Data</label><div class="row" style="gap:3px;flex-wrap:nowrap"><input id="rd" type="date" style="width:132px"><button class="sec sq" id="rdb" data-i="cal" aria-label="Abrir calendário"></button></div><div class="chips" id="dchips" style="margin:0"></div></div></div>
  <div class="card fbar">
   <div><label for="rt">Turma</label><select id="rt"></select></div>
   <div><label for="rb">Disciplina / UFCD</label><select id="rb" style="min-width:280px"></select></div>
   <div><label for="rl">Lição</label><div class="row" style="gap:4px"><button class="sec sq" id="lp" data-i="left" aria-label="Lição anterior"></button><input id="rl" type="number" min="1" style="width:58px"><button class="sec sq" id="ln" data-i="right" aria-label="Lição seguinte"></button><button class="sec" id="lnew" data-i="plus">Nova</button></div></div>
-  <div><label for="rd">Data</label><div class="row" style="gap:3px;flex-wrap:nowrap"><input id="rd" type="date" style="width:132px"><button class="sec sq" id="rdb" data-i="cal" aria-label="Abrir calendário"></button></div></div>
   <div><label for="rh">Hora</label><select id="rh" style="width:200px"></select></div>
   <div><label>&nbsp;</label><button id="cpd" class="sec" data-i="copy">Copiar da 1.ª aula do dia</button></div>
   <span class="sp"></span><span id="rtag" class="tag"></span>
   <button id="gr" class="go" data-i="save">Guardar aula</button><button id="gdel" class="dg" data-i="trash">Apagar aula</button>
  </div>
- <div class="chips" id="dchips"></div>
  <div id="rmsg" class="msg"></div>
- <div class="rg">
-  <div class="rl">
-   <div class="card"><div class="ch"><h2>Sumário anterior</h2><span id="sanh" class="mut"></span><button id="imp" class="sec mini" data-i="copy">Usar este texto</button></div><div id="sant" class="prevt"></div></div>
-   <div class="card"><h2>Sumário desta aula</h2><textarea id="rs" rows="4"></textarea><label for="ro">Observações da aula</label><textarea id="ro" rows="2"></textarea></div>
-   <div class="card"><div class="ch"><h2>Grupos</h2><span class="mut" id="gmut">passam de lição para lição</span><button id="gadd" class="sec mini" data-i="plus">Grupo</button></div><div id="grps"></div></div>
-  </div>
-  <div class="card"><div class="ch"><h2>Alunos</h2><span class="mut">Sem marcas = presente · FI injustificada · FM material · FP pontualidade · FJ justificada · + / – comportamento</span></div>
-   <div class="tw"><table id="gt"><thead><tr><th class="n">Nº</th><th>Nome</th><th class="k">Gr.</th><th class="k fi" title="Falta injustificada">FI</th><th class="k fm" title="Falta de material">FM</th><th class="k fp" title="Falta de pontualidade">FP</th><th class="k fj" title="Falta justificada">FJ</th><th class="k cp" title="Comportamento positivo">+</th><th class="k cn" title="Comportamento negativo">–</th><th>Observação</th></tr></thead><tbody id="gb"></tbody></table></div></div>
+ <div class="card"><div class="ch"><h2>Sumários</h2><span id="sumsum" class="mut"></span><button id="sumt" class="sec mini" data-i="up">Encolher</button></div>
+  <div id="sumb" class="g2">
+   <div><div class="ch"><b>Sumário anterior</b><span id="sanh" class="mut"></span><button id="imp" class="sec mini" data-i="copy">Usar este texto</button></div><div id="sant" class="prevt"></div></div>
+   <div><label for="rs" style="margin-top:0">Sumário desta aula</label><textarea id="rs" rows="4"></textarea><label for="ro">Observações da aula</label><textarea id="ro" rows="2"></textarea></div>
+  </div></div>
+ <div class="card gcard"><h2>Grupos</h2><div id="grps"></div><button id="gadd" class="sec mini" data-i="plus">Grupo</button><span class="mut" id="gmut">passam de lição para lição</span></div>
+ <div class="card"><div class="ch"><h2>Alunos</h2><label for="tt" style="margin:0">Tarefa</label><select id="tt"></select><button id="tta" class="sec mini sq" data-i="plus" aria-label="Novo tipo de trabalho" title="Novo tipo de trabalho"></button><input id="tn" placeholder="Nome da tarefa (ex.: Ficha Prática nº10)" style="width:270px"><span class="mut">Sem marcas = presente · FI · FM · FP · FJ · + / – comportamento · Con. / Cap. / Ati. = níveis 1–5 da rubrica</span></div>
+  <div class="tw"><table id="gt"><thead><tr><th class="n">Nº</th><th>Nome</th><th class="k">Gr.</th><th class="k fi" title="Falta injustificada">FI</th><th class="k fm" title="Falta de material">FM</th><th class="k fp" title="Falta de pontualidade">FP</th><th class="k fj" title="Falta justificada">FJ</th><th class="k cp" title="Comportamento positivo">+</th><th class="k cn" title="Comportamento negativo">–</th><th class="k ev" title="Conhecimentos (1–5)">Con.</th><th class="k ev" title="Capacidades (1–5)">Cap.</th><th class="k ev" title="Atitudes (1–5)">Ati.</th><th class="k" title="Nota 0–20 = média dos níveis × 4">Nota</th><th>Observação</th></tr></thead><tbody id="gb"></tbody></table></div>
+  <details id="rubleg" style="margin-top:10px"><summary>Rubrica: o que representa cada nota (clica para abrir)</summary><div class="tw rl2"><table><thead><tr><th>Domínio</th><th>5 · Muito Bom</th><th>4 · Bom</th><th>3 · Suficiente</th><th>2 · Insuficiente</th><th>1 · Fraco</th></tr></thead><tbody><tr><td><b>Conhecimentos</b><br><span class='mut'>(conteúdos e conceitos)</span></td><td>Domina, plenamente, os conteúdos e conceitos da disciplina.<br>Aplica os conhecimentos adquiridos a novas situações.</td><td>Entre o nível 5 e 3.</td><td>Domina, com falhas, os conteúdos e conceitos da disciplina.<br>Aplica, com dificuldade, os conhecimentos adquiridos a novas situações.</td><td>Entre o nível 3 e 1.</td><td>Não domina os conteúdos e conceitos da disciplina.<br>Não aplica os conhecimentos adquiridos a novas situações.</td></tr><tr><td><b>Capacidades</b><br><span class='mut'>(comunicação, resolução de problemas, espírito crítico, destreza associada à prática)</span></td><td>- Comunica de forma correta, clara e contextualizada.<br>-  Desenvolve estratégias que lhe permitem resolver problemas.<br>- Manifesta pensamento crítico, reflexivo, criativo e argumentativo.<br>-  Aplica as aprendizagens adquiridas em situações práticas.</td><td>Entre o nível 5 e 3.</td><td>- Nem sempre comunica de forma correta, clara e contextualizada.<br>- Desenvolve, com auxílio, estratégias que lhe permitem resolver problemas.<br>- Nem sempre manifesta pensamento crítico, reflexivo, criativo e argumentativo.<br>- Nem sempre aplica as aprendizagens adquiridas em situações práticas.</td><td>Entre o nível 3 e 1.</td><td>- Não comunica de forma correta, clara e contextualizada.<br>- Não desenvolve estratégias que lhe permitem resolver problemas.<br>- Não manifesta pensamento crítico, reflexivo, criativo e argumentativo.<br>- Não aplica as aprendizagens adquiridas em situações práticas.</td></tr><tr><td><b>Atitudes</b><br><span class='mut'>(autonomia, cooperação, solidariedade, assiduidade, pontualidade, empenho, aceita o feedback e relação interpessoal)</span></td><td>- Demonstra uma atitude autónoma.<br>-  É solidário, assíduo, pontual e empenha-se de forma adequada.<br>-  Com base no feedback dado pelo professor, reformula a sua postura, comportamento e trabalho.<br>-  Manifesta uma relação interpessoal muito adequada ao espaço de sala de aula e outros contextos, respeitando sempre as normas de conduta e de trabalho definidas.</td><td>Entre o nível 5 e 3.</td><td>- Nem sempre demonstra uma atitude autónoma.<br>- Nem sempre é solidário, assíduo, pontual e empenhado de forma adequada.<br>- Com base no feedback dado pelo professor, nem sempre reformula a sua postura, comportamento e trabalho.<br>- Manifesta uma relação interpessoal adequada ao espaço de sala de aula e outros contextos, respeitando as normas de conduta e de trabalho definidas.</td><td>Entre o nível 3 e 1.</td><td>- Não demonstra uma atitude autónoma.<br>-  Não é solidário, assíduo, pontual e empenhado de forma adequada.<br>- Com base no feedback dado pelo professor, não reformula a sua postura, comportamento e trabalho.<br>- Manifesta uma relação interpessoal inadequada ao espaço de sala de aula e outros contextos, desrespeitando sempre as normas de conduta e de trabalho definidas.</td></tr></tbody></table></div></details>
  </div>
 </div>
 <div id="pop" class="hide"></div><div id="dpop" class="hide"></div>
@@ -180,7 +182,7 @@ const say=(id,t,cls)=>{const e=$(id);e.textContent=t;e.className="msg "+(cls||""
 async function estado(){
   const {data:{session}}=await db.auth.getSession();
   $("login").classList.toggle("hide",!!session); $("app").classList.toggle("hide",!session); $("side").classList.toggle("hide",!session);
-  if(session){carregar();carregarDisc();carregarCal();carregarHor()}
+  if(session){carregar();carregarDisc();carregarCal();carregarHor();carregarTipos()}
 }
 $("entrar").onclick=async()=>{
   say("lmsg","A entrar…");
@@ -188,7 +190,7 @@ $("entrar").onclick=async()=>{
   if(error) say("lmsg","Não foi possível entrar: email ou palavra-passe incorretos.","err"); else {say("lmsg","");estado();}
 };
 $("pw").onkeydown=e=>{if(e.key==="Enter")$("entrar").click()};
-$("sair").onclick=async()=>{await db.auth.signOut();estado()};$("atu").onclick=()=>{carregar();carregarDisc();carregarCal();carregarHor()};
+$("sair").onclick=async()=>{await db.auth.signOut();estado()};$("atu").onclick=()=>{carregar();carregarDisc();carregarCal();carregarHor();carregarTipos()};
 
 async function carregar(){
   const t=await db.from("turmas").select("id,codigo,nome").order("codigo");
@@ -371,21 +373,42 @@ async function escolheAula(h){
 }
 async function carregaAula(novo){
   const b=$("rb").value,gb=$("gb");if(!b){gb.replaceChildren();$("sant").textContent="";return}
-  const s=await db.from("sumarios").select("id,licao,data,hora,sumario,obs,grupos").eq("bloco_id",b).order("licao");
-  if(s.error){say("rmsg","Erro: "+s.error.message+" (já executaste o fase5.sql?)","err");return}SA=s.data||[];
+  const s=await db.from("sumarios").select("id,licao,data,hora,sumario,obs,grupos,tarefa,tarefa_tipo").eq("bloco_id",b).order("licao");
+  if(s.error){say("rmsg","Erro: "+s.error.message+" (já executaste o fase5.sql e o fase7.sql?)","err");return}SA=s.data||[];
   const mx=SA.length?Math.max(...SA.map(x=>x.licao||0)):0;if(novo||!$("rl").value)$("rl").value=mx+1;
   const l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);
   $("rs").value=cur?cur.sumario||"":"";$("ro").value=cur?cur.obs||"":"";if(cur){$("rd").value=cur.data||$("rd").value;setHora((cur.hora||"").slice(0,5))}
-  PV=[...SA].filter(x=>x.licao<l).pop()||null;
+  PV=[...SA].filter(x=>x.licao<l).pop()||null;const base=cur||PV;setTarefa(base?base.tarefa_tipo:"",base?base.tarefa:"");
   $("sant").textContent=PV?PV.sumario:"(ainda não há sumários anteriores nesta UFCD)";$("sanh").textContent=PV?"Lição "+PV.licao+" · "+fmtd(PV.data)+((PV.hora||"")?" · "+hr(PV.hora):""):"";$("imp").disabled=!PV;
   $("rtag").textContent=cur?"Aula já registada – a editar":"Nova aula";$("gdel").disabled=!cur;chips();
-  const f=await db.from("faltas").select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l),c=await db.from("comportamento").select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l);
-  EX={f:f.data||[],c:c.data||[]};
+  const q=t=>db.from(t).select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l);
+  const [f,c,r]=await Promise.all([q("faltas"),q("comportamento"),db.from("rubrica_obs").select("id,aluno_id,conhecimentos,capacidades,atitudes").eq("bloco_id",b).eq("licao",l)]);
+  EX={f:f.data||[],c:c.data||[],r:r.data||[]};
   let g=cur?cur.grupos:(PV&&PV.grupos&&PV.grupos.length?PV.grupos:null);
-  if(!cur&&!g){const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),q=await db.from("sumarios").select("grupos,data").in("bloco_id",ids).order("data",{ascending:false}).limit(30);const z=(q.data||[]).find(x=>x.grupos&&x.grupos.length);g=z?z.grupos:null}
+  if(!cur&&!g){const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),w=await db.from("sumarios").select("grupos,data").in("bloco_id",ids).order("data",{ascending:false}).limit(30);const z=(w.data||[]).find(x=>x.grupos&&x.grupos.length);g=z?z.grupos:null}
   const ok=new Set(alunosT().map(a=>a.id));GR=(g||[]).map(x=>({n:x.n,a:x.a.filter(id=>ok.has(id))}));
-  desenhaGrelha();desenhaGrupos();
+  desenhaGrelha();desenhaGrupos();resumoSum();
 }
+const RP=[1,1,1];  // pesos Conhecimentos / Capacidades / Atitudes (ajusta se necessário)
+const TIPOS0=[["T","Tarefa"],["TP","Trabalho prático"],["Te","Teste"],["TI","Trabalho individual"],["TG","Trabalho de grupo"],["P/PAP","Projeto / PAP"],["AO","Avaliação oral"]];
+let TIPOS=TIPOS0.map(([codigo,nome])=>({codigo,nome})),TIPOSDB=false;
+function fillTipos(){const s=$("tt"),v=s.value;s.replaceChildren(new Option("— tipo —",""));TIPOS.forEach(t=>s.add(new Option(t.codigo+" – "+t.nome,t.codigo)));setTarefa(v,$("tn").value)}
+function setTarefa(t,n){const s=$("tt");if(t&&![...s.options].some(o=>o.value===t))s.add(new Option(t,t));s.value=t||"";$("tn").value=n||""}
+async function carregarTipos(){
+  const r=await db.from("tipos_trabalho").select("codigo,nome");TIPOSDB=!r.error&&r.data.length>0;
+  if(TIPOSDB){const o=TIPOS0.map(x=>x[0]);TIPOS=[...r.data].sort((x,y)=>{const i=o.indexOf(x.codigo),j=o.indexOf(y.codigo);return (i<0?99:i)-(j<0?99:j)||x.codigo.localeCompare(y.codigo)})}
+  fillTipos();
+}
+$("tta").onclick=async()=>{
+  if(!TIPOSDB){say("rmsg","Para acrescentar tipos de trabalho executa primeiro o fase7.sql no Supabase.","err");return}
+  const c=(prompt("Código curto do novo tipo de trabalho (ex.: Ap)")||"").trim();if(!c)return;const n=(prompt("Nome do tipo (ex.: Apresentação)")||"").trim();if(!n)return;
+  const r=await db.from("tipos_trabalho").insert({codigo:c,nome:n});if(r.error){say("rmsg",r.error.code==="23505"?"Esse código já existe.":"Erro: "+r.error.message,"err");return}
+  const v=$("tn").value;await carregarTipos();setTarefa(c,v);say("rmsg","Tipo '"+c+"' acrescentado.","ok");
+};
+function nota(tr){const v=[...tr.querySelectorAll("td.ev select")].map(x=>+x.value),n=tr.querySelector("td.nt");n.textContent=v.every(x=>x>0)?((v[0]*RP[0]+v[1]*RP[1]+v[2]*RP[2])/(RP[0]+RP[1]+RP[2])*4).toFixed(1):""}
+function resumoSum(){const h=$("sumb").classList.contains("hide");$("sumsum").textContent=h?($("rs").value||"").replace(/\s+/g," ").slice(0,100):""}
+$("sumt").onclick=()=>{const h=$("sumb").classList.toggle("hide"),b=$("sumt");b.replaceChildren(ic(h?"down":"up"),h?"Expandir":"Encolher");resumoSum()};
+fillTipos();
 const marca=tr=>tr.classList.toggle("mk",[...tr.querySelectorAll("input[type=checkbox]")].some(c=>c.checked));
 let FR=null;try{FR=JSON.parse(localStorage.getItem("frases"))}catch(e){}
 FR=FR||["Sem computador","Foi à biblioteca","Faltou ao respeito","Saiu sem autorização","A jogar no computador","Com o telemóvel","Distraído","Perturbador","Sem material","Chegou atrasado","Não fez o trabalho","Boa participação","Ajudou os colegas"];
@@ -405,6 +428,10 @@ function desenhaGrelha(){
     cols.forEach(([tp,k,cl])=>{const have=EX[k].find(x=>x.aluno_id===a.id&&x.tipo===tp);if(have&&have.obs&&!ob)ob=have.obs;
       const c=tr.insertCell();c.className="k "+cl;const cb=document.createElement("input");cb.type="checkbox";cb.dataset.a=a.id;cb.dataset.t=tp;cb.dataset.k=k;cb.checked=!!have;cb.setAttribute("aria-label",tp+" – "+a.nome);
       cb.onchange=()=>{if(cb.checked){const o=tp==="Positivo"?"Negativo":tp==="Negativo"?"Positivo":null;if(o)[...tr.querySelectorAll("input[type=checkbox]")].find(x=>x.dataset.t===o).checked=false}marca(tr)};c.append(cb)});
+    const rb=(EX.r||[]).find(x=>x.aluno_id===a.id);
+    [["conhecimentos","Conhecimentos"],["capacidades","Capacidades"],["atitudes","Atitudes"]].forEach(([k,nm])=>{const c=tr.insertCell();c.className="k ev";const sl=document.createElement("select");sl.dataset.r=k;sl.setAttribute("aria-label",nm+" – "+a.nome);
+      sl.append(new Option("",""));[1,2,3,4,5].forEach(n=>sl.add(new Option(n,n)));sl.value=rb&&rb[k]?rb[k]:"";sl.onchange=()=>nota(tr);c.append(sl)});
+    tr.insertCell().className="k nt";nota(tr);
     const w=document.createElement("div");w.style.cssText="display:flex;gap:3px";const o=document.createElement("input");o.className="ob";o.value=ob;
     const pb=document.createElement("button");pb.className="mini sec pb";pb.setAttribute("aria-label","Frases rápidas");pb.append(ic("down"));pb.onclick=e=>{e.stopPropagation();abrePop(pb,o)};w.append(o,pb);tr.insertCell().append(w);marca(tr);
   });
@@ -419,22 +446,23 @@ function desenhaGrupos(){
   const sg=al.filter(a=>!used.has(a.id));$("gmut").textContent=GR.length?(sg.length?"sem grupo: "+sg.map(nc).join(", "):"todos com grupo"):"passam de lição para lição";pintaGr();
 }
 $("gadd").onclick=()=>{GR.push({n:"G"+(GR.length+1),a:[]});desenhaGrupos()};
-function aplicaMarcas(f,c){document.querySelectorAll("#gb tr").forEach(tr=>{let ob="";tr.querySelectorAll("input[type=checkbox]").forEach(cb=>{const L=cb.dataset.k==="f"?f:c,h=L.find(x=>x.aluno_id===cb.dataset.a&&x.tipo===cb.dataset.t);cb.checked=!!h;if(h&&h.obs&&!ob)ob=h.obs});tr.querySelector(".ob").value=ob;marca(tr)})}
+function aplicaMarcas(f,c,rr){document.querySelectorAll("#gb tr").forEach(tr=>{let ob="";tr.querySelectorAll("input[type=checkbox]").forEach(cb=>{const L=cb.dataset.k==="f"?f:c,h=L.find(x=>x.aluno_id===cb.dataset.a&&x.tipo===cb.dataset.t);cb.checked=!!h;if(h&&h.obs&&!ob)ob=h.obs});tr.querySelector(".ob").value=ob;const e=(rr||[]).find(x=>x.aluno_id===tr.dataset.a);tr.querySelectorAll("td.ev select").forEach(sl=>sl.value=e&&e[sl.dataset.r]?e[sl.dataset.r]:"");nota(tr);marca(tr)})}
 $("cpd").onclick=async()=>{
   const d=$("rd").value,b=$("rb").value,l=parseInt($("rl").value,10),hh=$("rh").value;if(!d||!b){say("rmsg","Escolhe a UFCD e a data.","err");return}
-  const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,hora,sumario,obs,grupos").eq("data",d).in("bloco_id",ids);
+  const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,hora,sumario,obs,grupos,tarefa,tarefa_tipo").eq("data",d).in("bloco_id",ids);
   let L=(r.data||[]).filter(x=>!(x.bloco_id===b&&x.licao===l));if(hh)L=L.filter(x=>x.hora&&x.hora.slice(0,5)<hh);
   L.sort((x,y)=>(x.hora||"99").localeCompare(y.hora||"99")||x.licao-y.licao);
   if(!L.length){say("rmsg","Não há aula anterior desta turma registada neste dia (regista primeiro a 1.ª aula, com a hora).","err");return}
   const s=L[0],bl=BL.find(x=>x.id===s.bloco_id),h1=(s.hora||"").slice(0,5)||"?";
-  if(!confirm("Copiar tudo da aula das "+h1+" ("+bl.codigo+") para esta aula?\n\nSubstitui o sumário, os grupos e as marcas atuais (só fica gravado quando clicares em Guardar aula)."))return;
-  $("rs").value=s.sumario||"";$("ro").value=s.obs||"";const ok=new Set(alunosT().map(a=>a.id));GR=(s.grupos||[]).map(g=>({n:g.n,a:g.a.filter(id=>ok.has(id))}));desenhaGrupos();
-  const [f,c]=await Promise.all([db.from("faltas").select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao),db.from("comportamento").select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao)]);
-  aplicaMarcas(f.data||[],c.data||[]);let extra="";
+  if(!confirm("Copiar tudo da aula das "+h1+" ("+bl.codigo+") para esta aula?\n\nSubstitui o sumário, a tarefa, os grupos, as marcas e as avaliações atuais (só fica gravado quando clicares em Guardar aula)."))return;
+  $("rs").value=s.sumario||"";$("ro").value=s.obs||"";setTarefa(s.tarefa_tipo,s.tarefa);const ok=new Set(alunosT().map(a=>a.id));GR=(s.grupos||[]).map(g=>({n:g.n,a:g.a.filter(id=>ok.has(id))}));desenhaGrupos();
+  const q=t=>db.from(t).select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao);
+  const [f,c,rb]=await Promise.all([q("faltas"),q("comportamento"),db.from("rubrica_obs").select("aluno_id,conhecimentos,capacidades,atitudes").eq("bloco_id",s.bloco_id).eq("licao",s.licao)]);
+  aplicaMarcas(f.data||[],c.data||[],rb.data||[]);let extra="";
   if(!SA.find(x=>x.licao===l)){const mx=SA.length?Math.max(...SA.map(x=>x.licao||0)):0;$("rl").value=mx+1;
     const hs=(r.data||[]).filter(x=>!(x.bloco_id===b&&x.licao===l)&&x.hora).map(x=>x.hora.slice(0,5)).sort(),nx=hs.length?TT.find(t=>t[0]>hs[hs.length-1]):null;
     if(nx)setHora(nx[0]);extra=" Assumi a lição "+(mx+1)+(nx?" e a hora "+nx[0]+" – "+nx[1]:"")+" (podes alterar).";}
-  say("rmsg","Copiado da aula das "+h1+"."+extra+" Confirma e clica em Guardar aula.","ok");
+  resumoSum();say("rmsg","Copiado da aula das "+h1+"."+extra+" Confirma e clica em Guardar aula.","ok");
 };
 const TT=[["08:00","08:50"],["08:50","09:40"],["09:55","10:45"],["10:45","11:35"],["11:50","12:40"],["12:40","13:30"],["14:30","15:20"],["15:20","16:10"],["16:20","17:10"],["17:10","18:00"]];
 const hr=h=>{h=(h||"").slice(0,5);const t=TT.find(x=>x[0]===h);return t?t[0]+" – "+t[1]:h};
@@ -533,27 +561,33 @@ $("rd").value=hoje();chips();$("rd").onchange=chips;$("rt").onchange=()=>fillBlo
 $("lp").onclick=()=>{$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);carregaAula(false)};$("ln").onclick=()=>{$("rl").value=(parseInt($("rl").value,10)||0)+1;carregaAula(false)};$("lnew").onclick=async()=>{await carregaAula(true);const h=await proximaHora();if(h)setHora(h)};
 $("imp").onclick=()=>{if(!PV)return;if($("rs").value.trim()&&!confirm("Substituir o sumário atual pelo anterior?"))return;$("rs").value=PV.sumario||"";$("ro").value=PV.obs||""};
 $("gdel").onclick=async()=>{
-  const b=$("rb").value,l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);if(!cur||!confirm("Apagar a lição "+l+" (sumário, grupos, faltas e comportamento desta aula)?"))return;
-  for(const t of ["faltas","comportamento"]){const r=await db.from(t).delete().eq("bloco_id",b).eq("licao",l);if(r.error){say("rmsg","Erro: "+r.error.message,"err");return}}
+  const b=$("rb").value,l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);if(!cur||!confirm("Apagar a lição "+l+" (sumário, grupos, faltas, comportamento e avaliações desta aula)?"))return;
+  for(const t of ["faltas","comportamento","rubrica_obs"]){const r=await db.from(t).delete().eq("bloco_id",b).eq("licao",l);if(r.error){say("rmsg","Erro: "+r.error.message,"err");return}}
   const r=await db.from("sumarios").delete().eq("id",cur.id);if(r.error){say("rmsg","Erro: "+r.error.message,"err");return}
   say("rmsg","Aula apagada.","ok");carregaAula(true);visao();
 };
 $("gr").onclick=async()=>{
   const b=$("rb").value,d=$("rd").value,l=parseInt($("rl").value,10);if(!b||!d||!l){say("rmsg","Escolhe a UFCD, a lição e a data.","err");return}
-  say("rmsg","A guardar…");const txt=$("rs").value.trim(),cur=SA.find(x=>x.licao===l),gr=GR.filter(g=>g.a.length);
-  if(txt||cur||gr.length){const row={bloco_id:b,licao:l,data:d,hora:$("rh").value||null,sumario:txt,obs:$("ro").value.trim()||null,grupos:gr};
+  say("rmsg","A guardar…");const txt=$("rs").value.trim(),cur=SA.find(x=>x.licao===l),gr=GR.filter(g=>g.a.length),tar=$("tn").value.trim()||null,tti=$("tt").value||null;
+  if(txt||cur||gr.length||tar){const row={bloco_id:b,licao:l,data:d,hora:$("rh").value||null,sumario:txt,obs:$("ro").value.trim()||null,grupos:gr,tarefa:tar,tarefa_tipo:tti};
     const r=cur?await db.from("sumarios").update(row).eq("id",cur.id):await db.from("sumarios").insert(row);if(r.error){say("rmsg","Erro no sumário: "+r.error.message,"err");return}}
-  const ins={f:[],c:[]},del={f:[],c:[]},up=[];let sem=0;
+  const ins={f:[],c:[]},del={f:[],c:[]},up=[],RI=[],RD=[],RU=[];let sem=0;
   document.querySelectorAll("#gb tr").forEach(tr=>{const cbs=[...tr.querySelectorAll("input[type=checkbox]")],aid=tr.dataset.a,ob=tr.querySelector(".ob").value.trim()||null;
     if(ob&&!cbs.some(c=>c.checked))sem++;
     cbs.forEach(cb=>{const k=cb.dataset.k,tp=cb.dataset.t,have=EX[k].find(x=>x.aluno_id===aid&&x.tipo===tp),tab=k==="f"?"faltas":"comportamento";
-      if(cb.checked){if(!have)ins[k].push({aluno_id:aid,bloco_id:b,data:d,licao:l,tipo:tp,obs:ob});else if((have.obs||null)!==ob)up.push([tab,have.id,ob])}else if(have)del[k].push(have.id)})});
+      if(cb.checked){if(!have)ins[k].push({aluno_id:aid,bloco_id:b,data:d,licao:l,tipo:tp,obs:ob});else if((have.obs||null)!==ob)up.push([tab,have.id,ob])}else if(have)del[k].push(have.id)});
+    const ev=[...tr.querySelectorAll("td.ev select")].map(x=>x.value?+x.value:null),hv=(EX.r||[]).find(x=>x.aluno_id===aid),rw={conhecimentos:ev[0],capacidades:ev[1],atitudes:ev[2]};
+    if(ev.every(x=>x===null)){if(hv)RD.push(hv.id)}else if(!hv)RI.push({aluno_id:aid,bloco_id:b,licao:l,data:d,...rw});else if(hv.conhecimentos!==ev[0]||hv.capacidades!==ev[1]||hv.atitudes!==ev[2])RU.push([hv.id,rw])});
   try{for(const k of ["f","c"]){const tab=k==="f"?"faltas":"comportamento";
       if(del[k].length){const r=await db.from(tab).delete().in("id",del[k]);if(r.error)throw r.error}
       if(ins[k].length){const r=await db.from(tab).insert(ins[k]);if(r.error)throw r.error}
       const r=await db.from(tab).update({data:d}).eq("bloco_id",b).eq("licao",l);if(r.error)throw r.error}
     for(const [tab,id,ob] of up){const r=await db.from(tab).update({obs:ob}).eq("id",id);if(r.error)throw r.error}
-  }catch(e){say("rmsg","Erro ao guardar: "+e.message+" (já executaste o fase4.sql?)","err");return}
+    if(RD.length){const r=await db.from("rubrica_obs").delete().in("id",RD);if(r.error)throw r.error}
+    if(RI.length){const r=await db.from("rubrica_obs").insert(RI);if(r.error)throw r.error}
+    for(const [id,rw] of RU){const r=await db.from("rubrica_obs").update(rw).eq("id",id);if(r.error)throw r.error}
+    const r=await db.from("rubrica_obs").update({data:d}).eq("bloco_id",b).eq("licao",l);if(r.error)throw r.error;
+  }catch(e){say("rmsg","Erro ao guardar: "+e.message+" (já executaste o fase4.sql e o fase7.sql?)","err");return}
   say("rmsg","Aula guardada."+(sem?" "+sem+" observação(ões) sem marca não foram guardadas.":""),"ok");carregaAula(false);visao();
 };
 function fillRes(){

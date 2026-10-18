@@ -91,6 +91,11 @@ td.tc{white-space:nowrap}td.tc select{width:58px;padding:1px 0;font-size:12px}td
 #gt td.tc input::placeholder{color:#6b7f99}
 #gt th.tcol,#gt td.tc{border-left:2px solid #0a2a4d;width:1%;white-space:nowrap}#gt th.ncol,#gt td.nt{border-right:2px solid #0a2a4d}
 #gt th:last-child{width:100%}
+#sumb{grid-template-columns:minmax(270px,28%) 1fr!important}.prevt{font-size:12px!important;max-height:58px!important}
+.fbar2 button.cpy{background:#e6d2a2;border-color:#8b4f1d;color:#0b2a47;font-weight:700}.fbar2 button.cpy:hover{filter:brightness(.94)}
+button.go{background:#f6ecd3;border-color:#8b4f1d;color:var(--hd)}button.go:hover{filter:brightness(.94)}
+.nav button.on{background:#f6ecd3;color:var(--hd);box-shadow:inset 3px 0 0 var(--acc)}
+.pesoaviso{margin:6px 0 10px;padding:6px 10px;border-radius:6px;font-weight:600}.errp{background:#f6d6d0;color:#7a1d12;border:1px solid #a82a1c}.okp{background:#d8ead9;color:#1d5a37;border:1px solid #26704a}
 </style>
 </head>
 <body>
@@ -140,18 +145,18 @@ td.tc{white-space:nowrap}td.tc select{width:58px;padding:1px 0;font-size:12px}td
   <label for="rb">UFCD</label><select id="rb" style="max-width:270px"></select>
   <label for="rl">Lição</label><button class="sec sq" id="lp" data-i="left" aria-label="Lição anterior"></button><input id="rl" type="number" min="1" style="width:54px"><button class="sec sq" id="ln" data-i="right" aria-label="Lição seguinte"></button><button class="sec" id="lnew" data-i="plus">Nova</button>
   <label for="rh">Hora</label><select id="rh" style="width:190px"></select>
-  <button id="cpd" class="sec" data-i="copy">Copiar da aula anterior</button>
+  <button id="cpd" class="sec cpy" data-i="copy">Copiar da aula anterior</button>
   <span class="sp"></span><span id="rtag" class="tag"></span>
   <button id="gr" class="go" data-i="save">Guardar aula</button><button id="gdel" class="dg" data-i="trash">Apagar aula</button>
  </div>
  <div id="rmsg" class="msg"></div>
  <div class="card"><div class="ch" style="margin-bottom:4px"><h2>Sumários</h2><span id="sumsum" class="mut"></span><button id="sumt" class="sec mini" data-i="up">Encolher</button></div>
   <div id="sumb">
-   <div><div class="ch" style="margin-bottom:3px"><b style="font-size:11.5px">Sumário anterior</b><span id="sanh" class="mut" style="font-size:11px"></span><button id="imp" class="sec mini" data-i="copy">Usar</button></div><div id="sant" class="prevt"></div></div>
+   <div><div class="ch" style="margin-bottom:3px"><b style="font-size:12px">Sumário anterior</b><span class="sp"></span><button id="imp" class="sec mini" data-i="copy">Usar</button></div><div id="sanh" class="mut" style="font-size:11.5px;white-space:nowrap;margin-bottom:3px"></div><div id="sant" class="prevt"></div></div>
    <div><label for="rs" style="margin-top:0">Sumário desta aula</label><textarea id="rs" rows="2"></textarea><label for="ro" style="margin-top:4px">Observações da aula</label><textarea id="ro" rows="1"></textarea></div>
   </div></div>
  <div class="card gcard"><div class="ch" style="margin:0"><h2>Grupos</h2><button id="gadd" class="sec mini" data-i="plus">Grupo</button><span class="mut" id="gmut"></span><button id="gtg" class="sec mini" data-i="up">Encolher</button></div><div id="grps"></div></div>
- <div class="card"><div class="ch"><h2>Alunos</h2><label for="tt" style="margin:0">Tarefa para todos</label><select id="tt"></select><input id="tn" placeholder="nº" style="width:50px" aria-label="Número da tarefa"><button id="tall" class="sec mini" data-i="check">Aplicar a todos</button><button id="tta" class="sec mini sq" data-i="plus" aria-label="Novo tipo de trabalho" title="Novo tipo de trabalho"></button><span class="mut">Sem marcas = presente · Tarefa = tipo + nº (ex.: TP01) · Con./Cap./Ati. = níveis 1–5</span></div>
+ <div class="card"><div class="ch"><h2>Alunos</h2><label for="tt" style="margin:0">Tarefa para todos</label><select id="tt"></select><input id="tn" placeholder="nº" style="width:50px" aria-label="Número da tarefa"><button id="tall" class="sec mini" data-i="check">Aplicar a todos</button><button id="tta" class="sec mini sq" data-i="plus" aria-label="Novo tipo de trabalho" title="Novo tipo de trabalho"></button><span class="mut">Sem marcas = presente · Tarefa = tipo + nº (ex.: TP01) · Con./Cap./Ati. = níveis 1–5</span><span id="raviso" class="err" style="font-size:11.5px"></span></div>
   <div class="tw"><table id="gt"><thead><tr><th class="n">Nº</th><th>Nome</th><th class="k">Gr.</th><th class="k fi" title="Falta injustificada">FI</th><th class="k fm" title="Falta de material">FM</th><th class="k fp" title="Falta de pontualidade">FP</th><th class="k fj" title="Falta justificada">FJ</th><th class="k cp" title="Comportamento positivo">+</th><th class="k cn" title="Comportamento negativo">–</th><th class="av tcol">Tarefa</th><th class="k ev av" title="Conhecimentos (1–5)">Con.</th><th class="k ev av" title="Capacidades (1–5)">Cap.</th><th class="k ev av" title="Atitudes (1–5)">Ati.</th><th class="k av ncol" title="Nota 0–20 = média dos níveis × 4">Nota</th><th>Observação</th></tr></thead><tbody id="gb"></tbody></table></div>
   <details id="rubleg" style="margin-top:10px"><summary>Rubrica: o que representa cada nota (clica para abrir)</summary><div class="tw rl2"><table><thead><tr><th>Domínio</th><th>5 · Muito Bom</th><th>4 · Bom</th><th>3 · Suficiente</th><th>2 · Insuficiente</th><th>1 · Fraco</th></tr></thead><tbody><tr><td><b>Conhecimentos</b><br><span class='mut'>(conteúdos e conceitos)</span></td><td>Domina, plenamente, os conteúdos e conceitos da disciplina.<br>Aplica os conhecimentos adquiridos a novas situações.</td><td>Entre o nível 5 e 3.</td><td>Domina, com falhas, os conteúdos e conceitos da disciplina.<br>Aplica, com dificuldade, os conhecimentos adquiridos a novas situações.</td><td>Entre o nível 3 e 1.</td><td>Não domina os conteúdos e conceitos da disciplina.<br>Não aplica os conhecimentos adquiridos a novas situações.</td></tr><tr><td><b>Capacidades</b><br><span class='mut'>(comunicação, resolução de problemas, espírito crítico, destreza associada à prática)</span></td><td>- Comunica de forma correta, clara e contextualizada.<br>-  Desenvolve estratégias que lhe permitem resolver problemas.<br>- Manifesta pensamento crítico, reflexivo, criativo e argumentativo.<br>-  Aplica as aprendizagens adquiridas em situações práticas.</td><td>Entre o nível 5 e 3.</td><td>- Nem sempre comunica de forma correta, clara e contextualizada.<br>- Desenvolve, com auxílio, estratégias que lhe permitem resolver problemas.<br>- Nem sempre manifesta pensamento crítico, reflexivo, criativo e argumentativo.<br>- Nem sempre aplica as aprendizagens adquiridas em situações práticas.</td><td>Entre o nível 3 e 1.</td><td>- Não comunica de forma correta, clara e contextualizada.<br>- Não desenvolve estratégias que lhe permitem resolver problemas.<br>- Não manifesta pensamento crítico, reflexivo, criativo e argumentativo.<br>- Não aplica as aprendizagens adquiridas em situações práticas.</td></tr><tr><td><b>Atitudes</b><br><span class='mut'>(autonomia, cooperação, solidariedade, assiduidade, pontualidade, empenho, aceita o feedback e relação interpessoal)</span></td><td>- Demonstra uma atitude autónoma.<br>-  É solidário, assíduo, pontual e empenha-se de forma adequada.<br>-  Com base no feedback dado pelo professor, reformula a sua postura, comportamento e trabalho.<br>-  Manifesta uma relação interpessoal muito adequada ao espaço de sala de aula e outros contextos, respeitando sempre as normas de conduta e de trabalho definidas.</td><td>Entre o nível 5 e 3.</td><td>- Nem sempre demonstra uma atitude autónoma.<br>- Nem sempre é solidário, assíduo, pontual e empenhado de forma adequada.<br>- Com base no feedback dado pelo professor, nem sempre reformula a sua postura, comportamento e trabalho.<br>- Manifesta uma relação interpessoal adequada ao espaço de sala de aula e outros contextos, respeitando as normas de conduta e de trabalho definidas.</td><td>Entre o nível 3 e 1.</td><td>- Não demonstra uma atitude autónoma.<br>-  Não é solidário, assíduo, pontual e empenhado de forma adequada.<br>- Com base no feedback dado pelo professor, não reformula a sua postura, comportamento e trabalho.<br>- Manifesta uma relação interpessoal inadequada ao espaço de sala de aula e outros contextos, desrespeitando sempre as normas de conduta e de trabalho definidas.</td></tr></tbody></table></div></details>
  </div>
@@ -161,7 +166,11 @@ td.tc{white-space:nowrap}td.tc select{width:58px;padding:1px 0;font-size:12px}td
  <div class="ch"><h2>Tarefas e avaliações</h2><span class="mut">A nota de uma tarefa é a média de todas as avaliações feitas a essa tarefa, em qualquer lição (nota = média dos níveis × 4).</span></div>
  <div class="row"><select id="ut" aria-label="Turma"></select><select id="ub" aria-label="UFCD" style="max-width:300px"></select><select id="ua" aria-label="Aluno"></select><button id="ur" class="sec" data-i="refresh">Atualizar</button><button id="un" class="sec" data-i="edit">Renomear tarefa…</button></div>
  <div id="umsg" class="msg"></div>
- <h2>Média por tarefa</h2><div class="tw"><table><thead id="umh"></thead><tbody id="umb"></tbody></table></div>
+ <div id="upes" class="pesoaviso"></div>
+ <h2>Peso de cada tarefa (pontos de 0 a 20; 20 = 100%)</h2>
+ <div class="tw"><table style="width:auto"><thead><tr><th>Tarefa</th><th>Pontos (0–20)</th><th>%</th><th>Avaliações</th><th></th></tr></thead><tbody id="uw"></tbody><tfoot><tr><th>Soma</th><th id="uwp"></th><th id="uwc"></th><th></th><th></th></tr></tfoot></table></div>
+ <button id="uwadd" class="sec mini" data-i="plus" style="margin-top:6px">Tarefa</button>
+ <h2 style="margin-top:12px">Notas por tarefa e nota final da UFCD</h2><div class="tw"><table><thead id="umh"></thead><tbody id="umb"></tbody></table></div>
  <h2 style="margin-top:12px">Registos de avaliação (editáveis)</h2><div class="tw"><table><thead><tr><th>Lição</th><th>Data</th><th>Aluno</th><th>Tarefa</th><th class="k">Con.</th><th class="k">Cap.</th><th class="k">Ati.</th><th class="k">Nota</th><th></th></tr></thead><tbody id="ub2"></tbody></table></div>
 </div></div>
 <div id="t-res" class="hide"><div class="card"><h2>Resumo por aluno</h2>
@@ -409,8 +418,9 @@ async function carregaAula(novo){
   let g=cur?cur.grupos:(PV&&PV.grupos&&PV.grupos.length?PV.grupos:null);
   if(!cur&&!g){const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),w=await db.from("sumarios").select("grupos,data").in("bloco_id",ids).order("data",{ascending:false}).limit(30);const z=(w.data||[]).find(x=>x.grupos&&x.grupos.length);g=z?z.grupos:null}
   const ok=new Set(alunosT().map(a=>a.id));GR=(g||[]).map(x=>({n:x.n,a:x.a.filter(id=>ok.has(id))}));
-  desenhaGrelha();desenhaGrupos();resumoSum();
+  desenhaGrelha();desenhaGrupos();resumoSum();pesoAviso(b);
 }
+async function pesoAviso(b){const w=await db.from("tarefas_peso").select("pontos").eq("bloco_id",b),e=$("raviso");if(w.error){e.textContent="";return}const t=(w.data||[]).reduce((p,q)=>p+ +q.pontos,0);e.textContent=Math.abs(t-20)<0.001?"":"⚠ Pesos das tarefas desta UFCD: "+(+t.toFixed(2))+"/20 – não totaliza 20 (ver separador Tarefas)"}
 let TD={};
 const RP=[1,1,1];  // pesos Conhecimentos / Capacidades / Atitudes (ajusta se necessário)
 const TIPOS0=[["T","Tarefa"],["TP","Trabalho prático"],["Te","Teste"],["TI","Trabalho individual"],["TG","Trabalho de grupo"],["P/PAP","Projeto / PAP"],["AO","Avaliação oral"]];
@@ -637,29 +647,60 @@ function fillUt(){
   const sb=$("ub"),w=sb.value;sb.replaceChildren();BL.filter(b=>b.turmas.id===st.value).sort((x,y)=>x.codigo.localeCompare(y.codigo)).forEach(b=>sb.add(new Option(b.codigo+" – "+b.designacao,b.id)));if(w&&[...sb.options].some(o=>o.value===w))sb.value=w;
   const sa=$("ua"),x=sa.value;sa.replaceChildren(new Option("Todos os alunos",""));alT().forEach(a=>sa.add(new Option(a.numero+" – "+a.nome,a.id)));if(x&&[...sa.options].some(o=>o.value===x))sa.value=x;
 }
+let PW={},PWDB=false;
+const nat=(x,y)=>x.localeCompare(y,"pt",{numeric:true}),somaPW=()=>Object.values(PW).reduce((p,q)=>p+q,0),r1=x=>+(+x).toFixed(2);
 async function carregaTar(){
-  const b=$("ub").value;if(!b){UR=[];renderTar();return}
-  const r=await db.from("rubrica_obs").select("id,aluno_id,licao,data,tarefa,conhecimentos,capacidades,atitudes").eq("bloco_id",b).order("licao");
-  if(r.error){say("umsg","Erro: "+r.error.message+" (já executaste o fase7.sql e o fase8.sql?)","err");return}say("umsg","");UR=r.data||[];renderTar();
+  const b=$("ub").value;if(!b){UR=[];PW={};renderTar();return}
+  const [r,w]=await Promise.all([db.from("rubrica_obs").select("id,aluno_id,licao,data,tarefa,conhecimentos,capacidades,atitudes").eq("bloco_id",b).order("licao"),db.from("tarefas_peso").select("tarefa,pontos").eq("bloco_id",b)]);
+  if(r.error){say("umsg","Erro: "+r.error.message+" (já executaste o fase7.sql e o fase8.sql?)","err");return}
+  PWDB=!w.error;PW={};(w.data||[]).forEach(x=>PW[x.tarefa]=+x.pontos);
+  say("umsg",PWDB?"":"Para definir os pesos das tarefas executa o fase9.sql no Supabase.",PWDB?"":"err");UR=r.data||[];renderTar();
 }
+function resumoPesos(){
+  const t=somaPW(),ok=Math.abs(t-20)<0.001;$("uwp").textContent=r1(t)+" / 20";$("uwc").textContent=r1(t*5)+" %";
+  const a=$("upes");a.className="pesoaviso "+(ok?"okp":"errp");
+  a.textContent=ok?"✓ Os pesos das tarefas somam 20 (100%).":"⚠ Atenção: os pesos das tarefas somam "+r1(t)+" em 20 ("+r1(t*5)+"%). "+(t<20?"Faltam "+r1(20-t)+" pontos":"Há "+r1(t-20)+" pontos a mais")+" para chegar aos 100%.";
+}
+async function guardaPeso(c,v,p,q){
+  if(!PWDB){say("umsg","Executa primeiro o fase9.sql no Supabase.","err");return false}
+  if(!(v>=0&&v<=20)){say("umsg","O peso tem de estar entre 0 e 20 pontos (0% a 100%).","err");if(p){p.value=c in PW?PW[c]:"";q.value=c in PW?r1(PW[c]*5):""}return false}
+  const x=await db.from("tarefas_peso").upsert({bloco_id:$("ub").value,tarefa:c,pontos:v},{onConflict:"bloco_id,tarefa"});
+  if(x.error){say("umsg","Erro: "+x.error.message,"err");return false}PW[c]=v;if(p){p.value=v;q.value=r1(v*5)}return true;
+}
+function renderPesos(){
+  const codes=[...new Set([...UR.map(r=>r.tarefa).filter(Boolean),...Object.keys(PW)])].sort(nat),tb=$("uw");tb.replaceChildren();
+  codes.forEach(c=>{const tr=tb.insertRow();tr.insertCell().textContent=c;
+    const p=document.createElement("input"),q=document.createElement("input");[p,q].forEach(x=>{x.type="number";x.style.width="76px"});p.min=0;p.max=20;p.step=0.5;q.min=0;q.max=100;q.step=1;
+    p.value=c in PW?PW[c]:"";q.value=c in PW?r1(PW[c]*5):"";
+    const go=async v=>{if(await guardaPeso(c,v,p,q)){say("umsg","Peso guardado.","ok");resumoPesos();renderMedia()}};
+    p.onchange=()=>go(parseFloat(p.value));q.onchange=()=>go(parseFloat(q.value)/5);
+    tr.insertCell().append(p);tr.insertCell().append(q);tr.insertCell().textContent=UR.filter(r=>r.tarefa===c&&notaR(r)!==null).length;
+    const d=tr.insertCell();if(c in PW)d.append(mini("Eliminar",async()=>{if(!confirm("Tirar o peso da tarefa "+c+"? (as avaliações não são apagadas)"))return;
+      const x=await db.from("tarefas_peso").delete().eq("bloco_id",$("ub").value).eq("tarefa",c);if(x.error){say("umsg","Erro: "+x.error.message,"err");return}delete PW[c];renderPesos();renderMedia()}));
+  });
+  resumoPesos();
+}
+$("uwadd").onclick=async()=>{const c=(prompt("Código da tarefa (ex.: TP03):")||"").trim();if(!c||!$("ub").value)return;if(c in PW){say("umsg","Essa tarefa já tem peso.","err");return}
+  if(await guardaPeso(c,0)){renderPesos();renderMedia()}};
 function renderMedia(){
-  const sel=$("ua").value,codes=[...new Set(UR.map(r=>r.tarefa).filter(Boolean))].sort((x,y)=>x.localeCompare(y,"pt",{numeric:true}));
-  const h=$("umh");h.replaceChildren();const hr0=h.insertRow();["Nº","Aluno",...codes,"Média das tarefas"].forEach(t=>{const th=document.createElement("th");th.textContent=t;hr0.append(th)});
+  const sel=$("ua").value,codes=[...new Set([...UR.map(r=>r.tarefa).filter(Boolean),...Object.keys(PW)])].sort(nat);
+  const h=$("umh");h.replaceChildren();const hr0=h.insertRow();["Nº","Aluno",...codes.map(c=>c+(c in PW?" ("+r1(PW[c])+")":" (sem peso)")),"Nota final (/20)","Só avaliadas (/20)","Por avaliar"].forEach(t=>{const th=document.createElement("th");th.textContent=t;hr0.append(th)});
   const b=$("umb");b.replaceChildren();
-  alT().filter(a=>!sel||a.id===sel).forEach(a=>{const tr=b.insertRow();tr.insertCell().textContent=a.numero;tr.insertCell().textContent=a.nome;const ms=[];
-    codes.forEach(c=>{const v=UR.filter(r=>r.aluno_id===a.id&&r.tarefa===c).map(notaR).filter(x=>x!==null),td=tr.insertCell();
-      if(v.length){const m=v.reduce((p,q)=>p+q,0)/v.length;ms.push(m);td.textContent=m.toFixed(1)+" ("+v.length+")"}else td.textContent="–"});
-    const g=tr.insertCell();g.style.fontWeight="700";g.textContent=ms.length?(ms.reduce((p,q)=>p+q,0)/ms.length).toFixed(1):""});
+  alT().filter(a=>!sel||a.id===sel).forEach(a=>{const tr=b.insertRow();tr.insertCell().textContent=a.numero;tr.insertCell().textContent=a.nome;let acc=0,pav=0,falta=0;
+    codes.forEach(c=>{const v=UR.filter(r=>r.aluno_id===a.id&&r.tarefa===c).map(notaR).filter(x=>x!==null),td=tr.insertCell(),p=PW[c]||0;
+      if(v.length){const m=v.reduce((x,y)=>x+y,0)/v.length;td.textContent=m.toFixed(1)+" ("+v.length+")";acc+=m*p;pav+=p}else{td.textContent="–";if(p>0)falta++}});
+    const f=tr.insertCell(),g=tr.insertCell(),k=tr.insertCell();f.style.fontWeight="700";f.textContent=somaPW()>0?(acc/20).toFixed(1):"";g.textContent=pav>0?(acc/pav).toFixed(1):"";k.textContent=falta||"";
+    [f,g].forEach(x=>{if(x.textContent&&+x.textContent<9.5)x.style.color="var(--err)"})});
 }
 function renderTar(){
-  renderMedia();const sel=$("ua").value,nm=Object.fromEntries(todos.map(a=>[a.id,a])),rb=$("ub2");rb.replaceChildren();
+  renderPesos();renderMedia();const sel=$("ua").value,nm=Object.fromEntries(todos.map(a=>[a.id,a])),rb=$("ub2");rb.replaceChildren();
   UR.filter(r=>!sel||r.aluno_id===sel).sort((x,y)=>((nm[x.aluno_id]||{}).numero||0)-((nm[y.aluno_id]||{}).numero||0)||(x.licao||0)-(y.licao||0)).forEach(r=>{
     const tr=rb.insertRow(),a=nm[r.aluno_id]||{numero:"",nome:"?"};tr.insertCell().textContent=r.licao??"–";tr.insertCell().textContent=fmtd(r.data);tr.insertCell().textContent=a.numero+" – "+a.nome;
     const ti=document.createElement("input");ti.value=r.tarefa||"";ti.style.width="90px";tr.insertCell().append(ti);
     const ss=["conhecimentos","capacidades","atitudes"].map(k=>{const c=tr.insertCell();c.className="k";const sl=document.createElement("select");sl.append(new Option("",""));[1,2,3,4,5].forEach(n=>sl.add(new Option(n,n)));sl.value=r[k]||"";sl.style.width="40px";c.append(sl);return [k,sl]});
     const nt=tr.insertCell();nt.className="k";nt.style.fontWeight="700";const calc=()=>{const n=notaR(r);nt.textContent=n===null?"":n.toFixed(1)};calc();
     const upd=async()=>{const p={tarefa:ti.value.trim()||null};ss.forEach(([k,sl])=>p[k]=sl.value?+sl.value:null);const x=await db.from("rubrica_obs").update(p).eq("id",r.id);
-      if(x.error){say("umsg","Erro: "+x.error.message,"err");return}Object.assign(r,p);calc();renderMedia();say("umsg","Atualizado.","ok")};
+      if(x.error){say("umsg","Erro: "+x.error.message,"err");return}Object.assign(r,p);calc();renderPesos();renderMedia();say("umsg","Atualizado.","ok")};
     ti.onchange=upd;ss.forEach(([k,sl])=>sl.onchange=upd);
     const c=tr.insertCell();c.append(mini("Eliminar",async()=>{if(!confirm("Eliminar este registo de avaliação?"))return;const x=await db.from("rubrica_obs").delete().eq("id",r.id);x.error?say("umsg","Erro: "+x.error.message,"err"):(UR=UR.filter(y=>y.id!==r.id),renderTar(),say("umsg","Registo eliminado.","ok"))}));
   });
@@ -669,6 +710,7 @@ $("un").onclick=async()=>{
   const a=(prompt("Código atual da tarefa (ex.: TP01):")||"").trim();if(!a)return;const n=(prompt("Novo código (ex.: TP02):")||"").trim();if(!n)return;
   const sel=$("ua").value;let q=db.from("rubrica_obs").update({tarefa:n}).eq("bloco_id",$("ub").value).eq("tarefa",a);if(sel)q=q.eq("aluno_id",sel);
   const r=await q.select("id");if(r.error){say("umsg","Erro: "+r.error.message,"err");return}
+  if(!sel)await db.from("tarefas_peso").update({tarefa:n}).eq("bloco_id",$("ub").value).eq("tarefa",a);
   say("umsg",r.data.length+" registo(s) alterado(s) "+(sel?"(só o aluno selecionado).":"(todos os alunos desta UFCD)."),"ok");carregaTar();
 };
 function fillRes(){

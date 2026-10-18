@@ -69,6 +69,12 @@ td input.ob{width:100%;min-width:90px;padding:2px 5px}.pb{padding:2px 5px!import
 .gchip{padding:1px 8px;border-radius:99px;font-size:12px;border:1px solid var(--pri2);background:transparent;color:var(--ink);font-weight:500}.gchip:hover{background:var(--th);filter:none}
 .grp select{padding:2px 4px;font-size:12px;max-width:100px}.d.al{box-shadow:inset 0 -3px var(--pri2)}
 @media (max-width:1000px){.rg{grid-template-columns:1fr}}
+#rd::-webkit-calendar-picker-indicator{display:none}#rd{cursor:pointer}
+#dpop{position:fixed;z-index:60;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;box-shadow:0 10px 28px rgba(0,0,0,.35);width:262px}
+.dph{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.dph b{text-transform:capitalize}.dpg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.dpg b{font-size:11px;color:var(--mut);text-align:center}
+.dpd{display:block;padding:5px 0;font-size:12.5px;font-weight:500;background:var(--stripe);color:var(--ink);border:1px solid transparent;border-radius:5px;justify-content:center}.dpd:hover{filter:none;border-color:var(--pri2)}
+.dpd.f{color:var(--mut)}.dpd.Feriado{background:#e6c79a;color:#4a2f10}.dpd.Interrupção{background:#cfdcc4;color:#25391d}.dpd.Marco{background:#b7cde4;color:#0d2c4d}
+.dpd.al{box-shadow:inset 0 -3px var(--pri2);font-weight:700}.dpd.hj{border-color:var(--acc)}.dpd.sel{background:var(--pri);color:var(--on)}
 </style>
 </head>
 <body>
@@ -116,8 +122,8 @@ td input.ob{width:100%;min-width:90px;padding:2px 5px}.pb{padding:2px 5px!import
   <div><label for="rt">Turma</label><select id="rt"></select></div>
   <div><label for="rb">Disciplina / UFCD</label><select id="rb" style="min-width:280px"></select></div>
   <div><label for="rl">Lição</label><div class="row" style="gap:4px"><button class="sec sq" id="lp" data-i="left" aria-label="Lição anterior"></button><input id="rl" type="number" min="1" style="width:58px"><button class="sec sq" id="ln" data-i="right" aria-label="Lição seguinte"></button><button class="sec" id="lnew" data-i="plus">Nova</button></div></div>
-  <div><label for="rd">Data</label><input id="rd" type="date"></div>
-  <div><label for="rh">Hora</label><input id="rh" type="time" style="width:96px"></div>
+  <div><label for="rd">Data</label><div class="row" style="gap:3px;flex-wrap:nowrap"><input id="rd" type="date" style="width:132px"><button class="sec sq" id="rdb" data-i="cal" aria-label="Abrir calendário"></button></div></div>
+  <div><label for="rh">Hora</label><select id="rh" style="width:200px"></select></div>
   <div><label>&nbsp;</label><button id="cpd" class="sec" data-i="copy">Copiar da 1.ª aula do dia</button></div>
   <span class="sp"></span><span id="rtag" class="tag"></span>
   <button id="gr" class="go" data-i="save">Guardar aula</button><button id="gdel" class="dg" data-i="trash">Apagar aula</button>
@@ -134,7 +140,7 @@ td input.ob{width:100%;min-width:90px;padding:2px 5px}.pb{padding:2px 5px!import
    <div class="tw"><table id="gt"><thead><tr><th class="n">Nº</th><th>Nome</th><th class="k">Gr.</th><th class="k fi" title="Falta injustificada">FI</th><th class="k fm" title="Falta de material">FM</th><th class="k fp" title="Falta de pontualidade">FP</th><th class="k fj" title="Falta justificada">FJ</th><th class="k cp" title="Comportamento positivo">+</th><th class="k cn" title="Comportamento negativo">–</th><th>Observação</th></tr></thead><tbody id="gb"></tbody></table></div></div>
  </div>
 </div>
-<div id="pop" class="hide"></div>
+<div id="pop" class="hide"></div><div id="dpop" class="hide"></div>
 <div id="t-res" class="hide"><div class="card"><h2>Resumo por aluno</h2>
   <div class="row"><select id="st" aria-label="Turma"></select><select id="sd" aria-label="Disciplina"></select></div>
   <div class="tw"><table><thead><tr><th>Nº</th><th>Nome</th><th>FI</th><th>FM</th><th>FP</th><th>FJ</th><th>Faltas</th><th>Comp. +</th><th>Comp. –</th></tr></thead><tbody id="tr"></tbody></table></div><div id="rsm" class="msg"></div></div></div>
@@ -324,7 +330,7 @@ function fillBloco(skip){
   if(v&&[...sb.options].some(o=>o.value===v))sb.value=v; if(skip!==true)carregaAula(true);
 }
 function chips(){
-  const d=$("rd").value,box=$("dchips");box.replaceChildren();if(!d)return;const wd=new Date(d+"T12:00:00").getDay();
+  fillHoras();const d=$("rd").value,box=$("dchips");box.replaceChildren();if(!d)return;const wd=new Date(d+"T12:00:00").getDay();
   const lab=document.createElement("span");lab.className="mut";lab.textContent=DIAS[wd]+":";box.append(lab);const L=HOR.filter(h=>h.d===wd);
   if(!L.length){lab.textContent=DIAS[wd]+": sem aulas no horário";return}
   L.forEach(h=>{const b=document.createElement("button");b.className="mini sec"+(h.t?"":" off");b.textContent=h.i+"–"+h.f+" · "+(h.t?h.t+" "+h.disc:h.x)+(h.sala?" · "+h.sala:"");if(h.t)b.onclick=()=>escolheAula(h);box.append(b)});
@@ -334,7 +340,7 @@ async function escolheAula(h){
   const c=BL.filter(b=>b.turmas.id===t.id&&b.disciplina===h.disc).sort((x,y)=>x.codigo.localeCompare(y.codigo));if(!c.length){say("rmsg","Sem UFCD de "+h.disc+" nesta turma.","err");return}
   let best=c[0];const r=await db.from("sumarios").select("bloco_id,data").in("bloco_id",c.map(b=>b.id)).order("data",{ascending:false}).limit(1);
   if(r.data&&r.data.length)best=c.find(b=>b.id===r.data[0].bloco_id)||best;
-  $("rt").value=t.id;fillBloco(true);$("rb").value=best.id;$("rh").value=h.i;await carregaAula(true);
+  $("rt").value=t.id;fillBloco(true);$("rb").value=best.id;setHora(h.i);await carregaAula(true);
   const m=SA.find(x=>x.data===$("rd").value&&(x.hora||"").slice(0,5)===h.i);if(m){$("rl").value=m.licao;await carregaAula(false)}
 }
 async function carregaAula(novo){
@@ -343,7 +349,7 @@ async function carregaAula(novo){
   if(s.error){say("rmsg","Erro: "+s.error.message+" (já executaste o fase5.sql?)","err");return}SA=s.data||[];
   const mx=SA.length?Math.max(...SA.map(x=>x.licao||0)):0;if(novo||!$("rl").value)$("rl").value=mx+1;
   const l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);
-  $("rs").value=cur?cur.sumario||"":"";$("ro").value=cur?cur.obs||"":"";if(cur){$("rd").value=cur.data||$("rd").value;$("rh").value=(cur.hora||"").slice(0,5)}
+  $("rs").value=cur?cur.sumario||"":"";$("ro").value=cur?cur.obs||"":"";if(cur){$("rd").value=cur.data||$("rd").value;setHora((cur.hora||"").slice(0,5))}
   PV=[...SA].filter(x=>x.licao<l).pop()||null;
   $("sant").textContent=PV?PV.sumario:"(ainda não há sumários anteriores nesta UFCD)";$("sanh").textContent=PV?"Lição "+PV.licao+" · "+fmtd(PV.data)+((PV.hora||"")?" · "+PV.hora.slice(0,5):""):"";$("imp").disabled=!PV;
   $("rtag").textContent=cur?"Aula já registada – a editar":"Nova aula";$("gdel").disabled=!cur;chips();
@@ -400,6 +406,33 @@ $("cpd").onclick=async()=>{
   const [f,c]=await Promise.all([db.from("faltas").select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao),db.from("comportamento").select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao)]);
   aplicaMarcas(f.data||[],c.data||[]);say("rmsg","Copiado da aula das "+h1+". Confirma e clica em Guardar aula.","ok");
 };
+const TEMPOS=["08:00","08:50","09:55","10:45","11:50","12:40","14:30","15:20","16:20","17:10"];
+function setHora(v){const s=$("rh");if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v,v));s.value=v||""}
+function fillHoras(){
+  const s=$("rh"),v=s.value;s.replaceChildren(new Option("— hora —",""));const d=$("rd").value;
+  if(d){const wd=new Date(d+"T12:00:00").getDay(),og=document.createElement("optgroup");og.label="Aulas deste dia";HOR.filter(h=>h.d===wd&&h.t).forEach(h=>og.append(new Option(h.i+" · "+h.t+" "+h.disc,h.i)));if(og.children.length)s.append(og)}
+  const o2=document.createElement("optgroup");o2.label="Todos os tempos";TEMPOS.forEach(t=>o2.append(new Option(t,t)));s.append(o2);setHora(v);
+}
+let dpm=new Date();
+function abreDP(){const v=$("rd").value;dpm=v?new Date(v+"T12:00:00"):new Date();dpm.setDate(1);desenhaDP();const r=$("rd").getBoundingClientRect(),p=$("dpop");p.style.left=Math.max(4,Math.min(r.left,innerWidth-272))+"px";p.style.top=Math.max(4,Math.min(r.bottom+4,innerHeight-330))+"px";p.classList.remove("hide")}
+function escolheDia(k){$("rd").value=k;$("rd").dispatchEvent(new Event("change"));$("dpop").classList.add("hide")}
+function desenhaDP(){
+  const p=$("dpop");p.replaceChildren();const y=dpm.getFullYear(),m=dpm.getMonth(),mk=(n,f)=>{const b=document.createElement("button");b.type="button";b.className="sec sq";b.append(ic(n));b.onclick=f;return b};
+  const h=document.createElement("div");h.className="dph";const t=document.createElement("b");t.textContent=MESES[m]+" "+y;
+  h.append(mk("left",()=>{dpm=new Date(y,m-1,1);desenhaDP()}),t,mk("right",()=>{dpm=new Date(y,m+1,1);desenhaDP()}));p.append(h);
+  const g=document.createElement("div");g.className="dpg";"STQQSSD".split("").forEach(l=>{const e=document.createElement("b");e.textContent=l;g.append(e)});
+  const lead=(new Date(y,m,1).getDay()+6)%7,n=new Date(y,m+1,0).getDate();for(let i=0;i<lead;i++)g.append(document.createElement("span"));
+  const cod=(turmas.find(x=>x.id===$("rt").value)||{}).codigo,sel=$("rd").value,hj=hoje();
+  for(let d=1;d<=n;d++){const dt=new Date(y,m,d),k=ymd(dt),tp=tipoDia(k),b=document.createElement("button");b.type="button";b.textContent=d;
+    b.className="dpd"+(tp?" "+tp:"")+(dt.getDay()%6===0?" f":"")+(k===sel?" sel":"")+(k===hj?" hj":"");
+    const A=HOR.filter(x=>x.d===dt.getDay()&&x.t&&(!cod||x.t===cod));if(A.length&&tp!=="Feriado"&&tp!=="Interrupção"){b.classList.add("al");b.title=A.map(x=>x.i+" "+x.t+" "+x.disc).join("\n")}
+    b.onclick=()=>escolheDia(k);g.append(b)}
+  p.append(g);const f=document.createElement("div");f.style.cssText="margin-top:8px;display:flex;justify-content:space-between;align-items:center";
+  const hb=document.createElement("button");hb.type="button";hb.className="mini sec";hb.textContent="Hoje";hb.onclick=()=>escolheDia(hj);const lg=document.createElement("span");lg.className="mut";lg.textContent="sublinhado = aula desta turma";f.append(hb,lg);p.append(f);
+}
+$("rd").onclick=abreDP;$("rd").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();abreDP()}};$("rdb").onclick=e=>{e.stopPropagation();abreDP()};
+document.addEventListener("click",e=>{if(!e.target.closest("#dpop")&&e.target!==$("rd")&&!e.target.closest("#rdb"))$("dpop").classList.add("hide")});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("dpop").classList.add("hide")});
 $("rd").value=hoje();chips();$("rd").onchange=chips;$("rt").onchange=()=>fillBloco();$("rb").onchange=()=>carregaAula(true);$("rl").onchange=()=>carregaAula(false);
 $("lp").onclick=()=>{$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);carregaAula(false)};$("ln").onclick=()=>{$("rl").value=(parseInt($("rl").value,10)||0)+1;carregaAula(false)};$("lnew").onclick=()=>carregaAula(true);
 $("imp").onclick=()=>{if(!PV)return;if($("rs").value.trim()&&!confirm("Substituir o sumário atual pelo anterior?"))return;$("rs").value=PV.sumario||"";$("ro").value=PV.obs||""};

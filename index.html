@@ -329,11 +329,20 @@ function fillBloco(skip){
   for(const n in g){const og=document.createElement("optgroup");og.label=n;g[n].forEach(b=>og.append(new Option(b.codigo+" – "+b.designacao,b.id)));sb.append(og)}
   if(v&&[...sb.options].some(o=>o.value===v))sb.value=v; if(skip!==true)carregaAula(true);
 }
-function chips(){
-  fillHoras();const d=$("rd").value,box=$("dchips");box.replaceChildren();if(!d)return;const wd=new Date(d+"T12:00:00").getDay();
-  const lab=document.createElement("span");lab.className="mut";lab.textContent=DIAS[wd]+":";box.append(lab);const L=HOR.filter(h=>h.d===wd);
+let chipTok=0;
+async function chips(){
+  const tok=++chipTok,d=$("rd").value,box=$("dchips");fillHoras();if(!d){box.replaceChildren();return}
+  const wd=new Date(d+"T12:00:00").getDay(),L=HOR.filter(h=>h.d===wd),reg=new Set(),tc=Object.fromEntries(BL.map(b=>[b.id,b.turmas.codigo]));
+  if(L.some(h=>h.t)){const r=await db.from("sumarios").select("bloco_id,hora").eq("data",d);(r.data||[]).forEach(x=>{if(x.hora&&tc[x.bloco_id])reg.add(tc[x.bloco_id]+"|"+x.hora.slice(0,5))})}
+  if(tok!==chipTok)return;box.replaceChildren();
+  const lab=document.createElement("span");lab.className="mut";lab.textContent=DIAS[wd]+":";box.append(lab);
   if(!L.length){lab.textContent=DIAS[wd]+": sem aulas no horário";return}
-  L.forEach(h=>{const b=document.createElement("button");b.className="mini sec"+(h.t?"":" off");b.textContent=h.i+"–"+h.f+" · "+(h.t?h.t+" "+h.disc:h.x)+(h.sala?" · "+h.sala:"");if(h.t)b.onclick=()=>escolheAula(h);box.append(b)});
+  let n=0;
+  L.forEach(h=>{
+    if(!h.t){const b=document.createElement("button");b.className="mini sec off";b.textContent=h.i+"–"+h.f+" · "+h.x+(h.sala?" · "+h.sala:"");box.append(b);return}
+    TT.filter(t=>t[0]>=h.i&&t[1]<=h.f).forEach(t=>{if(reg.has(h.t+"|"+t[0]))return;n++;
+      const b=document.createElement("button");b.className="mini sec";b.textContent=t[0]+"–"+t[1]+" · "+h.t+" "+h.disc+(h.sala?" · "+h.sala:"");b.onclick=()=>escolheAula({...h,i:t[0],f:t[1]});box.append(b)})});
+  if(!n&&L.some(h=>h.t)){const m=document.createElement("span");m.className="mut";m.textContent="todas as aulas deste dia já estão registadas";box.append(m)}
 }
 async function escolheAula(h){
   const t=turmas.find(x=>x.codigo===h.t);if(!t){say("rmsg","Turma "+h.t+" não encontrada.","err");return}

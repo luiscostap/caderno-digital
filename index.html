@@ -46,6 +46,7 @@ textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radiu
 .stat b{display:block;font-size:34px;line-height:1.1}.stat span{color:var(--mut)}
 @media (max-width:760px){#shell{flex-direction:column}#side{width:auto;height:auto;position:static}#side .nav{flex-direction:row;flex-wrap:wrap}.hide{display:none}}
 .lg2{display:flex;align-items:center;gap:12px;font-weight:600;font-size:13px;text-align:right}.lg2 img{height:58px;width:auto;background:#fff;border-radius:6px;padding:2px}@media (max-width:760px){.lg2 span{display:none}}
+.mini{padding:3px 9px;font-size:13px;margin-right:4px}td input{max-width:none;padding:4px 6px}
 </style>
 </head>
 <body>
@@ -80,7 +81,10 @@ textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radiu
   <div class="card">
     <h2>Alunos</h2>
     <div class="row"><label for="ft" style="margin:0">Turma</label><select id="ft"></select></div>
-    <div class="tw"><table><thead><tr><th>Turma</th><th>Nº</th><th>Nome</th><th>Nº Processo</th></tr></thead><tbody id="tb"></tbody></table></div>
+    <details style="margin:12px 0"><summary style="cursor:pointer;font-weight:600">Adicionar aluno</summary>
+      <div class="row" style="margin-top:8px"><select id="nt" aria-label="Turma do novo aluno"></select><input id="nn" type="number" min="1" placeholder="Nº" style="max-width:80px"><input id="nm" placeholder="Nome" style="max-width:280px"><input id="np" placeholder="Nº Processo" style="max-width:140px"><button id="na">Adicionar</button></div></details>
+    <div id="amsg" class="msg"></div>
+    <div class="tw"><table><thead><tr><th>Turma</th><th>Nº</th><th>Nome</th><th>Nº Processo</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
     <div id="cnt" class="msg"><small></small></div>
   </div>
 </div>
@@ -135,17 +139,42 @@ async function carregar(){
   if(t.error||a.error){say("cnt","Erro ao ler a base de dados. Confirma se executaste o schema.sql.","err");return}
   turmas=t.data; todos=a.data;
   const sel=$("ft"), v=sel.value; sel.replaceChildren(new Option("Todas",""));
-  turmas.forEach(x=>sel.add(new Option(x.nome||x.codigo,x.id))); sel.value=v; lista(); fillReg(); fillRes(); visao();
+  turmas.forEach(x=>sel.add(new Option(x.nome||x.codigo,x.id))); sel.value=v; {const nt=$("nt"),vv=nt.value;nt.replaceChildren();turmas.forEach(x=>nt.add(new Option(x.nome||x.codigo,x.id)));if(vv)nt.value=vv} lista(); fillReg(); fillRes(); visao();
 }
 function lista(){
   const f=$("ft").value, tb=$("tb"); tb.replaceChildren();
   const m=Object.fromEntries(turmas.map(t=>[t.id,t]));
   const rows=todos.filter(a=>!f||a.turma_id===f).sort((x,y)=>(m[x.turma_id].codigo+String(x.numero).padStart(3,"0")).localeCompare(m[y.turma_id].codigo+String(y.numero).padStart(3,"0")));
-  rows.forEach(a=>{const tr=tb.insertRow(); if(!a.ativo)tr.className="off";
-    [m[a.turma_id].codigo,a.numero,a.nome,a.n_processo||""].forEach(v=>tr.insertCell().textContent=v)});
+  rows.forEach(a=>{const tr=tb.insertRow(); if(!a.ativo)tr.className="off"; desenhaLinha(tr,a,m[a.turma_id].codigo)});
   $("cnt").textContent=rows.length?`${rows.length} aluno(s).`:"Ainda não há alunos. Importa um ficheiro Excel.";
 }
 $("ft").onchange=lista;
+function mini(t,f,sec){const b=document.createElement("button");b.className="mini"+(sec===false?"":" sec");b.textContent=t;b.onclick=f;return b}
+function desenhaLinha(tr,a,cod){
+  tr.replaceChildren(); [cod,a.numero,a.nome,a.n_processo||""].forEach(v=>tr.insertCell().textContent=v);
+  const c=tr.insertCell(); c.style.whiteSpace="nowrap";
+  c.append(mini("Editar",()=>editaLinha(tr,a,cod)),
+    mini(a.ativo?"Desativar":"Reativar",async()=>{const r=await db.from("alunos").update({ativo:!a.ativo}).eq("id",a.id);r.error?say("amsg","Não foi possível alterar: "+r.error.message,"err"):carregar()}),
+    mini("Eliminar",async()=>{if(!confirm("Eliminar "+a.nome+"?\n\nIsto apaga também TODAS as faltas, observações de comportamento, notas e dados de PAP/estágio deste aluno e não se pode desfazer.\n\nSe só queres tirá-lo da lista, usa Desativar."))return;
+      const r=await db.from("alunos").delete().eq("id",a.id);r.error?say("amsg","Não foi possível eliminar: "+r.error.message,"err"):(say("amsg","Aluno eliminado.","ok"),carregar())}));
+}
+function editaLinha(tr,a,cod){
+  tr.replaceChildren(); tr.insertCell().textContent=cod;
+  const n=document.createElement("input");n.type="number";n.min=1;n.value=a.numero;n.style.width="70px";
+  const nm=document.createElement("input");nm.value=a.nome;const p=document.createElement("input");p.value=a.n_processo||"";
+  [n,nm,p].forEach(x=>tr.insertCell().append(x)); const c=tr.insertCell(); c.style.whiteSpace="nowrap";
+  c.append(mini("Guardar",async()=>{const num=parseInt(n.value,10),nome=nm.value.trim();if(!Number.isInteger(num)||!nome){say("amsg","Indica o número e o nome.","err");return}
+    const r=await db.from("alunos").update({numero:num,nome,n_processo:p.value.trim()||null}).eq("id",a.id);
+    r.error?say("amsg",r.error.code==="23505"?"Já existe um aluno com esse número nesta turma.":"Não foi possível guardar: "+r.error.message,"err"):(say("amsg","Aluno atualizado.","ok"),carregar())},false),
+    mini("Cancelar",()=>desenhaLinha(tr,a,cod)));
+}
+$("na").onclick=async()=>{
+  const t=$("nt").value,num=parseInt($("nn").value,10),nome=$("nm").value.trim(); if(!t||!Number.isInteger(num)||!nome){say("amsg","Escolhe a turma e indica o número e o nome.","err");return}
+  const r=await db.from("alunos").insert({turma_id:t,numero:num,nome,n_processo:$("np").value.trim()||null});
+  if(r.error){say("amsg",r.error.code==="23505"?"Já existe um aluno com esse número nesta turma.":"Não foi possível adicionar: "+r.error.message,"err");return}
+  say("amsg","Aluno adicionado.","ok"); ["nn","nm","np"].forEach(i=>$(i).value=""); carregar();
+};
+
 
 const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
 $("fx").onchange=async e=>{

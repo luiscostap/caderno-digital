@@ -58,10 +58,21 @@ tr.mk td{background:rgba(201,117,31,.16)}td input.ob{width:100%;min-width:160px;
 .lg{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0;font-size:12px}.lg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 @media (max-width:900px){.g2{grid-template-columns:1fr}}
 @media (max-width:760px){#shell{flex-direction:column}#side{width:auto;height:auto;position:static}.nav{flex-direction:row;flex-wrap:wrap}.lg2 span{display:none}}
+.rg{display:grid;grid-template-columns:minmax(300px,38%) minmax(0,1fr);gap:12px;align-items:start}.rl .card{margin-bottom:10px}
+.prevt{max-height:58px;overflow:auto;min-height:0;font-size:12px;padding:5px 8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:-2px 0 8px}.chips button.mini{border-radius:99px}.chips button.off{opacity:.55;cursor:default;border-style:dashed}
+th.n{width:26px}td:nth-child(2){white-space:nowrap}th.k,td.k{width:34px;padding:3px 2px}td.k input{width:16px;height:16px}td{padding:3px 6px}
+td input.ob{width:100%;min-width:90px;padding:2px 5px}.pb{padding:2px 5px!important}
+#pop{position:fixed;z-index:50;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px;box-shadow:0 8px 24px rgba(0,0,0,.3);max-height:340px;overflow:auto;min-width:230px}
+#pop label{display:flex;gap:7px;align-items:center;margin:1px 0;font-weight:500;font-size:12.5px;color:var(--ink)}#pop input[type=text],#pop>input:last-child{width:100%;margin-top:6px}
+.grp{display:flex;gap:4px;flex-wrap:wrap;align-items:center;padding:3px 0;border-bottom:1px dashed var(--line)}.grp>input{width:56px;padding:2px 5px;font-weight:700}
+.gchip{padding:1px 8px;border-radius:99px;font-size:12px;border:1px solid var(--pri2);background:transparent;color:var(--ink);font-weight:500}.gchip:hover{background:var(--th);filter:none}
+.grp select{padding:2px 4px;font-size:12px;max-width:100px}.d.al{box-shadow:inset 0 -3px var(--pri2)}
+@media (max-width:1000px){.rg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol><symbol id="i-edit" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol><symbol id="i-left" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></symbol><symbol id="i-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-clip" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><polyline points="9 14 11 16 15 12"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol><symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol><symbol id="i-edit" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol><symbol id="i-left" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></symbol><symbol id="i-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-clip" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><polyline points="9 14 11 16 15 12"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol><symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol><symbol id="i-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol></svg>
 <div id="shell"><aside id="side" class="hide"><div class="brand"><b>Caderno digital</b><span>Professor · 2026/2027</span></div>
 <div class="nav"><button data-t="vis" data-i="home" class="on">Visão geral</button><button data-t="reg" data-i="clip">Registo de aula</button><button data-t="res" data-i="chart">Resumo</button><button data-t="alunos" data-i="users">Alunos</button><button data-t="disc" data-i="book">Disciplinas</button><button data-t="cal" data-i="cal">Calendário</button></div>
 <div class="sp"></div><button id="atu" data-i="refresh">Atualizar dados</button><button id="sair" data-i="logout">Terminar sessão</button></aside>
@@ -94,29 +105,36 @@ tr.mk td{background:rgba(201,117,31,.16)}td input.ob{width:100%;min-width:160px;
     <h2>Alunos</h2>
     <div class="row"><label for="ft" style="margin:0">Turma</label><select id="ft"></select></div>
     <details style="margin:12px 0"><summary style="cursor:pointer;font-weight:600">Adicionar aluno</summary>
-      <div class="row" style="margin-top:8px"><select id="nt" aria-label="Turma do novo aluno"></select><input id="nn" type="number" min="1" placeholder="Nº" style="max-width:80px"><input id="nm" placeholder="Nome" style="max-width:280px"><input id="np" placeholder="Nº Processo" style="max-width:140px"><button data-i="plus" class="go" id="na">Adicionar</button></div></details>
+      <div class="row" style="margin-top:8px"><select id="nt" aria-label="Turma do novo aluno"></select><input id="nn" type="number" min="1" placeholder="Nº" style="max-width:80px"><input id="nm" placeholder="Nome" style="max-width:280px"><input id="nk" placeholder="Nome curto" style="max-width:120px"><input id="np" placeholder="Nº Processo" style="max-width:140px"><button data-i="plus" class="go" id="na">Adicionar</button></div></details>
     <div id="amsg" class="msg"></div>
-    <div class="tw"><table><thead><tr><th>Turma</th><th>Nº</th><th>Nome</th><th>Nº Processo</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Turma</th><th>Nº</th><th>Nome</th><th>Nome curto</th><th>Nº Processo</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
     <div id="cnt" class="msg"><small></small></div>
   </div>
 </div>
 <div id="t-reg" class="hide">
  <div class="card fbar">
   <div><label for="rt">Turma</label><select id="rt"></select></div>
-  <div><label for="rb">Disciplina / UFCD</label><select id="rb" style="min-width:300px"></select></div>
-  <div><label for="rl">Lição</label><div class="row" style="gap:4px"><button class="sec sq" id="lp" data-i="left" aria-label="Lição anterior"></button><input id="rl" type="number" min="1" style="width:62px"><button class="sec sq" id="ln" data-i="right" aria-label="Lição seguinte"></button><button class="sec" id="lnew" data-i="plus">Nova aula</button></div></div>
+  <div><label for="rb">Disciplina / UFCD</label><select id="rb" style="min-width:280px"></select></div>
+  <div><label for="rl">Lição</label><div class="row" style="gap:4px"><button class="sec sq" id="lp" data-i="left" aria-label="Lição anterior"></button><input id="rl" type="number" min="1" style="width:58px"><button class="sec sq" id="ln" data-i="right" aria-label="Lição seguinte"></button><button class="sec" id="lnew" data-i="plus">Nova</button></div></div>
   <div><label for="rd">Data</label><input id="rd" type="date"></div>
+  <div><label for="rh">Hora</label><input id="rh" type="time" style="width:96px"></div>
+  <div><label>&nbsp;</label><button id="cpd" class="sec" data-i="copy">Copiar da 1.ª aula do dia</button></div>
   <span class="sp"></span><span id="rtag" class="tag"></span>
   <button id="gr" class="go" data-i="save">Guardar aula</button><button id="gdel" class="dg" data-i="trash">Apagar aula</button>
  </div>
+ <div class="chips" id="dchips"></div>
  <div id="rmsg" class="msg"></div>
- <div class="g2">
-  <div class="card"><div class="ch"><h2>Sumário anterior</h2><span id="sanh" class="mut"></span><button id="imp" class="sec" data-i="copy">Usar este texto</button></div><div id="sant" class="prevt"></div></div>
-  <div class="card"><h2>Sumário desta aula</h2><textarea id="rs" rows="4"></textarea><label for="ro">Observações da aula</label><input id="ro" style="width:100%"></div>
+ <div class="rg">
+  <div class="rl">
+   <div class="card"><div class="ch"><h2>Sumário anterior</h2><span id="sanh" class="mut"></span><button id="imp" class="sec mini" data-i="copy">Usar este texto</button></div><div id="sant" class="prevt"></div></div>
+   <div class="card"><h2>Sumário desta aula</h2><textarea id="rs" rows="4"></textarea><label for="ro">Observações da aula</label><textarea id="ro" rows="2"></textarea></div>
+   <div class="card"><div class="ch"><h2>Grupos</h2><span class="mut" id="gmut">passam de lição para lição</span><button id="gadd" class="sec mini" data-i="plus">Grupo</button></div><div id="grps"></div></div>
+  </div>
+  <div class="card"><div class="ch"><h2>Alunos</h2><span class="mut">Sem marcas = presente · FI injustificada · FM material · FP pontualidade · FJ justificada · + / – comportamento</span></div>
+   <div class="tw"><table id="gt"><thead><tr><th class="n">Nº</th><th>Nome</th><th class="k">Gr.</th><th class="k fi" title="Falta injustificada">FI</th><th class="k fm" title="Falta de material">FM</th><th class="k fp" title="Falta de pontualidade">FP</th><th class="k fj" title="Falta justificada">FJ</th><th class="k cp" title="Comportamento positivo">+</th><th class="k cn" title="Comportamento negativo">–</th><th>Observação</th></tr></thead><tbody id="gb"></tbody></table></div></div>
  </div>
- <div class="card"><div class="ch"><h2>Alunos · faltas e comportamento</h2><span class="mut">Marca as caixas. Sem marcas = presente. FI injustificada · FM material · FP pontualidade · FJ justificada · + positivo · – negativo</span></div>
-  <div class="tw"><table id="gt"><thead><tr><th style="width:34px">Nº</th><th>Nome</th><th class="k fi" title="Falta injustificada">FI</th><th class="k fm" title="Falta de material">FM</th><th class="k fp" title="Falta de pontualidade">FP</th><th class="k fj" title="Falta justificada">FJ</th><th class="k cp" title="Comportamento positivo">+</th><th class="k cn" title="Comportamento negativo">–</th><th>Observação (grava junto com uma marca)</th></tr></thead><tbody id="gb"></tbody></table></div></div>
 </div>
+<div id="pop" class="hide"></div>
 <div id="t-res" class="hide"><div class="card"><h2>Resumo por aluno</h2>
   <div class="row"><select id="st" aria-label="Turma"></select><select id="sd" aria-label="Disciplina"></select></div>
   <div class="tw"><table><thead><tr><th>Nº</th><th>Nome</th><th>FI</th><th>FM</th><th>FP</th><th>FJ</th><th>Faltas</th><th>Comp. +</th><th>Comp. –</th></tr></thead><tbody id="tr"></tbody></table></div><div id="rsm" class="msg"></div></div></div>
@@ -126,7 +144,8 @@ tr.mk td{background:rgba(201,117,31,.16)}td input.ob{width:100%;min-width:160px;
   <div class="row"><button id="mp" class="sec sq" data-i="left" aria-label="Mês anterior"></button><b id="mt" style="min-width:150px;text-align:center"></b><button id="mn" class="sec sq" data-i="right" aria-label="Mês seguinte"></button><button data-i="download" id="ics" class="sec">Descarregar .ics</button></div>
   <div class="lg"><span><i style="background:#e6c79a"></i>Feriado</span><span><i style="background:#cfdcc4"></i>Interrupção</span><span><i style="background:#b7cde4"></i>Marco de período</span></div>
   <div class="cal" id="cg"></div><div id="cl" style="margin-top:12px"></div>
-  <p><small>Subscrever no Outlook/Teams: <b id="subu"></b> (Outlook na web → Adicionar calendário → Subscrever da Web).</small></p></div></div>
+  <p><small>Subscrever no Outlook/Teams: <b id="subu"></b> (Outlook na web → Adicionar calendário → Subscrever da Web).</small></p></div>
+  <div class="card"><h2>Horário semanal</h2><div class="tw"><table><thead><tr><th>Dia</th><th>Hora</th><th>Turma</th><th>Disciplina</th><th>Sala</th></tr></thead><tbody id="thor"></tbody></table></div><p><small>Subscrever o horário (repete todas as semanas, sem feriados nem interrupções): <b id="subh"></b></small></p></div></div>
 </section>
 </main></div></div>
 
@@ -158,7 +177,7 @@ $("sair").onclick=async()=>{await db.auth.signOut();estado()};$("atu").onclick=(
 
 async function carregar(){
   const t=await db.from("turmas").select("id,codigo,nome").order("codigo");
-  const a=await db.from("alunos").select("id,numero,nome,n_processo,ativo,turma_id").order("numero");
+  const a=await db.from("alunos").select("id,numero,nome,nome_curto,n_processo,ativo,turma_id").order("numero");
   if(t.error||a.error){say("cnt","Erro ao ler a base de dados. Confirma se executaste o schema.sql.","err");return}
   turmas=t.data; todos=a.data;
   const sel=$("ft"), v=sel.value; sel.replaceChildren(new Option("Todas",""));
@@ -175,7 +194,7 @@ $("ft").onchange=lista;
 const MI={Editar:["edit","sec"],Desativar:["pause","sec"],Reativar:["play","sec"],Eliminar:["trash","dg"],Guardar:["save","go"],Cancelar:["x","sec"]};
 function mini(t,f){const b=document.createElement("button");b.className="mini "+MI[t][1];b.append(ic(MI[t][0]),t);b.onclick=f;return b}
 function desenhaLinha(tr,a,cod){
-  tr.replaceChildren(); [cod,a.numero,a.nome,a.n_processo||""].forEach(v=>tr.insertCell().textContent=v);
+  tr.replaceChildren(); [cod,a.numero,a.nome,a.nome_curto||"",a.n_processo||""].forEach(v=>tr.insertCell().textContent=v);
   const c=tr.insertCell(); c.style.whiteSpace="nowrap";
   c.append(mini("Editar",()=>editaLinha(tr,a,cod)),
     mini(a.ativo?"Desativar":"Reativar",async()=>{const r=await db.from("alunos").update({ativo:!a.ativo}).eq("id",a.id);r.error?say("amsg","Não foi possível alterar: "+r.error.message,"err"):carregar()}),
@@ -185,18 +204,18 @@ function desenhaLinha(tr,a,cod){
 function editaLinha(tr,a,cod){
   tr.replaceChildren(); tr.insertCell().textContent=cod;
   const n=document.createElement("input");n.type="number";n.min=1;n.value=a.numero;n.style.width="70px";
-  const nm=document.createElement("input");nm.value=a.nome;const p=document.createElement("input");p.value=a.n_processo||"";
-  [n,nm,p].forEach(x=>tr.insertCell().append(x)); const c=tr.insertCell(); c.style.whiteSpace="nowrap";
+  const nm=document.createElement("input");nm.value=a.nome;const nk=document.createElement("input");nk.value=a.nome_curto||"";const p=document.createElement("input");p.value=a.n_processo||"";
+  [n,nm,nk,p].forEach(x=>tr.insertCell().append(x)); const c=tr.insertCell(); c.style.whiteSpace="nowrap";
   c.append(mini("Guardar",async()=>{const num=parseInt(n.value,10),nome=nm.value.trim();if(!Number.isInteger(num)||!nome){say("amsg","Indica o número e o nome.","err");return}
-    const r=await db.from("alunos").update({numero:num,nome,n_processo:p.value.trim()||null}).eq("id",a.id);
+    const r=await db.from("alunos").update({numero:num,nome,nome_curto:nk.value.trim()||null,n_processo:p.value.trim()||null}).eq("id",a.id);
     r.error?say("amsg",r.error.code==="23505"?"Já existe um aluno com esse número nesta turma.":"Não foi possível guardar: "+r.error.message,"err"):(say("amsg","Aluno atualizado.","ok"),carregar())},false),
     mini("Cancelar",()=>desenhaLinha(tr,a,cod)));
 }
 $("na").onclick=async()=>{
   const t=$("nt").value,num=parseInt($("nn").value,10),nome=$("nm").value.trim(); if(!t||!Number.isInteger(num)||!nome){say("amsg","Escolhe a turma e indica o número e o nome.","err");return}
-  const r=await db.from("alunos").insert({turma_id:t,numero:num,nome,n_processo:$("np").value.trim()||null});
+  const r=await db.from("alunos").insert({turma_id:t,numero:num,nome,nome_curto:$("nk").value.trim()||null,n_processo:$("np").value.trim()||null});
   if(r.error){say("amsg",r.error.code==="23505"?"Já existe um aluno com esse número nesta turma.":"Não foi possível adicionar: "+r.error.message,"err");return}
-  say("amsg","Aluno adicionado.","ok"); ["nn","nm","np"].forEach(i=>$(i).value=""); carregar();
+  say("amsg","Aluno adicionado.","ok"); ["nn","nm","nk","np"].forEach(i=>$(i).value=""); carregar();
 };
 
 
@@ -208,12 +227,12 @@ $("fx").onchange=async e=>{
     const raw=XLSX.utils.sheet_to_json(ws,{defval:""}); const rows=[], erros=[], vistos=new Set();
     raw.forEach((r,i)=>{
       const k={}; for(const c in r)k[norm(c)]=r[c];
-      const turma=String(k.turma??k.turmaid??"").trim(), num=parseInt(k.n??k.no??k.numero,10), nome=String(k.nome??k.nomedoaluno??"").trim(), proc=String(k.nprocesso??k.processo??"").trim();
+      const turma=String(k.turma??k.turmaid??"").trim(), num=parseInt(k.n??k.no??k.numero,10), nome=String(k.nome??k.nomedoaluno??"").trim(), proc=String(k.nprocesso??k.processo??"").trim(), curto=String(k.nomecurto??k.alcunha??k.nomeabreviado??"").trim();
       if(!turma&&!nome) return;
       if(!nome) return;                                   // linhas de reserva sem nome
       if(!turma||!Number.isInteger(num)){erros.push(`Linha ${i+2}: falta turma ou número.`);return}
       const ch=turma+"|"+num; if(vistos.has(ch)){erros.push(`Linha ${i+2}: número ${num} repetido na turma ${turma}.`);return} vistos.add(ch);
-      rows.push({turma,numero:num,nome,n_processo:proc||null});
+      rows.push({turma,numero:num,nome,nome_curto:curto||null,n_processo:proc||null});
     });
     if(erros.length){say("prev",erros.slice(0,5).join(" "),"err");return}
     if(!rows.length){say("prev","Não encontrei alunos no ficheiro. Verifica os nomes das colunas.","err");return}
@@ -228,7 +247,7 @@ $("grav").onclick=async()=>{
   let r=await db.from("turmas").upsert(codigos.map(c=>({codigo:c,nome:NOMES[c]||c})),{onConflict:"user_id,codigo",ignoreDuplicates:true});
   if(r.error){say("imsg","Erro ao criar turmas: "+r.error.message,"err");return}
   const t=await db.from("turmas").select("id,codigo").in("codigo",codigos); const id=Object.fromEntries(t.data.map(x=>[x.codigo,x.id]));
-  r=await db.from("alunos").upsert(pend.map(p=>({turma_id:id[p.turma],numero:p.numero,nome:p.nome,n_processo:p.n_processo,ativo:true})),{onConflict:"turma_id,numero"});
+  r=await db.from("alunos").upsert(pend.map(p=>({turma_id:id[p.turma],numero:p.numero,nome:p.nome,...(pend.some(q=>q.nome_curto)?{nome_curto:p.nome_curto}:{}),n_processo:p.n_processo,ativo:true})),{onConflict:"turma_id,numero"});
   if(r.error){say("imsg","Erro ao gravar alunos: "+r.error.message,"err");return}
   const chaves=new Set(pend.map(p=>id[p.turma]+"|"+p.numero));
   const a=await db.from("alunos").select("id,numero,nome,turma_id,ativo").in("turma_id",Object.values(id));
@@ -242,9 +261,9 @@ $("grav").onclick=async()=>{
 $("exp").onclick=async()=>{
   const m=Object.fromEntries(turmas.map(t=>[t.id,t.codigo]));
   const rows=todos.filter(a=>a.ativo).sort((x,y)=>(m[x.turma_id]+String(x.numero).padStart(3,"0")).localeCompare(m[y.turma_id]+String(y.numero).padStart(3,"0")))
-    .map(a=>({"Turma":m[a.turma_id],"Nº":a.numero,"Nome":a.nome,"Nº Processo":a.n_processo||""}));
+    .map(a=>({"Turma":m[a.turma_id],"Nº":a.numero,"Nome":a.nome,"Nome curto":a.nome_curto||"","Nº Processo":a.n_processo||""}));
   if(!rows.length) rows.push({"Turma":"TMEC11G","Nº":1,"Nome":"Nome do aluno (exemplo – apagar)","Nº Processo":""});
-  const ws=XLSX.utils.json_to_sheet(rows); ws["!cols"]=[{wch:12},{wch:6},{wch:42},{wch:14}];
+  const ws=XLSX.utils.json_to_sheet(rows); ws["!cols"]=[{wch:12},{wch:6},{wch:42},{wch:14},{wch:14}];
   const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Alunos"); XLSX.writeFile(wb,"modelo_alunos.xlsx");
 };
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("on",x===b));
@@ -270,7 +289,7 @@ function desenhaCal(){
   const lead=(new Date(mes.getFullYear(),mes.getMonth(),1).getDay()+6)%7, n=new Date(mes.getFullYear(),mes.getMonth()+1,0).getDate();
   for(let i=0;i<lead;i++)g.append(document.createElement("span"));
   for(let d=1;d<=n;d++){const dt=new Date(mes.getFullYear(),mes.getMonth(),d),e=document.createElement("div"),t=tipoDia(ymd(dt));
-    e.className="d"+(dt.getDay()%6===0?" f":"")+(t?" "+t:""); e.textContent=d; g.append(e)}
+    e.className="d"+(dt.getDay()%6===0?" f":"")+(t?" "+t:"");e.textContent=d;if(!t){const A=HOR.filter(h=>h.d===dt.getDay()&&h.t);if(A.length){e.classList.add("al");e.title=A.map(h=>h.i+" "+h.t+" "+h.disc).join("\n")}}g.append(e)}
   const p=ymd(new Date(mes.getFullYear(),mes.getMonth(),1)), q=ymd(new Date(mes.getFullYear(),mes.getMonth(),n)), fmt=x=>x.slice(8)+"/"+x.slice(5,7);
   const ev=cal.filter(e=>e.fim>=p&&e.inicio<=q); const l=$("cl"); l.replaceChildren();
   ev.forEach(e=>{const r=document.createElement("div");r.textContent=(e.inicio===e.fim?fmt(e.inicio):fmt(e.inicio)+" a "+fmt(e.fim))+" – "+e.descricao;l.append(r)});
@@ -287,53 +306,116 @@ let BL=[], rk="sum";
 async function visao(){$("s1").textContent=todos.filter(a=>a.ativo).length;$("s2").textContent=turmas.length;$("s3").textContent=BL.length;const r=await db.from("sumarios").select("id",{count:"exact",head:true});$("s4").textContent=r.count??0}
 const hoje=()=>ymd(new Date()), fmtd=x=>x?x.slice(8)+"/"+x.slice(5,7)+"/"+x.slice(0,4):"", dnome=b=>b.disciplina_nome||b.disciplina||"Outras";
 async function todosDe(t,cols){let o=[],i=0;for(;;){const r=await db.from(t).select(cols).range(i,i+999);if(r.error)throw r.error;o=o.concat(r.data);if(r.data.length<1000)return o;i+=1000}}
-let EX={f:[],c:[]}, SA=[], PV=null;
+const HOR=[
+{d:1,i:"09:55",f:"11:35",t:"TMEC11G",disc:"E.E.",sala:"ET1"},{d:1,i:"11:50",f:"13:30",t:"TMEC12F",disc:"D.T.",sala:"ET1"},{d:1,i:"14:30",f:"17:10",t:"TEAC11H",disc:"S.D.",sala:"ET1"},
+{d:2,i:"10:45",f:"11:35",x:"Red. Art.º 79 · Ac. Educativo",sala:"Bib_Sec"},{d:2,i:"11:50",f:"13:30",t:"TMEC12F",disc:"A.M.",sala:"ET1"},{d:2,i:"14:30",f:"16:10",t:"TMEC11G",disc:"E.E.",sala:"ET1"},
+{d:3,i:"09:55",f:"11:35",t:"TEAC12F",disc:"T.A.",sala:"EV2"},{d:3,i:"11:50",f:"13:30",x:"TE · Ac. Educativo",sala:"Bib_Sec"},{d:3,i:"14:30",f:"16:10",t:"TEAC12F",disc:"S.D.",sala:"EV2"},{d:3,i:"17:10",f:"18:00",x:"Reunião",sala:""},
+{d:5,i:"09:55",f:"10:45",t:"TEAC11H",disc:"S.D.",sala:"ET1"},{d:5,i:"10:45",f:"11:35",x:"Red. Art.º 79 · Ac. Educativo",sala:"Bib_Sec"},{d:5,i:"11:50",f:"13:30",t:"TMEC12F",disc:"D.T.",sala:"ET1"},{d:5,i:"14:30",f:"16:10",t:"TMEC12F",disc:"A.M.",sala:"ET1"}];
+const DIAS=["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"], DNOME={"E.E.":"Eletricidade e Eletrónica","S.D.":"Sistemas Digitais","T.A.":"Tecnologias Aplicadas","A.M.":"Automação Mecatrónica","D.T.":"Desenho Técnico"};
+let EX={f:[],c:[]},SA=[],PV=null,GR=[];
+const nc=a=>a.nome_curto||a.nome.split(" ")[0], alunosT=()=>todos.filter(a=>a.turma_id===$("rt").value&&a.ativo).sort((x,y)=>x.numero-y.numero);
+$("thor").replaceChildren(...HOR.map(h=>{const tr=document.createElement("tr");[DIAS[h.d],h.i+" – "+h.f,h.t||h.x,h.t?DNOME[h.disc]:"",h.sala].forEach(v=>tr.insertCell().textContent=v);return tr}));
+$("subh").textContent=location.origin+location.pathname.replace(/[^/]*$/,"")+"horario.ics";
 function fillReg(){const st=$("rt"),v=st.value;st.replaceChildren();turmas.forEach(t=>st.add(new Option(t.nome||t.codigo,t.id)));if(v)st.value=v;fillBloco()}
-function fillBloco(){
+function fillBloco(skip){
   const sb=$("rb"),v=sb.value;sb.replaceChildren();const g={};
   BL.filter(b=>b.turmas.id===$("rt").value).sort((x,y)=>x.codigo.localeCompare(y.codigo)).forEach(b=>(g[dnome(b)]=g[dnome(b)]||[]).push(b));
   for(const n in g){const og=document.createElement("optgroup");og.label=n;g[n].forEach(b=>og.append(new Option(b.codigo+" – "+b.designacao,b.id)));sb.append(og)}
-  if(v&&[...sb.options].some(o=>o.value===v))sb.value=v; carregaAula(true);
+  if(v&&[...sb.options].some(o=>o.value===v))sb.value=v; if(skip!==true)carregaAula(true);
+}
+function chips(){
+  const d=$("rd").value,box=$("dchips");box.replaceChildren();if(!d)return;const wd=new Date(d+"T12:00:00").getDay();
+  const lab=document.createElement("span");lab.className="mut";lab.textContent=DIAS[wd]+":";box.append(lab);const L=HOR.filter(h=>h.d===wd);
+  if(!L.length){lab.textContent=DIAS[wd]+": sem aulas no horário";return}
+  L.forEach(h=>{const b=document.createElement("button");b.className="mini sec"+(h.t?"":" off");b.textContent=h.i+"–"+h.f+" · "+(h.t?h.t+" "+h.disc:h.x)+(h.sala?" · "+h.sala:"");if(h.t)b.onclick=()=>escolheAula(h);box.append(b)});
+}
+async function escolheAula(h){
+  const t=turmas.find(x=>x.codigo===h.t);if(!t){say("rmsg","Turma "+h.t+" não encontrada.","err");return}
+  const c=BL.filter(b=>b.turmas.id===t.id&&b.disciplina===h.disc).sort((x,y)=>x.codigo.localeCompare(y.codigo));if(!c.length){say("rmsg","Sem UFCD de "+h.disc+" nesta turma.","err");return}
+  let best=c[0];const r=await db.from("sumarios").select("bloco_id,data").in("bloco_id",c.map(b=>b.id)).order("data",{ascending:false}).limit(1);
+  if(r.data&&r.data.length)best=c.find(b=>b.id===r.data[0].bloco_id)||best;
+  $("rt").value=t.id;fillBloco(true);$("rb").value=best.id;$("rh").value=h.i;await carregaAula(true);
+  const m=SA.find(x=>x.data===$("rd").value&&(x.hora||"").slice(0,5)===h.i);if(m){$("rl").value=m.licao;await carregaAula(false)}
 }
 async function carregaAula(novo){
-  const b=$("rb").value,gb=$("gb"); if(!b){gb.replaceChildren();$("sant").textContent="";return}
-  const s=await db.from("sumarios").select("id,licao,data,sumario,obs").eq("bloco_id",b).order("licao"); SA=s.data||[];
-  const mx=SA.length?Math.max(...SA.map(x=>x.licao||0)):0; if(novo||!$("rl").value)$("rl").value=mx+1;
-  const l=parseInt($("rl").value,10), cur=SA.find(x=>x.licao===l);
-  $("rs").value=cur?cur.sumario||"":""; $("ro").value=cur?cur.obs||"":""; $("rd").value=cur?cur.data||hoje():hoje();
+  const b=$("rb").value,gb=$("gb");if(!b){gb.replaceChildren();$("sant").textContent="";return}
+  const s=await db.from("sumarios").select("id,licao,data,hora,sumario,obs,grupos").eq("bloco_id",b).order("licao");
+  if(s.error){say("rmsg","Erro: "+s.error.message+" (já executaste o fase5.sql?)","err");return}SA=s.data||[];
+  const mx=SA.length?Math.max(...SA.map(x=>x.licao||0)):0;if(novo||!$("rl").value)$("rl").value=mx+1;
+  const l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);
+  $("rs").value=cur?cur.sumario||"":"";$("ro").value=cur?cur.obs||"":"";if(cur){$("rd").value=cur.data||$("rd").value;$("rh").value=(cur.hora||"").slice(0,5)}
   PV=[...SA].filter(x=>x.licao<l).pop()||null;
-  $("sant").textContent=PV?PV.sumario:"(ainda não há sumários anteriores nesta UFCD)"; $("sanh").textContent=PV?"Lição "+PV.licao+" · "+fmtd(PV.data):""; $("imp").disabled=!PV;
-  $("rtag").textContent=cur?"Aula já registada – a editar":"Nova aula"; $("gdel").disabled=!cur;
-  const f=await db.from("faltas").select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l), c=await db.from("comportamento").select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l);
-  EX={f:f.data||[],c:c.data||[]}; desenhaGrelha();
+  $("sant").textContent=PV?PV.sumario:"(ainda não há sumários anteriores nesta UFCD)";$("sanh").textContent=PV?"Lição "+PV.licao+" · "+fmtd(PV.data)+((PV.hora||"")?" · "+PV.hora.slice(0,5):""):"";$("imp").disabled=!PV;
+  $("rtag").textContent=cur?"Aula já registada – a editar":"Nova aula";$("gdel").disabled=!cur;chips();
+  const f=await db.from("faltas").select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l),c=await db.from("comportamento").select("id,aluno_id,tipo,obs").eq("bloco_id",b).eq("licao",l);
+  EX={f:f.data||[],c:c.data||[]};
+  let g=cur?cur.grupos:(PV&&PV.grupos&&PV.grupos.length?PV.grupos:null);
+  if(!cur&&!g){const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),q=await db.from("sumarios").select("grupos,data").in("bloco_id",ids).order("data",{ascending:false}).limit(30);const z=(q.data||[]).find(x=>x.grupos&&x.grupos.length);g=z?z.grupos:null}
+  const ok=new Set(alunosT().map(a=>a.id));GR=(g||[]).map(x=>({n:x.n,a:x.a.filter(id=>ok.has(id))}));
+  desenhaGrelha();desenhaGrupos();
 }
 const marca=tr=>tr.classList.toggle("mk",[...tr.querySelectorAll("input[type=checkbox]")].some(c=>c.checked));
+let FR=null;try{FR=JSON.parse(localStorage.getItem("frases"))}catch(e){}
+FR=FR||["Sem computador","Foi à biblioteca","Faltou ao respeito","Saiu sem autorização","A jogar no computador","Com o telemóvel","Distraído","Perturbador","Sem material","Chegou atrasado","Não fez o trabalho","Boa participação","Ajudou os colegas"];
+function abrePop(btn,inp){
+  const p=$("pop");p.replaceChildren();const toks=()=>inp.value.split(/;\s*/).map(x=>x.trim()).filter(Boolean);
+  FR.forEach(f=>{const l=document.createElement("label"),c=document.createElement("input");c.type="checkbox";c.checked=toks().includes(f);
+    c.onchange=()=>{let t=toks();if(c.checked){if(!t.includes(f))t.push(f)}else t=t.filter(x=>x!==f);inp.value=t.join("; ")};l.append(c,f);p.append(l)});
+  const n=document.createElement("input");n.placeholder="Nova frase + Enter";n.onkeydown=e=>{if(e.key==="Enter"&&n.value.trim()){FR.push(n.value.trim());try{localStorage.setItem("frases",JSON.stringify(FR))}catch(x){}abrePop(btn,inp)}};p.append(n);
+  const r=btn.getBoundingClientRect();p.style.left=Math.max(4,Math.min(r.left,innerWidth-250))+"px";p.style.top=Math.max(4,Math.min(r.bottom+4,innerHeight-350))+"px";p.classList.remove("hide");
+}
+document.addEventListener("click",e=>{if(!e.target.closest("#pop")&&!e.target.closest(".pb"))$("pop").classList.add("hide")});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("pop").classList.add("hide")});
 function desenhaGrelha(){
   const tb=$("gb");tb.replaceChildren();const cols=[["FI","f","fi"],["FM","f","fm"],["FP","f","fp"],["FJ","f","fj"],["Positivo","c","cp"],["Negativo","c","cn"]];
-  todos.filter(a=>a.turma_id===$("rt").value&&a.ativo).sort((x,y)=>x.numero-y.numero).forEach(a=>{
-    const tr=tb.insertRow();tr.insertCell().textContent=a.numero;tr.insertCell().textContent=a.nome;let ob="";
+  alunosT().forEach(a=>{
+    const tr=tb.insertRow();tr.dataset.a=a.id;tr.insertCell().textContent=a.numero;tr.insertCell().textContent=a.nome;const g=tr.insertCell();g.className="k gr";let ob="";
     cols.forEach(([tp,k,cl])=>{const have=EX[k].find(x=>x.aluno_id===a.id&&x.tipo===tp);if(have&&have.obs&&!ob)ob=have.obs;
       const c=tr.insertCell();c.className="k "+cl;const cb=document.createElement("input");cb.type="checkbox";cb.dataset.a=a.id;cb.dataset.t=tp;cb.dataset.k=k;cb.checked=!!have;cb.setAttribute("aria-label",tp+" – "+a.nome);
       cb.onchange=()=>{if(cb.checked){const o=tp==="Positivo"?"Negativo":tp==="Negativo"?"Positivo":null;if(o)[...tr.querySelectorAll("input[type=checkbox]")].find(x=>x.dataset.t===o).checked=false}marca(tr)};c.append(cb)});
-    const o=document.createElement("input");o.className="ob";o.value=ob;tr.insertCell().append(o);marca(tr);
+    const w=document.createElement("div");w.style.cssText="display:flex;gap:3px";const o=document.createElement("input");o.className="ob";o.value=ob;
+    const pb=document.createElement("button");pb.className="mini sec pb";pb.setAttribute("aria-label","Frases rápidas");pb.append(ic("down"));pb.onclick=e=>{e.stopPropagation();abrePop(pb,o)};w.append(o,pb);tr.insertCell().append(w);marca(tr);
   });
 }
-$("rd").value=hoje();$("rt").onchange=fillBloco;$("rb").onchange=()=>carregaAula(true);$("rl").onchange=()=>carregaAula(false);
+function pintaGr(){const m={};GR.forEach(g=>g.a.forEach(id=>m[id]=g.n));document.querySelectorAll("#gb tr").forEach(tr=>tr.querySelector(".gr").textContent=m[tr.dataset.a]||"")}
+function desenhaGrupos(){
+  const box=$("grps");box.replaceChildren();const al=alunosT(),used=new Set(GR.flatMap(g=>g.a));
+  GR.forEach((g,i)=>{const d=document.createElement("div");d.className="grp";const n=document.createElement("input");n.value=g.n;n.setAttribute("aria-label","Nome do grupo");n.oninput=()=>{g.n=n.value;pintaGr()};d.append(n);
+    g.a.forEach(id=>{const a=al.find(x=>x.id===id);if(!a)return;const c=document.createElement("button");c.className="gchip";c.textContent=nc(a)+" ×";c.title="Tirar do grupo";c.onclick=()=>{g.a=g.a.filter(x=>x!==id);desenhaGrupos()};d.append(c)});
+    const sel=document.createElement("select");sel.append(new Option("+ aluno",""));al.filter(a=>!used.has(a.id)).forEach(a=>sel.add(new Option(nc(a),a.id)));sel.onchange=()=>{if(sel.value){g.a.push(sel.value);desenhaGrupos()}};d.append(sel);
+    const x=document.createElement("button");x.className="mini sec sq";x.setAttribute("aria-label","Remover grupo");x.append(ic("x"));x.onclick=()=>{GR.splice(i,1);desenhaGrupos()};d.append(x);box.append(d)});
+  const sg=al.filter(a=>!used.has(a.id));$("gmut").textContent=GR.length?(sg.length?"sem grupo: "+sg.map(nc).join(", "):"todos com grupo"):"passam de lição para lição";pintaGr();
+}
+$("gadd").onclick=()=>{GR.push({n:"G"+(GR.length+1),a:[]});desenhaGrupos()};
+function aplicaMarcas(f,c){document.querySelectorAll("#gb tr").forEach(tr=>{let ob="";tr.querySelectorAll("input[type=checkbox]").forEach(cb=>{const L=cb.dataset.k==="f"?f:c,h=L.find(x=>x.aluno_id===cb.dataset.a&&x.tipo===cb.dataset.t);cb.checked=!!h;if(h&&h.obs&&!ob)ob=h.obs});tr.querySelector(".ob").value=ob;marca(tr)})}
+$("cpd").onclick=async()=>{
+  const d=$("rd").value,b=$("rb").value,l=parseInt($("rl").value,10),hh=$("rh").value;if(!d||!b){say("rmsg","Escolhe a UFCD e a data.","err");return}
+  const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,hora,sumario,obs,grupos").eq("data",d).in("bloco_id",ids);
+  let L=(r.data||[]).filter(x=>!(x.bloco_id===b&&x.licao===l));if(hh)L=L.filter(x=>x.hora&&x.hora.slice(0,5)<hh);
+  L.sort((x,y)=>(x.hora||"99").localeCompare(y.hora||"99")||x.licao-y.licao);
+  if(!L.length){say("rmsg","Não há aula anterior desta turma registada neste dia (regista primeiro a 1.ª aula, com a hora).","err");return}
+  const s=L[0],bl=BL.find(x=>x.id===s.bloco_id),h1=(s.hora||"").slice(0,5)||"?";
+  if(!confirm("Copiar tudo da aula das "+h1+" ("+bl.codigo+") para esta aula?\n\nSubstitui o sumário, os grupos e as marcas atuais (só fica gravado quando clicares em Guardar aula)."))return;
+  $("rs").value=s.sumario||"";$("ro").value=s.obs||"";const ok=new Set(alunosT().map(a=>a.id));GR=(s.grupos||[]).map(g=>({n:g.n,a:g.a.filter(id=>ok.has(id))}));desenhaGrupos();
+  const [f,c]=await Promise.all([db.from("faltas").select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao),db.from("comportamento").select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao)]);
+  aplicaMarcas(f.data||[],c.data||[]);say("rmsg","Copiado da aula das "+h1+". Confirma e clica em Guardar aula.","ok");
+};
+$("rd").value=hoje();chips();$("rd").onchange=chips;$("rt").onchange=()=>fillBloco();$("rb").onchange=()=>carregaAula(true);$("rl").onchange=()=>carregaAula(false);
 $("lp").onclick=()=>{$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);carregaAula(false)};$("ln").onclick=()=>{$("rl").value=(parseInt($("rl").value,10)||0)+1;carregaAula(false)};$("lnew").onclick=()=>carregaAula(true);
 $("imp").onclick=()=>{if(!PV)return;if($("rs").value.trim()&&!confirm("Substituir o sumário atual pelo anterior?"))return;$("rs").value=PV.sumario||"";$("ro").value=PV.obs||""};
 $("gdel").onclick=async()=>{
-  const b=$("rb").value,l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);if(!cur||!confirm("Apagar a lição "+l+" (sumário, faltas e comportamento desta aula)?"))return;
+  const b=$("rb").value,l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);if(!cur||!confirm("Apagar a lição "+l+" (sumário, grupos, faltas e comportamento desta aula)?"))return;
   for(const t of ["faltas","comportamento"]){const r=await db.from(t).delete().eq("bloco_id",b).eq("licao",l);if(r.error){say("rmsg","Erro: "+r.error.message,"err");return}}
   const r=await db.from("sumarios").delete().eq("id",cur.id);if(r.error){say("rmsg","Erro: "+r.error.message,"err");return}
   say("rmsg","Aula apagada.","ok");carregaAula(true);visao();
 };
 $("gr").onclick=async()=>{
   const b=$("rb").value,d=$("rd").value,l=parseInt($("rl").value,10);if(!b||!d||!l){say("rmsg","Escolhe a UFCD, a lição e a data.","err");return}
-  say("rmsg","A guardar…");const txt=$("rs").value.trim(),cur=SA.find(x=>x.licao===l);
-  if(txt||cur){const row={bloco_id:b,licao:l,data:d,sumario:txt,obs:$("ro").value.trim()||null};
+  say("rmsg","A guardar…");const txt=$("rs").value.trim(),cur=SA.find(x=>x.licao===l),gr=GR.filter(g=>g.a.length);
+  if(txt||cur||gr.length){const row={bloco_id:b,licao:l,data:d,hora:$("rh").value||null,sumario:txt,obs:$("ro").value.trim()||null,grupos:gr};
     const r=cur?await db.from("sumarios").update(row).eq("id",cur.id):await db.from("sumarios").insert(row);if(r.error){say("rmsg","Erro no sumário: "+r.error.message,"err");return}}
   const ins={f:[],c:[]},del={f:[],c:[]},up=[];let sem=0;
-  document.querySelectorAll("#gb tr").forEach(tr=>{const cbs=[...tr.querySelectorAll("input[type=checkbox]")],aid=cbs[0].dataset.a,ob=tr.querySelector(".ob").value.trim()||null;
+  document.querySelectorAll("#gb tr").forEach(tr=>{const cbs=[...tr.querySelectorAll("input[type=checkbox]")],aid=tr.dataset.a,ob=tr.querySelector(".ob").value.trim()||null;
     if(ob&&!cbs.some(c=>c.checked))sem++;
     cbs.forEach(cb=>{const k=cb.dataset.k,tp=cb.dataset.t,have=EX[k].find(x=>x.aluno_id===aid&&x.tipo===tp),tab=k==="f"?"faltas":"comportamento";
       if(cb.checked){if(!have)ins[k].push({aluno_id:aid,bloco_id:b,data:d,licao:l,tipo:tp,obs:ob});else if((have.obs||null)!==ob)up.push([tab,have.id,ob])}else if(have)del[k].push(have.id)})});

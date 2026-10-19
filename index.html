@@ -116,6 +116,8 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
  body{background:#fff!important}#shell{display:block}main{padding:0}#t-pau>.card{border:0;box-shadow:none;padding:0;margin:0;background:#fff}
  #pauta{border:0;padding:0;max-width:none;margin:0}#pauta .pl input{border:0}#pauta th,#pauta td,#pauta td.adj{-webkit-print-color-adjust:exact;print-color-adjust:exact}#pauta td input.auto{color:#000;font-style:normal}
  #pauta td input::-webkit-outer-spin-button,#pauta td input::-webkit-inner-spin-button{display:none}}
+.chips button.c0{background:#b7cde4;border-color:#5b86a8;color:#0b2a47}.chips button.c1{background:#f3e6c8;border-color:#c9a867;color:#4a2f10}.chips button.c2{background:#d9b38a;border-color:#8b4f1d;color:#3b2410}.chips button.c3{background:#cfdcc4;border-color:#7d9a6b;color:#25391d}.chips button.c4{background:#c9c3e6;border-color:#7a70b8;color:#2b2650}
+.chips button.mini[class*=" c"]:hover{filter:brightness(.93)}
 </style>
 </head>
 <body>
@@ -422,11 +424,11 @@ async function chips(){
   if(tok!==chipTok)return;box.replaceChildren();
   const lab=document.createElement("span");lab.className="mut";lab.textContent=DIAS[wd]+":";box.append(lab);
   if(!L.length){lab.textContent=DIAS[wd]+": sem aulas no horário";return}
-  let n=0;
+  let n=0,bi=0;
   L.forEach(h=>{
     if(!h.t){const b=document.createElement("button");b.className="mini sec off";b.textContent=h.i+"–"+h.f+" · "+h.x;b.title=h.x+(h.sala?" · "+h.sala:"");box.append(b);return}
-    TT.filter(t=>t[0]>=h.i&&t[1]<=h.f).forEach(t=>{if(reg.has(h.t+"|"+t[0]))return;n++;
-      const b=document.createElement("button");b.className="mini sec";b.textContent=t[0]+"–"+t[1]+" · "+h.t.replace(/^T(EAC|MEC)/,"")+" "+h.disc;{const tn=turmas.find(x=>x.codigo===h.t);b.title=(tn?tn.nome:h.t)+" · "+(DNOME[h.disc]||h.disc)+(h.sala?" · "+h.sala:"")}b.onclick=()=>escolheAula({...h,i:t[0],f:t[1]});box.append(b)})});
+    const cc="c"+(bi++%5);TT.filter(t=>t[0]>=h.i&&t[1]<=h.f).forEach(t=>{if(reg.has(h.t+"|"+t[0]))return;n++;
+      const b=document.createElement("button");b.className="mini sec "+cc;b.textContent=t[0]+"–"+t[1]+" · "+h.t.replace(/^T(EAC|MEC)/,"")+" "+h.disc;{const tn=turmas.find(x=>x.codigo===h.t);b.title=(tn?tn.nome:h.t)+" · "+(DNOME[h.disc]||h.disc)+(h.sala?" · "+h.sala:"")}b.onclick=()=>escolheAula({...h,i:t[0],f:t[1]});box.append(b)})});
   if(!n&&L.some(h=>h.t)){const m=document.createElement("span");m.className="mut";m.textContent="todas as aulas deste dia já estão registadas";box.append(m)}
 }
 async function escolheAula(h){

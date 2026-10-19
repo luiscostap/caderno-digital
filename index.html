@@ -424,9 +424,9 @@ async function chips(){
   if(!L.length){lab.textContent=DIAS[wd]+": sem aulas no horário";return}
   let n=0;
   L.forEach(h=>{
-    if(!h.t){const b=document.createElement("button");b.className="mini sec off";b.textContent=h.i+"–"+h.f+" · "+h.x+(h.sala?" · "+h.sala:"");box.append(b);return}
+    if(!h.t){const b=document.createElement("button");b.className="mini sec off";b.textContent=h.i+"–"+h.f+" · "+h.x;b.title=h.x+(h.sala?" · "+h.sala:"");box.append(b);return}
     TT.filter(t=>t[0]>=h.i&&t[1]<=h.f).forEach(t=>{if(reg.has(h.t+"|"+t[0]))return;n++;
-      const b=document.createElement("button");b.className="mini sec";b.textContent=t[0]+"–"+t[1]+" · "+h.t+" "+h.disc+(h.sala?" · "+h.sala:"");b.onclick=()=>escolheAula({...h,i:t[0],f:t[1]});box.append(b)})});
+      const b=document.createElement("button");b.className="mini sec";b.textContent=t[0]+"–"+t[1]+" · "+h.t.replace(/^T(EAC|MEC)/,"")+" "+h.disc;{const tn=turmas.find(x=>x.codigo===h.t);b.title=(tn?tn.nome:h.t)+" · "+(DNOME[h.disc]||h.disc)+(h.sala?" · "+h.sala:"")}b.onclick=()=>escolheAula({...h,i:t[0],f:t[1]});box.append(b)})});
   if(!n&&L.some(h=>h.t)){const m=document.createElement("span");m.className="mut";m.textContent="todas as aulas deste dia já estão registadas";box.append(m)}
 }
 async function escolheAula(h){
@@ -602,7 +602,7 @@ async function proximaHora(){
 function setHora(v){const s=$("rh");if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v,v));s.value=v||""}
 function fillHoras(){
   const s=$("rh"),v=s.value;s.replaceChildren(new Option("— hora —",""));const d=$("rd").value;
-  if(d){const wd=new Date(d+"T12:00:00").getDay(),og=document.createElement("optgroup");og.label="Aulas deste dia";horarioEm($("rd").value).filter(h=>h.d===wd&&h.t).forEach(h=>TT.filter(t=>t[0]>=h.i&&t[1]<=h.f).forEach(t=>og.append(new Option(t[0]+" – "+t[1]+" · "+h.t+" "+h.disc,t[0]))));if(og.children.length)s.append(og)}
+  if(d){const wd=new Date(d+"T12:00:00").getDay(),og=document.createElement("optgroup");og.label="Aulas deste dia";horarioEm($("rd").value).filter(h=>h.d===wd&&h.t).forEach(h=>TT.filter(t=>t[0]>=h.i&&t[1]<=h.f).forEach(t=>og.append(new Option(t[0]+" – "+t[1]+" · "+h.t.replace(/^T(EAC|MEC)/,"")+" "+h.disc,t[0]))));if(og.children.length)s.append(og)}
   const o2=document.createElement("optgroup");o2.label="Todos os tempos";TT.forEach(t=>o2.append(new Option(t[0]+" – "+t[1],t[0])));s.append(o2);setHora(v);
 }
 let dpm=new Date();

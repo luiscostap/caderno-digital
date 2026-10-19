@@ -112,12 +112,21 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
 #pauta td.crit{background:#f3e6c8}#pauta td input.auto{color:#4a5568;font-style:italic}#pauta td.cl input{font-weight:700;width:40px}#pauta td.adj{background:#ffff00!important}
 #pauta .pf{display:flex;justify-content:space-between;margin-top:16px}#pauta .pn{margin-top:10px}
 @media print{@page{size:A4 portrait;margin:14mm}
- #side,#top,#login,.noprint,#app>div:not(#t-pau),#pop,#dpop{display:none!important}
+ #side,#top,#login,.noprint,#pop,#dpop{display:none!important}#app>div:not(#t-pau):not(#t-hor){display:none!important}body:not(.pr-hor) #t-hor{display:none!important}body.pr-hor #t-pau{display:none!important}
  body{background:#fff!important}#shell{display:block}main{padding:0}#t-pau>.card{border:0;box-shadow:none;padding:0;margin:0;background:#fff}
  #pauta{border:0;padding:0;max-width:none;margin:0}#pauta .pl input{border:0}#pauta th,#pauta td,#pauta td.adj{-webkit-print-color-adjust:exact;print-color-adjust:exact}#pauta td input.auto{color:#000;font-style:normal}
  #pauta td input::-webkit-outer-spin-button,#pauta td input::-webkit-inner-spin-button{display:none}}
 .chips button.c0{background:#b7cde4;border-color:#5b86a8;color:#0b2a47}.chips button.c1{background:#f3e6c8;border-color:#c9a867;color:#4a2f10}.chips button.c2{background:#d9b38a;border-color:#8b4f1d;color:#3b2410}.chips button.c3{background:#cfdcc4;border-color:#7d9a6b;color:#25391d}.chips button.c4{background:#c9c3e6;border-color:#7a70b8;color:#2b2650}
 .chips button.mini[class*=" c"]:hover{filter:brightness(.93)}
+#hpr{background:#fff;color:#000;padding:14px 18px;max-width:900px;margin:10px auto;border:1px solid var(--line);font:12px Arial,Helvetica,sans-serif}
+#hpr .h1{background:#555;color:#fff;padding:4px 8px;font-size:15px;font-weight:700}#hpr .h2{background:#e2e2e2;padding:3px 8px;font-size:13px}#hpr .h3{background:#444;color:#fff;padding:3px 8px;font-weight:700;font-size:13px}
+#hpr .hm{display:flex;justify-content:space-between;font-size:11px;margin:8px 0 4px}#hpr table{border-collapse:collapse;width:100%;table-layout:fixed}
+#hpr th,#hpr td{border:1px solid #333;padding:2px 4px;text-align:center;color:#000;background:#fff;position:static;box-shadow:none;font-size:11px;white-space:normal;vertical-align:middle}
+#hpr th{background:#d5d5d5;font-weight:700}#hpr th.dia{width:15%}#hpr th.sl{width:6%}#hpr tbody tr:nth-child(even){background:#fff}
+#hpr td.tp{background:#cfcfcf;font-weight:700;white-space:nowrap;height:30px}#hpr td.sl{background:#dbe6f4;font-size:10px}#hpr td.blk{background:#eef0f4;cursor:pointer}#hpr td.blk.nb{background:#ece5d2}
+#hpr td.blk:hover{outline:2px solid #1664a0;outline-offset:-2px}#hpr td.em{cursor:pointer}#hpr td.em:hover{background:#fff4cf}#hpr .hf{margin-top:20px;display:flex;gap:50px}
+@media print{body.pr-hor #t-hor>.card{border:0;box-shadow:none;padding:0;margin:0;background:#fff}body.pr-hor #t-hor>.card>*:not(#hpr){display:none!important}
+ body.pr-hor #hpr{border:0;padding:0;margin:0;max-width:none}body.pr-hor #hpr th,body.pr-hor #hpr td{-webkit-print-color-adjust:exact;print-color-adjust:exact}body.pr-hor #hpr td.blk{outline:0}}
 </style>
 </head>
 <body>
@@ -219,11 +228,18 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
 <div id="t-hor" class="hide"><div class="card">
  <div class="ch"><h2>Horário</h2><span class="mut">Para cada data vale o horário do período que a inclui. Os registos já feitos nunca mudam.</span></div>
  <div class="row"><label for="hp" style="margin:0">Período</label><select id="hp"></select><span class="sp"></span>
-  <input id="hn" type="date" aria-label="Início do novo horário"><button id="hnb" class="go" data-i="plus">Novo horário a partir de…</button><button id="hics" class="sec" data-i="download">Gerar horario.ics</button></div>
+  <input id="hn" type="date" aria-label="Início do novo horário"><button id="hnb" class="go" data-i="plus">Novo horário a partir de…</button><button id="hics" class="sec" data-i="download">Gerar horario.ics</button><button id="hpb" class="go" data-i="print">Imprimir horário</button></div>
  <div id="hmsg" class="msg"></div>
+ <div id="hpr">
+  <div class="h1">AGRUPAMENTO DE ESCOLAS D. ANTÓNIO TAIPA - FREAMUNDE</div><div class="h2">Escola Secundária D. António Taipa</div><div class="h3">Horário do professor: Luís Costa</div>
+  <div class="hm"><span>Entrada em vigor: <b id="hev"></b></span><span>Ano letivo: 2026 - 2027</span></div>
+  <table><thead><tr><th style="width:92px">Tempos</th><th class="dia">Segunda</th><th class="sl">Sala</th><th class="dia">Terça</th><th class="sl">Sala</th><th class="dia">Quarta</th><th class="sl">Sala</th><th class="dia">Quinta</th><th class="sl">Sala</th><th class="dia">Sexta</th><th class="sl">Sala</th></tr></thead><tbody id="hgb"></tbody></table>
+  <div class="hf"><span>O Diretor: _______________</span><span>O Professor: ______________</span></div>
+  <div class="noprint" style="margin-top:8px;font-size:11px;color:#555">Clica numa aula para a alterar, ou numa célula vazia para acrescentar uma aula (o formulário abre por baixo do quadro).</div>
+ </div>
  <div class="tw"><table><thead><tr><th>Dia</th><th>Início</th><th>Fim</th><th>Turma</th><th>Disc.</th><th>Sala</th><th>Descrição</th><th></th></tr></thead><tbody id="htb"></tbody></table></div>
  <h2 style="margin-top:12px">Adicionar ou editar aula neste período</h2>
- <div class="row"><select id="hd" aria-label="Dia"></select><select id="hi" aria-label="Início"></select><select id="hf" aria-label="Fim"></select><select id="ht" aria-label="Turma"></select><select id="hs" aria-label="Disciplina"></select><input id="hsa" placeholder="Sala" style="width:80px"><input id="hx" placeholder="Descrição (se não for aula)" style="width:200px"><button id="hg" class="go" data-i="save">Adicionar</button><button id="hc" class="sec hide" data-i="x">Cancelar</button></div>
+ <div class="row"><select id="hd" aria-label="Dia"></select><select id="hi" aria-label="Início"></select><select id="hf" aria-label="Fim"></select><select id="ht" aria-label="Turma"></select><select id="hs" aria-label="Disciplina"></select><input id="hsa" placeholder="Sala" style="width:80px"><input id="hx" placeholder="Descrição (se não for aula)" style="width:200px"><button id="hg" class="go" data-i="save">Adicionar</button><button id="hc" class="sec hide" data-i="x">Cancelar</button><button id="hdl" class="dg hide" data-i="trash">Eliminar aula</button></div>
 </div></div>
 <div id="t-cal" class="hide"><div class="card"><h2>Calendário escolar</h2>
   <div class="row"><button id="mp" class="sec sq" data-i="left" aria-label="Mês anterior"></button><b id="mt" style="min-width:150px;text-align:center"></b><button id="mn" class="sec sq" data-i="right" aria-label="Mês seguinte"></button><button data-i="download" id="ics" class="sec">Descarregar .ics</button></div>
@@ -640,12 +656,13 @@ function desenhaHor(){
   all.filter(h=>h.de===sp.value).sort((x,y)=>x.d-y.d||x.i.localeCompare(y.i)).forEach(h=>{const tr=tb.insertRow();
     [DIAS[h.d],h.i,h.f,h.t||"",h.disc||"",h.sala,h.x||""].forEach(v=>tr.insertCell().textContent=v);const c=tr.insertCell();c.style.whiteSpace="nowrap";
     if(HORDB)c.append(mini("Editar",()=>editaH(h)),mini("Eliminar",()=>apagaH(h)))});
+  renderGrade();
 }
 (()=>{const f=(id,L)=>{const s=$(id);L.forEach(([v,t])=>s.add(new Option(t,v)))};
   f("hd",[1,2,3,4,5].map(d=>[d,DIAS[d]]));f("hi",TT.map(t=>[t[0],t[0]]));f("hf",TT.map(t=>[t[1],t[1]]));
   f("ht",[["","— não é aula —"],...["TMEC11G","TEAC11H","TEAC12F","TMEC12F"].map(c=>[c,c])]);f("hs",[["","—"],...Object.entries(DNOME).map(([k,v])=>[k,k+" – "+v])]);})();
 let HE=null;
-const setBtn=e=>{$("hg").lastChild.textContent=e?"Guardar alterações":"Adicionar";$("hc").classList.toggle("hide",!e)};
+const setBtn=e=>{$("hg").lastChild.textContent=e?"Guardar alterações":"Adicionar";$("hc").classList.toggle("hide",!e);$("hdl").classList.toggle("hide",!e)};
 function limpaH(){HE=null;["hsa","hx"].forEach(i=>$(i).value="");$("ht").value="";$("hs").value="";setBtn(false)}
 function editaH(h){HE=h.id;$("hd").value=h.d;$("hi").value=h.i;$("hf").value=h.f;$("ht").value=h.t||"";$("hs").value=h.disc||"";$("hsa").value=h.sala||"";$("hx").value=h.x||"";setBtn(true);$("hd").scrollIntoView({block:"center"})}
 async function apagaH(h){if(!confirm("Eliminar esta linha do horário?"))return;const r=await db.from("horario").delete().eq("id",h.id);r.error?say("hmsg","Erro: "+r.error.message,"err"):(say("hmsg","Linha eliminada.","ok"),carregarHor())}
@@ -658,6 +675,29 @@ $("hg").onclick=async()=>{
   let r;if(HE)r=await db.from("horario").update(row).eq("id",HE);else{row.valido_de=$("hp").value;const p=horAll().find(h=>h.de===row.valido_de);row.valido_ate=p?p.ate:null;r=await db.from("horario").insert(row)}
   if(r.error){say("hmsg","Erro: "+r.error.message,"err");return}say("hmsg","Guardado.","ok");limpaH();carregarHor();
 };
+function renderGrade(){
+  const sp=$("hp").value,all=horAll().filter(h=>h.de===sp),tb=$("hgb");tb.replaceChildren();$("hev").textContent=sp?fmtd(sp):"";
+  const blocks=all.map(h=>({h,rows:TT.map((t,k)=>t[0]<h.f&&t[1]>h.i?k:-1).filter(k=>k>=0)})).filter(b=>b.rows.length).map(b=>({h:b.h,first:b.rows[0],span:b.rows.length})),cover={};
+  const edita=h=>HORDB?editaH(h):say("hmsg","Executa o fase6.sql no Supabase para poder alterar o horário.","err");
+  TT.forEach((t,ti)=>{
+    const tr=tb.insertRow(),th=tr.insertCell();th.className="tp";th.textContent=t[0]+" - "+t[1];
+    for(let d=1;d<=5;d++){
+      if(cover[d+"|"+ti])continue;
+      const b=blocks.find(x=>x.h.d===d&&x.first===ti),c1=tr.insertCell(),c2=tr.insertCell();c2.className="sl";
+      if(b){const h=b.h;for(let k=1;k<b.span;k++)cover[d+"|"+(ti+k)]=1;c1.rowSpan=c2.rowSpan=b.span;c1.className="blk"+(h.t?"":" nb");
+        if(h.t){const tn=turmas.find(x=>x.codigo===h.t),n=document.createElement("b");n.textContent=tn?tn.nome:h.t;c1.append(n,document.createElement("br"),DNOME[h.disc]||h.disc)}else c1.textContent=h.x;
+        c2.textContent=h.sala||"";c2.className="sl blk";c1.onclick=c2.onclick=()=>edita(h)}
+      else{c1.className="em";c2.className="sl em";c1.onclick=c2.onclick=()=>novaCel(d,ti)}
+    }
+  });
+}
+function novaCel(d,ti){
+  if(!HORDB){say("hmsg","Executa o fase6.sql no Supabase para poder alterar o horário.","err");return}
+  limpaH();$("hd").value=d;$("hi").value=TT[ti][0];$("hf").value=TT[ti][1];say("hmsg","Nova aula na "+DIAS[d]+" às "+TT[ti][0]+": escolhe a turma e a disciplina, e clica em Adicionar. Para 2 ou 3 tempos seguidos, muda a hora de fim.","ok");$("hd").scrollIntoView({block:"center"});
+}
+$("hdl").onclick=()=>{if(HE)apagaH({id:HE}).then(limpaH)};
+$("hpb").onclick=()=>{document.body.classList.add("pr-hor");window.print()};
+window.addEventListener("afterprint",()=>document.body.classList.remove("pr-hor"));
 $("hc").onclick=limpaH;$("hp").onchange=desenhaHor;
 $("hnb").onclick=async()=>{
   if(!HORDB){say("hmsg","Executa primeiro o fase6.sql no Supabase.","err");return}

@@ -127,6 +127,9 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
 #hpr td.blk:hover{outline:2px solid #1664a0;outline-offset:-2px}#hpr td.em{cursor:pointer}#hpr td.em:hover{background:#fff4cf}#hpr .hf{margin-top:20px;display:flex;gap:50px}
 @media print{body.pr-hor #t-hor>.card{border:0;box-shadow:none;padding:0;margin:0;background:#fff}body.pr-hor #t-hor>.card>*:not(#hpr){display:none!important}
  body.pr-hor #hpr{border:0;padding:0;margin:0;max-width:none}body.pr-hor #hpr th,body.pr-hor #hpr td{-webkit-print-color-adjust:exact;print-color-adjust:exact}body.pr-hor #hpr td.blk{outline:0}}
+.cal{max-width:none!important;width:100%;gap:4px}.cal .d{aspect-ratio:auto;min-height:76px;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:4px 7px;font-size:13px}
+.cal .dn{align-self:flex-end;font-weight:700}.cal .dl{font-size:10.5px;line-height:1.15;margin-top:2px;font-weight:600;overflow:hidden}.cal b{font-size:12px;padding:2px 0}
+.d.Municipal,.dpd.Municipal{background:#d9955f;color:#2e1a08}
 </style>
 </head>
 <body>
@@ -243,7 +246,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
 </div></div>
 <div id="t-cal" class="hide"><div class="card"><h2>Calendário escolar</h2>
   <div class="row"><button id="mp" class="sec sq" data-i="left" aria-label="Mês anterior"></button><b id="mt" style="min-width:150px;text-align:center"></b><button id="mn" class="sec sq" data-i="right" aria-label="Mês seguinte"></button><button data-i="download" id="ics" class="sec">Descarregar .ics</button></div>
-  <div class="lg"><span><i style="background:#e6c79a"></i>Feriado</span><span><i style="background:#cfdcc4"></i>Interrupção</span><span><i style="background:#b7cde4"></i>Marco de período</span></div>
+  <div class="lg"><span><i style="background:#e6c79a"></i>Feriado nacional</span><span><i style="background:#d9955f"></i>Feriado municipal (Paços de Ferreira)</span><span><i style="background:#cfdcc4"></i>Interrupção</span><span><i style="background:#b7cde4"></i>Marco de período</span></div>
   <div class="cal" id="cg"></div><div id="cl" style="margin-top:12px"></div>
   <p><small>Subscrever no Outlook/Teams: <b id="subu"></b> (Outlook na web → Adicionar calendário → Subscrever da Web).</small></p></div>
   <div class="card"><h2>Horário semanal</h2><div class="tw"><table><thead><tr><th>Dia</th><th>Hora</th><th>Turma</th><th>Disciplina</th><th>Sala</th></tr></thead><tbody id="thor"></tbody></table></div><p><small id="hnext"></small></p><p><small>Subscrever o horário (repete todas as semanas, sem feriados nem interrupções): <b id="subh"></b></small></p></div></div>
@@ -380,17 +383,19 @@ async function carregarDisc(){
   [...BL].sort((x,y)=>(x.turmas.codigo+dn(x)+x.codigo).localeCompare(y.turmas.codigo+dn(y)+y.codigo)).forEach(r=>{const tr=tb.insertRow();[r.turmas.codigo,dn(r),r.codigo,r.designacao,r.horas,r.dias].forEach(v=>tr.insertCell().textContent=v??"")});
   fillReg(); fillRes(); visao();
 }
+const FER_MUN=[["2026-11-06","Feriado municipal – Paços de Ferreira (elevação a concelho, 1836)"]];
 async function carregarCal(){
-  const c=await db.from("calendario").select("inicio,fim,tipo,descricao").order("inicio"); cal=c.data||[]; desenhaCal();
+  const c=await db.from("calendario").select("inicio,fim,tipo,descricao").order("inicio"); cal=c.data||[];for(const f of FER_MUN)if(!cal.some(e=>e.tipo==="Feriado municipal"&&e.inicio===f[0]))cal.push({inicio:f[0],fim:f[0],tipo:"Feriado municipal",descricao:f[1]});cal.sort((x,y)=>x.inicio.localeCompare(y.inicio));desenhaCal();
 }
-function tipoDia(k){let t=null;for(const e of cal){if(k>=e.inicio&&k<=e.fim){const x=e.tipo.startsWith("Marco")?"Marco":e.tipo;if(x==="Feriado")return x;if(x==="Interrupção"||!t)t=x}}return t}
+const k0=(x,dt,d)=>{const k=ymd(dt);return k>=x.inicio&&k<=x.fim&&(k===x.inicio||d===1)};
+function tipoDia(k){let t=null;for(const e of cal){if(k>=e.inicio&&k<=e.fim){const x=e.tipo.startsWith("Marco")?"Marco":e.tipo==="Feriado municipal"?"Municipal":e.tipo;if(x==="Feriado"||x==="Municipal")return x;if(x==="Interrupção"||!t)t=x}}return t}
 function desenhaCal(){
   $("mt").textContent=MESES[mes.getMonth()]+" "+mes.getFullYear(); const g=$("cg"); g.replaceChildren();
   "STQQSSD".split("").forEach(l=>{const e=document.createElement("b");e.textContent=l;g.append(e)});
   const lead=(new Date(mes.getFullYear(),mes.getMonth(),1).getDay()+6)%7, n=new Date(mes.getFullYear(),mes.getMonth()+1,0).getDate();
   for(let i=0;i<lead;i++)g.append(document.createElement("span"));
   for(let d=1;d<=n;d++){const dt=new Date(mes.getFullYear(),mes.getMonth(),d),e=document.createElement("div"),t=tipoDia(ymd(dt));
-    e.className="d"+(dt.getDay()%6===0?" f":"")+(t?" "+t:"");e.textContent=d;if(!t){const A=horarioEm(ymd(dt)).filter(h=>h.d===dt.getDay()&&h.t);if(A.length){e.classList.add("al");e.title=A.map(h=>h.i+" "+h.t+" "+h.disc).join("\n")}}g.append(e)}
+    e.className="d"+(dt.getDay()%6===0?" f":"")+(t?" "+t:"");{const n=document.createElement("span");n.className="dn";n.textContent=d;e.append(n);const ev=cal.find(x=>k0(x,dt,d));if(ev){const l=document.createElement("small");l.className="dl";l.textContent=ev.descricao;e.append(l);e.title=ev.descricao}}if(!t){const A=horarioEm(ymd(dt)).filter(h=>h.d===dt.getDay()&&h.t);if(A.length){e.classList.add("al");e.title=A.map(h=>h.i+" "+h.t+" "+h.disc).join("\n")}}g.append(e)}
   const p=ymd(new Date(mes.getFullYear(),mes.getMonth(),1)), q=ymd(new Date(mes.getFullYear(),mes.getMonth(),n)), fmt=x=>x.slice(8)+"/"+x.slice(5,7);
   const ev=cal.filter(e=>e.fim>=p&&e.inicio<=q); const l=$("cl"); l.replaceChildren();
   ev.forEach(e=>{const r=document.createElement("div");r.textContent=(e.inicio===e.fim?fmt(e.inicio):fmt(e.inicio)+" a "+fmt(e.fim))+" – "+e.descricao;l.append(r)});
@@ -635,7 +640,7 @@ function desenhaDP(){
   const cod=(turmas.find(x=>x.id===$("rt").value)||{}).codigo,sel=$("rd").value,hj=hoje();
   for(let d=1;d<=n;d++){const dt=new Date(y,m,d),k=ymd(dt),tp=tipoDia(k),b=document.createElement("button");b.type="button";b.textContent=d;
     b.className="dpd"+(tp?" "+tp:"")+(dt.getDay()%6===0?" f":"")+(k===sel?" sel":"")+(k===hj?" hj":"");
-    const A=horarioEm(k).filter(x=>x.d===dt.getDay()&&x.t&&(!cod||x.t===cod));if(A.length&&tp!=="Feriado"&&tp!=="Interrupção"){b.classList.add("al");b.title=A.map(x=>x.i+" "+x.t+" "+x.disc).join("\n")}
+    const A=horarioEm(k).filter(x=>x.d===dt.getDay()&&x.t&&(!cod||x.t===cod));if(A.length&&tp!=="Feriado"&&tp!=="Municipal"&&tp!=="Interrupção"){b.classList.add("al");b.title=A.map(x=>x.i+" "+x.t+" "+x.disc).join("\n")}
     b.onclick=()=>escolheDia(k);g.append(b)}
   p.append(g);const f=document.createElement("div");f.style.cssText="margin-top:8px;display:flex;justify-content:space-between;align-items:center";
   const hb=document.createElement("button");hb.type="button";hb.className="mini sec";hb.textContent="Hoje";hb.onclick=()=>escolheDia(hj);const lg=document.createElement("span");lg.className="mut";lg.textContent="sublinhado = aula desta turma";f.append(hb,lg);p.append(f);
@@ -714,7 +719,7 @@ $("hnb").onclick=async()=>{
 };
 const fold=l=>{const e=new TextEncoder(),d=new TextDecoder();let b=e.encode(l);const o=[];while(b.length>74){let k=74;while((b[k]&192)===128)k--;o.push(d.decode(b.slice(0,k)));b=e.encode(" "+d.decode(b.slice(k)))}o.push(d.decode(b));return o};
 $("hics").onclick=()=>{
-  const ex=new Set();cal.filter(e=>e.tipo==="Feriado"||e.tipo==="Interrupção").forEach(e=>{for(let d=new Date(e.inicio+"T12:00:00");ymd(d)<=e.fim;d.setDate(d.getDate()+1))ex.add(ymd(d))});
+  const ex=new Set();cal.filter(e=>e.tipo==="Feriado"||e.tipo==="Feriado municipal"||e.tipo==="Interrupção").forEach(e=>{for(let d=new Date(e.inicio+"T12:00:00");ymd(d)<=e.fim;d.setDate(d.getDate()+1))ex.add(ymd(d))});
   const hm=x=>x.replace(":","")+"00",n2=x=>x.replace(/-/g,""),esc=x=>x.replace(/([,;\\])/g,"\\$1"),stamp=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
   const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Caderno digital//Horario//PT","X-WR-CALNAME:Horário 2026/2027"];let n=0;
   horAll().forEach((h,k)=>{

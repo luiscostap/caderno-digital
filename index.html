@@ -226,7 +226,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
 </div></div>
 <div id="t-res" class="hide"><div class="card"><h2>Resumo por aluno</h2>
   <div class="row"><select id="st" aria-label="Turma"></select><select id="sd" aria-label="Disciplina"></select></div>
-  <div class="tw"><table><thead><tr><th>Nº</th><th>Nome</th><th>FI</th><th>FM</th><th>FP</th><th>FJ</th><th>Faltas</th><th>Comp. +</th><th>Comp. –</th><th title="D1: média das notas das tarefas, com as 3 rubricas (Con., Cap. e Ati.), de 0 a 20; entre parênteses, o nº de tarefas avaliadas">D1 · Tarefas (/20)</th><th title="Referência para o D2: média de todas as atitudes (Ati.), de 0 a 20 (nível × 4); entre parênteses, o nº de avaliações">Atitudes (/20) · ref. D2</th></tr></thead><tbody id="tr"></tbody></table></div><p class="mut" style="margin:6px 0 0">As avaliações vêm do Registo de aula (editáveis em Tarefas). D1 · Tarefas = média das notas das tarefas, com as 3 rubricas (Con., Cap. e Ati.). Atitudes = média de todas as avaliações de Ati., que serve só de referência para o D2 (o D2 é uma análise tua, na Pauta). Valores de 0 a 20 (nível × 4); a vermelho abaixo de 9,5.</p><div id="rsm" class="msg"></div></div></div>
+  <div class="tw"><table><thead><tr><th>Nº</th><th>Nome</th><th>FI</th><th>FM</th><th>FP</th><th>FJ</th><th>Faltas</th><th>Comp. +</th><th>Comp. –</th><th title="D1: média das notas das tarefas, com as 3 rubricas (Con., Cap. e Ati.), ponderada pelos pesos de cada UFCD (como na Pauta), de 0 a 20; entre parênteses, o nº de tarefas avaliadas">D1 · Tarefas (/20)</th><th title="Referência para o D2: média de todas as atitudes (Ati.), de 0 a 20 (nível × 4); entre parênteses, o nº de avaliações">Atitudes (/20) · ref. D2</th></tr></thead><tbody id="tr"></tbody></table></div><p class="mut" style="margin:6px 0 0">As avaliações vêm do Registo de aula (editáveis em Tarefas). D1 · Tarefas = média das notas das tarefas, com as 3 rubricas (Con., Cap. e Ati.), ponderada pelos pesos de cada UFCD (como na Pauta; com várias UFCD, média entre elas). Atitudes = média de todas as avaliações de Ati., que serve só de referência para o D2 (o D2 é uma análise tua, na Pauta). Valores de 0 a 20 (nível × 4); a vermelho abaixo de 9,5.</p><div id="rsm" class="msg"></div></div></div>
 <div id="t-disc" class="hide"><div class="card"><h2>Disciplinas / UFCD</h2>
   <details style="margin:8px 0"><summary>Adicionar disciplina / UFCD</summary>
    <div class="row" style="margin-top:8px"><select id="dnt" aria-label="Turma"></select><input id="dnc" placeholder="Código (ex.: 6013)" style="width:130px"><input id="dnd" placeholder="Designação" style="width:260px"><select id="dns" aria-label="Disciplina"></select><input id="dnh" type="number" placeholder="Horas" style="width:70px"><input id="dnts" type="number" placeholder="Tempos/sem." style="width:100px"><input id="dntt" type="number" placeholder="Tempos totais" style="width:110px"><input id="dndi" placeholder="Dias (ex.: Segunda, Terça)" style="width:180px"><button id="dna" class="go" data-i="plus">Adicionar</button></div></details>
@@ -804,10 +804,10 @@ function fillQ(){
   const st=$("qt"),v=st.value;st.replaceChildren();turmas.forEach(t=>st.add(new Option(t.nome||t.codigo,t.id)));if(v)st.value=v;
   const sb=$("qb"),w=sb.value;sb.replaceChildren();BL.filter(b=>b.turmas.id===st.value).sort((x,y)=>x.codigo.localeCompare(y.codigo)).forEach(b=>sb.add(new Option(b.codigo+" – "+b.designacao,b.id)));if(w&&[...sb.options].some(o=>o.value===w))sb.value=w;
 }
-function autoD1(aid){   // D1 = média das tarefas (3 rubricas: Con., Cap., Ati.), ponderada pelos pesos, em pontos (nota/20 × 3)
+function autoD1(aid){   // D1 = média das tarefas (3 rubricas: Con., Cap., Ati.), ponderada pelos pesos, em pontos 0–60 (nota/20 × 3); se os pesos não somarem 20, regra de 3 sobre a soma
   const S=Object.values(QPW).reduce((p,q)=>p+q,0);if(!(S>0))return null;let acc=0,n=0;
   for(const c in QPW){const v=QS.filter(x=>x.aluno_id===aid&&x.tarefa===c).map(notaR).filter(x=>x!==null);if(v.length){acc+=qmean(v)*QPW[c];n++}}
-  return n?Math.round(acc/20*3):null;
+  return n?Math.max(0,Math.min(60,Math.round(acc/S*3))):null;
 }
 function refD2(aid){   // referência do D2: média de todas as atitudes (Ati.), em pontos (nota/20 × 7). NÃO é calculada como valor final.
   const a=QS.filter(x=>x.aluno_id===aid&&x.atitudes>0).map(x=>x.atitudes);return a.length?{pts:Math.round(qmean(a)*28),nota:qmean(a)*4}:null;
@@ -828,7 +828,7 @@ function renderPauta(){
   $("qu").textContent="UFCD: "+b.codigo+"  "+b.designacao;$("qh").textContent=fmtd($("qd").value);
   const S=Object.values(QPW).reduce((p,q)=>p+q,0),w=$("qw");
   if(!Object.keys(QPW).length){w.textContent="⚠ Ainda não definiste o peso das tarefas desta UFCD (separador Tarefas): o D1 não pode ser sugerido.";w.classList.remove("hide")}
-  else if(Math.abs(S-20)>0.001){w.textContent="⚠ Os pesos das tarefas somam "+r1(S)+" em 20: o D1 sugerido pode estar incompleto (ver separador Tarefas).";w.classList.remove("hide")}else w.classList.add("hide");
+  else if(Math.abs(S-20)>0.001){w.textContent="⚠ Os pesos das tarefas somam "+r1(S)+" em 20: o D1 sugerido foi convertido por regra de 3 para 0–60 pontos (confirma os pesos no separador Tarefas).";w.classList.remove("hide")}else w.classList.add("hide");
   todos.filter(a=>a.turma_id===t.id&&a.ativo).sort((x,y)=>x.numero-y.numero).forEach(a=>{
     const p=QP[a.id]||(QP[a.id]={c:[null,null,null],d1:null,d2:null,cl:null}),tr=tb.insertRow();tr.insertCell().textContent=a.numero+".";tr.insertCell().textContent=a.nome;
     const sels=[0,1,2].map(k=>{const c=tr.insertCell();c.className="crit noprint";const s=document.createElement("select");s.setAttribute("aria-label","Critério "+(k+1)+" – "+a.nome);s.append(new Option("",""));[1,2,3,4,5].forEach(n=>s.add(new Option(n,n)));s.value=p.c[k]||"";c.append(s);return s});
@@ -902,7 +902,7 @@ function renderMedia(){
   alT().filter(a=>!sel||a.id===sel).forEach(a=>{const tr=b.insertRow();tr.insertCell().textContent=a.numero;tr.insertCell().textContent=a.nome;let acc=0,pav=0,falta=0;
     codes.forEach(c=>{const v=UR.filter(r=>r.aluno_id===a.id&&r.tarefa===c).map(notaR).filter(x=>x!==null),td=tr.insertCell(),p=PW[c]||0;
       if(v.length){const m=v.reduce((x,y)=>x+y,0)/v.length;td.textContent=m.toFixed(1)+" ("+v.length+")";acc+=m*p;pav+=p}else{td.textContent="–";if(p>0)falta++}});
-    const f=tr.insertCell(),g=tr.insertCell(),k=tr.insertCell();f.style.fontWeight="700";f.textContent=somaPW()>0?(acc/20).toFixed(1):"";g.textContent=pav>0?(acc/pav).toFixed(1):"";k.textContent=falta||"";const am=UR.filter(r=>r.aluno_id===a.id&&r.atitudes>0).map(r=>r.atitudes*4),at=tr.insertCell();at.textContent=am.length?(am.reduce((p,q)=>p+q,0)/am.length).toFixed(1)+" ("+am.length+")":"";
+    const f=tr.insertCell(),g=tr.insertCell(),k=tr.insertCell();f.style.fontWeight="700";f.textContent=somaPW()>0?(acc/somaPW()).toFixed(1):"";g.textContent=pav>0?(acc/pav).toFixed(1):"";k.textContent=falta||"";const am=UR.filter(r=>r.aluno_id===a.id&&r.atitudes>0).map(r=>r.atitudes*4),at=tr.insertCell();at.textContent=am.length?(am.reduce((p,q)=>p+q,0)/am.length).toFixed(1)+" ("+am.length+")":"";
     [f,g].forEach(x=>{if(x.textContent&&+x.textContent<9.5)x.style.color="var(--err)"})});
 }
 function renderTar(){
@@ -934,16 +934,21 @@ function fillRes(){
 async function resumo(){
   const tid=$("st").value, dn=$("sd").value, tb=$("tr"); tb.replaceChildren(); if(!tid)return;
   const ids=new Set(BL.filter(b=>b.turmas.id===tid&&(!dn||dnome(b)===dn)).map(b=>b.id));
-  let f,c,rb; try{[f,c,rb]=await Promise.all([todosDe("faltas","aluno_id,tipo,bloco_id"),todosDe("comportamento","aluno_id,tipo,bloco_id"),todosDe("rubrica_obs","aluno_id,bloco_id,tarefa,conhecimentos,capacidades,atitudes")])}catch(e){say("rsm","Erro ao ler os registos.","err");return}
+  let f,c,rb,pw=[]; try{[f,c,rb]=await Promise.all([todosDe("faltas","aluno_id,tipo,bloco_id"),todosDe("comportamento","aluno_id,tipo,bloco_id"),todosDe("rubrica_obs","aluno_id,bloco_id,tarefa,conhecimentos,capacidades,atitudes")])}catch(e){say("rsm","Erro ao ler os registos.","err");return}
+  try{pw=await todosDe("tarefas_peso","bloco_id,tarefa,pontos")}catch(e){}
+  const PB={};pw.forEach(x=>{(PB[x.bloco_id]=PB[x.bloco_id]||{})[x.tarefa]=+x.pontos});
   say("rsm",""); const ok=x=>dn?ids.has(x.bloco_id):true,mean=a=>a.reduce((p,q)=>p+q,0)/a.length;
   todos.filter(a=>a.turma_id===tid&&a.ativo).sort((x,y)=>x.numero-y.numero).forEach(a=>{
     const ff=f.filter(x=>x.aluno_id===a.id&&ok(x)),n=t=>ff.filter(x=>x.tipo===t).length,cc=c.filter(x=>x.aluno_id===a.id&&ok(x));
     const tr=tb.insertRow();[a.numero,a.nome,n("FI"),n("FM"),n("FP"),n("FJ"),ff.length,cc.filter(x=>x.tipo==="Positivo").length,cc.filter(x=>x.tipo==="Negativo").length].forEach(v=>tr.insertCell().textContent=v);
     const rr=rb.filter(x=>x.aluno_id===a.id&&ids.has(x.bloco_id)),g={};
     rr.filter(x=>[x.conhecimentos,x.capacidades,x.atitudes].every(v=>v>0)).forEach(x=>{const k=x.bloco_id+"|"+(x.tarefa||"");(g[k]=g[k]||[]).push((x.conhecimentos*RP[0]+x.capacidades*RP[1]+x.atitudes*RP[2])/(RP[0]+RP[1]+RP[2])*4)});
-    const gm=Object.values(g).map(mean),at=rr.filter(x=>x.atitudes>0).map(x=>x.atitudes*4);
+    // D1 por UFCD como na Pauta: média das tarefas ponderada pelos pesos (regra de 3 sobre a soma dos pesos); sem pesos, média simples
+    const ub={};for(const k in g){const [bid,tf]=k.split("|");(ub[bid]=ub[bid]||{})[tf]=mean(g[k])}
+    const gm=Object.entries(ub).map(([bid,ts])=>{const w=PB[bid]||{},S=Object.values(w).reduce((p,q)=>p+q,0);
+      return S>0?Object.keys(w).reduce((p,tf)=>p+(ts[tf]||0)*w[tf],0)/S:mean(Object.values(ts))}),nt=Object.keys(g).length,at=rr.filter(x=>x.atitudes>0).map(x=>x.atitudes*4);
     const cell=(v,k)=>{const td=tr.insertCell();td.style.fontWeight="700";if(v!==null){td.textContent=v.toFixed(1)+" ("+k+")";if(v<9.5)td.style.color="var(--err)"}};
-    cell(gm.length?mean(gm):null,gm.length);cell(at.length?mean(at):null,at.length)});
+    cell(gm.length?mean(gm):null,nt);cell(at.length?mean(at):null,at.length)});
 }
 $("st").onchange=()=>{fillRes();resumo()}; $("sd").onchange=resumo;
 iconify();

@@ -584,6 +584,7 @@ async function chips(){
   if(!n&&L.some(h=>h.t)){const m=document.createElement("span");m.className="mut";m.textContent="todas as aulas deste dia já estão registadas";box.append(m)}
 }
 async function escolheAula(h){
+  if(!(await sairOk()))return;
   const t=turmas.find(x=>x.codigo===h.t);if(!t){say("rmsg","Turma "+h.t+" não encontrada.","err");return}
   const c=BL.filter(b=>b.turmas.id===t.id&&b.disciplina===h.disc).sort((x,y)=>x.codigo.localeCompare(y.codigo));if(!c.length){say("rmsg","Sem UFCD de "+h.disc+" nesta turma.","err");return}
   let best=c[0];const r=await db.from("sumarios").select("bloco_id,data").in("bloco_id",c.map(b=>b.id)).order("data",{ascending:false}).limit(1);
@@ -609,7 +610,7 @@ async function carregaAula(novo){
   let g=cur?cur.grupos:(PV&&PV.grupos&&PV.grupos.length?PV.grupos:null);
   if(!cur&&!g){const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),w=await db.from("sumarios").select("grupos,data").in("bloco_id",ids).order("data",{ascending:false}).limit(30);const z=(w.data||[]).find(x=>x.grupos&&x.grupos.length);g=z?z.grupos:null}
   const ok=new Set(alunosT().map(a=>a.id));GR=(g||[]).map(x=>({n:x.n,a:x.a.filter(id=>ok.has(id))}));
-  desenhaGrelha();desenhaGrupos();resumoSum();pesoAviso(b);carregaCT();
+  desenhaGrelha();desenhaGrupos();resumoSum();pesoAviso(b);carregaCT();REG0=estadoReg();
 }
 async function pesoAviso(b){const w=await db.from("tarefas_peso").select("pontos").eq("bloco_id",b),e=$("raviso");if(w.error){e.textContent="";return}const t=(w.data||[]).reduce((p,q)=>p+ +q.pontos,0);e.textContent=Math.abs(t-20)<0.001?"":"⚠ Pesos das tarefas desta UFCD: "+(+t.toFixed(2))+"/20 – não totaliza 20 (ver separador Tarefas)"}
 let TD={},TH=[],CT=[],ctCod=null,CTED=false,TOP=new Set(),COV=new Set();
@@ -742,9 +743,29 @@ async function autoContinua(manterHora){   // aula nova: se a turma já teve aul
   const L=(r.data||[]).filter(x=>!(x.bloco_id===b&&x.licao===l)).sort((x,y)=>(y.hora||"").localeCompare(x.hora||"")||y.licao-x.licao);if(!L.length)return false;
   const feitos=new Set(L.map(x=>(x.hora||"").slice(0,5)).filter(Boolean)),wd=new Date(d+"T12:00:00").getDay(),tc=(turmas.find(x=>x.id===$("rt").value)||{}).codigo;
   const slots=horarioEm(d).filter(h=>h.d===wd&&h.t===tc).flatMap(h=>TT.filter(t=>t[0]>=h.i&&t[1]<=h.f)).sort((x,y)=>x[0].localeCompare(y[0])),ult=[...feitos].sort().pop()||"";
-  const nx=manterHora?null:(slots.find(t=>t[0]>ult&&!feitos.has(t[0]))||slots.find(t=>!feitos.has(t[0]))||TT.find(t=>t[0]>ult));
+  const nx=manterHora?null:(slots.find(t=>t[0]>ult&&!feitos.has(t[0]))||slots.find(t=>!feitos.has(t[0])));if(!manterHora&&!nx)return false;   // dia completo: vai para a próxima aula (autoProxima)
   const s=L[0],bl=BL.find(x=>x.id===s.bloco_id)||{};await copiaDe(s);if(nx)setHora(nx[0]);
   say("rmsg","Continuação da aula das "+(s.hora||"").slice(0,5)+(bl.id!==b?" ("+bl.codigo+")":"")+": copiei tudo, exceto a falta de pontualidade"+(nx?"; hora "+nx[0]+" – "+nx[1]:(manterHora?"":"; não há mais tempos livres neste dia no horário"))+". Confirma e clica em Guardar aula.","ok");return true}
+let REG0=null;   // estado do registo de aula quando foi carregado/guardado (para avisar alterações por guardar)
+const estadoReg=()=>JSON.stringify([$("rb").value,$("rl").value,$("rd").value,$("rh").value,$("rs").value.trim(),$("ro").value.trim(),GR.map(g=>[g.n,g.a]),[...TOP].sort(),[...document.querySelectorAll("#gb input,#gb select")].map(e=>e.type==="checkbox"?e.checked:e.value)]);
+async function sairOk(){   // antes de mudar de aula: oferece guardar o que está no ecrã
+  if(REG0===null||estadoReg()===REG0)return true;
+  if(!confirm("Esta aula tem alterações que ainda não foram guardadas.\n\nOK = Guardar agora\nCancelar = Continuar sem guardar"))return true;
+  if(GRAV)return false;GRAV=true;$("gr").disabled=true;try{return !!(await guardaAula(false))}finally{GRAV=false;$("gr").disabled=false}}
+const slotsDia=(d,bl)=>{const wd=new Date(d+"T12:00:00").getDay();return horarioEm(d).filter(h=>h.d===wd&&h.t===bl.turmas.codigo&&(!h.disc||!bl.disciplina||h.disc===bl.disciplina)).flatMap(h=>TT.filter(t=>t[0]>=h.i&&t[1]<=h.f)).sort((x,y)=>x[0].localeCompare(y[0]))};
+async function autoProxima(){   // aula nova e o dia já está completo (ou sem aulas desta UFCD): vai para a próxima aula do horário e continua o sumário anterior
+  const b=$("rb").value,bl=BL.find(x=>x.id===b),l=parseInt($("rl").value,10);if(!bl||!l||SA.find(x=>x.licao===l))return false;
+  const ant=[...SA].filter(x=>x.licao<l).pop()||null,base=$("rd").value||(ant&&ant.data)||hoje(),ids=BL.filter(x=>x.turmas.id===bl.turmas.id).map(x=>x.id);
+  const r=await db.from("sumarios").select("data,hora").gte("data",base).in("bloco_id",ids),reg=new Set((r.data||[]).map(x=>x.data+"|"+(x.hora||"").slice(0,5)));
+  if(!ant||!(r.data||[]).some(x=>x.data===base)&&slotsDia(base,bl).length)return false;   // primeira aula da UFCD, ou dia ainda sem registos: fica como está
+  if(slotsDia(base,bl).some(t=>!reg.has(base+"|"+t[0])))return false;                     // ainda há tempos livres neste dia
+  let d=null,t=null;const dt=new Date(base+"T12:00:00");
+  for(let i=1;i<=150&&!d;i++){dt.setDate(dt.getDate()+1);const k=ymd(dt);if(k>LETIVO_FIM)break;const tp=tipoDia(k);if(tp==="Feriado"||tp==="Municipal"||tp==="Interrupção")continue;
+    const f=slotsDia(k,bl).find(x=>!reg.has(k+"|"+x[0]));if(f){d=k;t=f}}
+  if(!d){say("rmsg","Não encontrei a próxima aula desta UFCD no horário até ao fim do ano letivo.","err");return false}
+  $("rd").value=d;setHora(t[0]);chips();
+  const txt=(ant.sumario||"").replace(/\s*\(continuação\)\s*$/i,"").trim();if(txt)$("rs").value=txt+" (continuação)";resumoSum();
+  say("rmsg","Próxima aula: "+DIAS[new Date(d+"T12:00:00").getDay()].toLowerCase()+", "+fmtd(d)+", "+t[0]+" – "+t[1]+" (o dia "+fmtd(base)+" já estava completo)."+(txt?" Sumário da lição "+ant.licao+" com \"(continuação)\".":"")+" Confirma e clica em Guardar aula.","ok");return true}
 $("cpd").onclick=async()=>{
   const d=$("rd").value,b=$("rb").value,l=parseInt($("rl").value,10),hh=$("rh").value;if(!d||!b){say("rmsg","Escolhe a UFCD e a data.","err");return}
   const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,data,hora,sumario,obs,grupos,topicos").eq("data",d).in("bloco_id",ids);
@@ -884,7 +905,7 @@ $("hics").onclick=()=>{
 };
 (()=>{const s=$("dns");s.add(new Option("— disciplina —",""));Object.entries(DNOME).forEach(([k,v])=>s.add(new Option(k+" – "+v,k)))})();
 $("rd").value=hoje();chips();$("rd").onchange=chips;$("rt").onchange=()=>fillBloco();$("rb").onchange=()=>carregaAula(true);$("rl").onchange=()=>carregaAula(false);
-$("lp").onclick=()=>{$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);carregaAula(false)};$("ln").onclick=async()=>{$("rl").value=(parseInt($("rl").value,10)||0)+1;await carregaAula(false);await autoContinua()};$("lnew").onclick=async()=>{await carregaAula(true);if(!(await autoContinua())){const h=await proximaHora();setHora(h)}};
+$("lp").onclick=async()=>{if(!(await sairOk()))return;$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);await carregaAula(false)};$("ln").onclick=async()=>{if(!(await sairOk()))return;$("rl").value=(parseInt($("rl").value,10)||0)+1;await carregaAula(false);if(!(await autoContinua()))await autoProxima()};$("lnew").onclick=async()=>{if(!(await sairOk()))return;await carregaAula(true);if(!(await autoContinua())&&!(await autoProxima())){const h=await proximaHora();setHora(h)}};
 $("imp").onclick=()=>{if(!PV)return;if($("rs").value.trim()&&!confirm("Substituir o sumário atual pelo anterior?"))return;$("rs").value=PV.sumario||"";$("ro").value=PV.obs||""};
 $("gdel").onclick=async()=>{
   const b=$("rb").value,l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);if(!cur||!confirm("Apagar a lição "+l+" (sumário, grupos, faltas, comportamento e avaliações desta aula)?"))return;
@@ -894,7 +915,7 @@ $("gdel").onclick=async()=>{
 };
 let GRAV=false;   // impede gravações em duplicado (dois cliques seguidos em Guardar)
 $("gr").onclick=async()=>{if(GRAV)return;GRAV=true;$("gr").disabled=true;try{await guardaAula()}finally{GRAV=false;$("gr").disabled=false}};
-async function guardaAula(){
+async function guardaAula(recarrega){
   const b=$("rb").value,d=$("rd").value,l=parseInt($("rl").value,10);if(!b||!d||!l){say("rmsg","Escolhe a UFCD, a lição e a data.","err");return}
   say("rmsg","A guardar…");$("rs").value=limpaSum($("rs").value);const txt=$("rs").value.trim(),cur=SA.find(x=>x.licao===l),gr=GR.filter(g=>g.a.length);
   if(txt||cur||gr.length||TOP.size){const row={bloco_id:b,licao:l,data:d,hora:$("rh").value||null,sumario:txt,obs:$("ro").value.trim()||null,grupos:gr,topicos:[...TOP]};
@@ -917,7 +938,7 @@ async function guardaAula(){
     for(const [id,rw] of RU){const r=await db.from("rubrica_obs").update(rw).eq("id",id);if(r.error)throw r.error}
     const r=await db.from("rubrica_obs").update({data:d}).eq("bloco_id",b).eq("licao",l);if(r.error)throw r.error;
   }catch(e){say("rmsg","Erro ao guardar: "+e.message+" (já executaste o fase4.sql, o fase7.sql e o fase8.sql?)","err");return}
-  say("rmsg","Aula guardada."+(sem?" "+sem+" observação(ões) sem marca não foram guardadas.":""),"ok");carregaAula(false);visao();
+  say("rmsg","Aula guardada."+(sem?" "+sem+" observação(ões) sem marca não foram guardadas.":""),"ok");REG0=estadoReg();if(recarrega!==false)carregaAula(false);visao();return true;
 }
 
 /* ---- pautas ---- */

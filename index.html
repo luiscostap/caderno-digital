@@ -610,7 +610,7 @@ async function carregaAula(novo){
   let g=cur?cur.grupos:(PV&&PV.grupos&&PV.grupos.length?PV.grupos:null);
   if(!cur&&!g){const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),w=await db.from("sumarios").select("grupos,data").in("bloco_id",ids).order("data",{ascending:false}).limit(30);const z=(w.data||[]).find(x=>x.grupos&&x.grupos.length);g=z?z.grupos:null}
   const ok=new Set(alunosT().map(a=>a.id));GR=(g||[]).map(x=>({n:x.n,a:x.a.filter(id=>ok.has(id))}));
-  desenhaGrelha();desenhaGrupos();resumoSum();pesoAviso(b);carregaCT();REG0=estadoReg();
+  desenhaGrelha();desenhaGrupos();resumoSum();pesoAviso(b);carregaCT();marcaReg();
 }
 async function pesoAviso(b){const w=await db.from("tarefas_peso").select("pontos").eq("bloco_id",b),e=$("raviso");if(w.error){e.textContent="";return}const t=(w.data||[]).reduce((p,q)=>p+ +q.pontos,0);e.textContent=Math.abs(t-20)<0.001?"":"⚠ Pesos das tarefas desta UFCD: "+(+t.toFixed(2))+"/20 – não totaliza 20 (ver separador Tarefas)"}
 let TD={},TH=[],CT=[],ctCod=null,CTED=false,TOP=new Set(),COV=new Set();
@@ -746,7 +746,9 @@ async function autoContinua(manterHora){   // aula nova: se a turma já teve aul
   const nx=manterHora?null:(slots.find(t=>t[0]>ult&&!feitos.has(t[0]))||slots.find(t=>!feitos.has(t[0])));if(!manterHora&&!nx)return false;   // dia completo: vai para a próxima aula (autoProxima)
   const s=L[0],bl=BL.find(x=>x.id===s.bloco_id)||{};await copiaDe(s);if(nx)setHora(nx[0]);
   say("rmsg","Continuação da aula das "+(s.hora||"").slice(0,5)+(bl.id!==b?" ("+bl.codigo+")":"")+": copiei tudo, exceto a falta de pontualidade"+(nx?"; hora "+nx[0]+" – "+nx[1]:(manterHora?"":"; não há mais tempos livres neste dia no horário"))+". Confirma e clica em Guardar aula.","ok");return true}
-let REG0=null;   // estado do registo de aula quando foi carregado/guardado (para avisar alterações por guardar)
+let REG0=null,REGV={};const marcaReg=()=>{REG0=estadoReg();REGV={rt:$("rt").value,rb:$("rb").value,rl:$("rl").value}};
+const comPergunta=(id,f)=>async()=>{const novo=$(id).value,old=REGV[id];if(old!==undefined&&old!==novo){$(id).value=old;const ok=await sairOk();if(!ok)return;$(id).value=novo}f()};   // muda turma/UFCD/lição só depois de oferecer guardar
+   // estado do registo de aula quando foi carregado/guardado (para avisar alterações por guardar)
 const estadoReg=()=>JSON.stringify([$("rb").value,$("rl").value,$("rd").value,$("rh").value,$("rs").value.trim(),$("ro").value.trim(),GR.map(g=>[g.n,g.a]),[...TOP].sort(),[...document.querySelectorAll("#gb input,#gb select")].map(e=>e.type==="checkbox"?e.checked:e.value)]);
 async function sairOk(){   // antes de mudar de aula: oferece guardar o que está no ecrã
   if(REG0===null||estadoReg()===REG0)return true;
@@ -904,7 +906,7 @@ $("hics").onclick=()=>{
   say("hmsg","horario.ics gerado com "+n+" evento(s) semanais. Carrega-o no GitHub por cima do anterior.","ok");
 };
 (()=>{const s=$("dns");s.add(new Option("— disciplina —",""));Object.entries(DNOME).forEach(([k,v])=>s.add(new Option(k+" – "+v,k)))})();
-$("rd").value=hoje();chips();$("rd").onchange=chips;$("rt").onchange=()=>fillBloco();$("rb").onchange=()=>carregaAula(true);$("rl").onchange=()=>carregaAula(false);
+$("rd").value=hoje();chips();$("rd").onchange=chips;$("rt").onchange=comPergunta("rt",()=>fillBloco());$("rb").onchange=comPergunta("rb",()=>carregaAula(true));$("rl").onchange=comPergunta("rl",()=>carregaAula(false));
 $("lp").onclick=async()=>{if(!(await sairOk()))return;$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);await carregaAula(false)};$("ln").onclick=async()=>{if(!(await sairOk()))return;$("rl").value=(parseInt($("rl").value,10)||0)+1;await carregaAula(false);if(!(await autoContinua()))await autoProxima()};$("lnew").onclick=async()=>{if(!(await sairOk()))return;await carregaAula(true);if(!(await autoContinua())&&!(await autoProxima())){const h=await proximaHora();setHora(h)}};
 $("imp").onclick=()=>{if(!PV)return;if($("rs").value.trim()&&!confirm("Substituir o sumário atual pelo anterior?"))return;$("rs").value=PV.sumario||"";$("ro").value=PV.obs||""};
 $("gdel").onclick=async()=>{
@@ -938,7 +940,7 @@ async function guardaAula(recarrega){
     for(const [id,rw] of RU){const r=await db.from("rubrica_obs").update(rw).eq("id",id);if(r.error)throw r.error}
     const r=await db.from("rubrica_obs").update({data:d}).eq("bloco_id",b).eq("licao",l);if(r.error)throw r.error;
   }catch(e){say("rmsg","Erro ao guardar: "+e.message+" (já executaste o fase4.sql, o fase7.sql e o fase8.sql?)","err");return}
-  say("rmsg","Aula guardada."+(sem?" "+sem+" observação(ões) sem marca não foram guardadas.":""),"ok");REG0=estadoReg();if(recarrega!==false)carregaAula(false);visao();return true;
+  say("rmsg","Aula guardada."+(sem?" "+sem+" observação(ões) sem marca não foram guardadas.":""),"ok");marcaReg();if(recarrega!==false)carregaAula(false);visao();return true;
 }
 
 /* ---- pautas ---- */

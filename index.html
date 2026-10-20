@@ -210,7 +210,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
  <h2 style="margin-top:12px">Registos de avaliação (editáveis)</h2><div class="tw"><table><thead><tr><th>Lição</th><th>Data</th><th>Aluno</th><th>Tarefa</th><th class="k">Con.</th><th class="k">Cap.</th><th class="k">Ati.</th><th class="k">Nota</th><th></th></tr></thead><tbody id="ub2"></tbody></table></div>
 </div></div>
 <div id="t-pau" class="hide"><div class="card">
- <div class="ch noprint"><h2>Pautas</h2><span class="mut"><b>D1</b> (30%, até 60 pts) = média das tarefas (/20) com as 3 rubricas (Con., Cap. e Ati.) × 3, ponderada pelos pesos; podes ajustá-lo. <b>D2</b> (70%, até 140 pts) = análise tua, que não é calculada: a coluna <b>Ref. D2</b> mostra a média das atitudes como referência (clica para a usar e depois ajusta). A soma e a classificação só aparecem com D1 e D2 preenchidos; Classificação = (D1 + D2) ÷ 10, e fica a amarelo se a alterares à mão. As 3 colunas Part./Coop./Resp. são só apoio (não entram no cálculo).</span></div>
+ <div class="ch noprint"><h2>Pautas</h2><span class="mut"><b>D1</b> (70%, até 140 pts) = média das tarefas (/20) com as 3 rubricas (Con., Cap. e Ati.) × 7, ponderada pelos pesos; podes ajustá-lo. <b>D2</b> (30%, até 60 pts) = análise tua, que não é calculada: a coluna <b>Ref. D2</b> mostra a média das atitudes (/20) × 3 como referência (clica para a usar e depois ajusta). A soma e a classificação só aparecem com D1 e D2 preenchidos; Classificação = (D1 + D2) ÷ 10, e fica a amarelo se a alterares à mão. As 3 colunas Part./Coop./Resp. são só apoio (não entram no cálculo).</span></div>
  <div class="row noprint"><select id="qt" aria-label="Turma"></select><select id="qb" aria-label="UFCD" style="max-width:300px"></select><label for="qd" style="margin:0">Data</label><input id="qd" type="date"><button id="qr" class="sec" data-i="refresh">Atualizar</button><button id="qc" class="sec" data-i="copy" title="Preenche o D2 dos alunos que ainda não têm, com a referência (depois ajustas)">D2 ← referência (vazios)</button><button id="qp" class="go" data-i="print">Imprimir pauta</button></div>
  <div class="noprint"><div id="qm" class="msg"></div><div id="qw" class="pesoaviso errp hide"></div></div>
  <div id="pauta">
@@ -218,7 +218,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
   <div class="pl"><b>Disciplina:</b> <input id="qs" aria-label="Disciplina"></div>
   <div class="pl"><b>Ano:</b> <span id="qa1"></span> &nbsp;&nbsp;&nbsp; <b>Turma:</b> <span id="qa2"></span></div>
   <table id="qtab"><thead>
-   <tr><th rowspan="2" style="width:30px">Nº</th><th rowspan="2">Nome</th><th rowspan="2" class="noprint" title="Participar sempre nas atividades (dentro e fora da sala de aula) cumprindo integralmente as suas responsabilidades (D; E; F; H; J)">Part.</th><th rowspan="2" class="noprint" title="Propor e/ou cooperar em atividades e projetos (C; D; E; F)">Coop.</th><th rowspan="2" class="noprint" title="Respeitar sempre os outros e zelar pelo material escolar (E; G)">Resp.</th><th rowspan="2" class="noprint" title="Referência: média das atitudes dos trabalhos, em pontos de D2 (0–140). Clica numa célula para usar o valor no D2.">Ref. D2</th><th colspan="4" id="qu"></th></tr>
+   <tr><th rowspan="2" style="width:30px">Nº</th><th rowspan="2">Nome</th><th rowspan="2" class="noprint" title="Participar sempre nas atividades (dentro e fora da sala de aula) cumprindo integralmente as suas responsabilidades (D; E; F; H; J)">Part.</th><th rowspan="2" class="noprint" title="Propor e/ou cooperar em atividades e projetos (C; D; E; F)">Coop.</th><th rowspan="2" class="noprint" title="Respeitar sempre os outros e zelar pelo material escolar (E; G)">Resp.</th><th rowspan="2" class="noprint" title="Referência: média das atitudes dos trabalhos, em pontos de D2 (0–60). Clica numa célula para usar o valor no D2.">Ref. D2</th><th colspan="4" id="qu"></th></tr>
    <tr><th>D1 *</th><th>D2 *</th><th colspan="2">Classificação</th></tr></thead><tbody id="qg"></tbody></table>
   <div class="pf"><span>Ass: ________________________</span><span id="qh"></span></div>
   <div class="pn"><i>D1*- Conhecimentos e capacidades</i><br><i>D2*- Atitudes e Valores</i></div>
@@ -804,13 +804,13 @@ function fillQ(){
   const st=$("qt"),v=st.value;st.replaceChildren();turmas.forEach(t=>st.add(new Option(t.nome||t.codigo,t.id)));if(v)st.value=v;
   const sb=$("qb"),w=sb.value;sb.replaceChildren();BL.filter(b=>b.turmas.id===st.value).sort((x,y)=>x.codigo.localeCompare(y.codigo)).forEach(b=>sb.add(new Option(b.codigo+" – "+b.designacao,b.id)));if(w&&[...sb.options].some(o=>o.value===w))sb.value=w;
 }
-function autoD1(aid){   // D1 = média das tarefas (3 rubricas: Con., Cap., Ati.), ponderada pelos pesos, em pontos 0–60 (nota/20 × 3); se os pesos não somarem 20, regra de 3 sobre a soma
+function autoD1(aid){   // D1 = média das tarefas (3 rubricas: Con., Cap., Ati.), ponderada pelos pesos, em pontos 0–140 (nota/20 × 7); se os pesos não somarem 20, regra de 3 sobre a soma
   const S=Object.values(QPW).reduce((p,q)=>p+q,0);if(!(S>0))return null;let acc=0,n=0;
   for(const c in QPW){const v=QS.filter(x=>x.aluno_id===aid&&x.tarefa===c).map(notaR).filter(x=>x!==null);if(v.length){acc+=qmean(v)*QPW[c];n++}}
-  return n?Math.max(0,Math.min(60,Math.round(acc/S*3))):null;
+  return n?Math.max(0,Math.min(140,Math.round(acc/S*7))):null;
 }
-function refD2(aid){   // referência do D2: média de todas as atitudes (Ati.), em pontos (nota/20 × 7). NÃO é calculada como valor final.
-  const a=QS.filter(x=>x.aluno_id===aid&&x.atitudes>0).map(x=>x.atitudes);return a.length?{pts:Math.round(qmean(a)*28),nota:qmean(a)*4}:null;
+function refD2(aid){   // referência do D2: média de todas as atitudes (Ati.), em pontos 0–60 (nota/20 × 3; nível 5 = 60). NÃO é calculada como valor final.
+  const a=QS.filter(x=>x.aluno_id===aid&&x.atitudes>0).map(x=>x.atitudes);return a.length?{pts:Math.round(qmean(a)*12),nota:qmean(a)*4}:null;
 }
 async function carregaPauta(){
   const b=$("qb").value;if(!b){QS=[];QPW={};QP={};renderPauta();return}
@@ -828,7 +828,7 @@ function renderPauta(){
   $("qu").textContent="UFCD: "+b.codigo+"  "+b.designacao;$("qh").textContent=fmtd($("qd").value);
   const S=Object.values(QPW).reduce((p,q)=>p+q,0),w=$("qw");
   if(!Object.keys(QPW).length){w.textContent="⚠ Ainda não definiste o peso das tarefas desta UFCD (separador Tarefas): o D1 não pode ser sugerido.";w.classList.remove("hide")}
-  else if(Math.abs(S-20)>0.001){w.textContent="⚠ Os pesos das tarefas somam "+r1(S)+" em 20: o D1 sugerido foi convertido por regra de 3 para 0–60 pontos (confirma os pesos no separador Tarefas).";w.classList.remove("hide")}else w.classList.add("hide");
+  else if(Math.abs(S-20)>0.001){w.textContent="⚠ Os pesos das tarefas somam "+r1(S)+" em 20: o D1 sugerido foi convertido por regra de 3 para 0–140 pontos (confirma os pesos no separador Tarefas).";w.classList.remove("hide")}else w.classList.add("hide");
   todos.filter(a=>a.turma_id===t.id&&a.ativo).sort((x,y)=>x.numero-y.numero).forEach(a=>{
     const p=QP[a.id]||(QP[a.id]={c:[null,null,null],d1:null,d2:null,cl:null}),tr=tb.insertRow();tr.insertCell().textContent=a.numero+".";tr.insertCell().textContent=a.nome;
     const sels=[0,1,2].map(k=>{const c=tr.insertCell();c.className="crit noprint";const s=document.createElement("select");s.setAttribute("aria-label","Critério "+(k+1)+" – "+a.nome);s.append(new Option("",""));[1,2,3,4,5].forEach(n=>s.add(new Option(n,n)));s.value=p.c[k]||"";c.append(s);return s});
@@ -843,7 +843,7 @@ function renderPauta(){
       const x=await db.from("pautas").upsert({bloco_id:b.id,aluno_id:a.id,crit1:p.c[0],crit2:p.c[1],crit3:p.c[2],d1:p.d1,d2:p.d2,classificacao:p.cl},{onConflict:"bloco_id,aluno_id"});say("qm",x.error?"Erro: "+x.error.message:"","err")};
     const num=(i,mx)=>{const v=i.value.trim();if(v===""||isNaN(+v))return null;return Math.max(0,Math.min(mx,Math.round(+v)))};
     sels.forEach((s,k)=>s.onchange=()=>{p.c[k]=s.value?+s.value:null;fill();save()});
-    i1.onchange=()=>{p.d1=num(i1,60);fill();save()};i2.onchange=()=>{p.d2=num(i2,140);fill();save()};ic.onchange=()=>{p.cl=num(ic,20);fill();save()};fill();
+    i1.onchange=()=>{p.d1=num(i1,140);fill();save()};i2.onchange=()=>{p.d2=num(i2,60);fill();save()};ic.onchange=()=>{p.cl=num(ic,20);fill();save()};fill();
   });
 }
 $("qd").value=hoje();$("qd").onchange=()=>{$("qh").textContent=fmtd($("qd").value)};$("qt").onchange=()=>{fillQ();carregaPauta()};$("qb").onchange=carregaPauta;$("qr").onclick=carregaPauta;$("qp").onclick=()=>window.print();

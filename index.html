@@ -286,7 +286,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
  <div class="row"><select id="hd" aria-label="Dia"></select><select id="hi" aria-label="Início"></select><select id="hf" aria-label="Fim"></select><select id="ht" aria-label="Turma"></select><select id="hs" aria-label="Disciplina"></select><input id="hsa" placeholder="Sala" style="width:80px"><input id="hx" placeholder="Descrição (se não for aula)" style="width:200px"><button id="hg" class="go" data-i="save">Adicionar</button><button id="hc" class="sec hide" data-i="x">Cancelar</button><button id="hdl" class="dg hide" data-i="trash">Eliminar aula</button></div>
 </div></div>
 <div id="t-rec" class="hide"><div class="card">
- <div class="ch noprint"><h2>Recuperação de faltas</h2><span class="mut">Plano de trabalho (Portaria 235-A/2018). Contam as faltas <b>FI</b> e <b>FJ</b>, em tempos de 50 min (pelo horário: uma aula de 100 min = 2 faltas). Limite = 10% das aulas da UFCD (25 h = 30 aulas → 3; 50 h = 60 aulas → 6). Nº de linhas da tabela = faltas − limite. Clica em qualquer texto do documento para o alterar (fica guardado).</span></div>
+ <div class="ch noprint"><h2>Recuperação de faltas</h2><span class="mut">Plano de trabalho (Portaria 235-A/2018). Contam as faltas <b>FI</b> e <b>FJ</b>; cada lição (tempo de 50 min) conta 1 falta. Limite = 10% das aulas da UFCD (25 h = 30 aulas → 3; 50 h = 60 aulas → 6). Nº de linhas da tabela = faltas − limite. Clica em qualquer texto do documento para o alterar (fica guardado).</span></div>
  <div class="row noprint"><select id="xt" aria-label="Turma"></select><select id="xb" aria-label="UFCD" style="max-width:300px"></select><select id="xa" aria-label="Aluno" style="max-width:320px"></select><button id="xs" class="go" data-i="save">Guardar</button><button id="xr" class="sec" data-i="refresh" title="Volta aos valores calculados">Repor</button><button id="xp" class="go" data-i="print">Imprimir / PDF</button></div>
  <div class="noprint"><div id="xi" class="mut" style="font-size:12.5px;margin-top:4px"></div><div id="xm" class="msg"></div></div>
  <div id="recdoc" class="hide">
@@ -589,7 +589,7 @@ async function escolheAula(h){
   let best=c[0];const r=await db.from("sumarios").select("bloco_id,data").in("bloco_id",c.map(b=>b.id)).order("data",{ascending:false}).limit(1);
   if(r.data&&r.data.length)best=c.find(b=>b.id===r.data[0].bloco_id)||best;
   $("rt").value=t.id;fillBloco(true);$("rb").value=best.id;setHora(h.i);await carregaAula(true);
-  const m=SA.find(x=>x.data===$("rd").value&&(x.hora||"").slice(0,5)===h.i);if(m){$("rl").value=m.licao;await carregaAula(false)}
+  const m=SA.find(x=>x.data===$("rd").value&&(x.hora||"").slice(0,5)===h.i);if(m){$("rl").value=m.licao;await carregaAula(false)}else{setHora(h.i);await autoContinua(true)}
 }
 async function carregaAula(novo){
   const b=$("rb").value,gb=$("gb");if(!b){gb.replaceChildren();$("sant").textContent="";return}
@@ -731,6 +731,20 @@ $("gtg").onclick=()=>{const h=$("grps").classList.toggle("hide"),b=$("gtg");b.re
 $("gadd").onclick=()=>{GR.push({n:"G"+(GR.length+1),a:[]});desenhaGrupos()};
 function aplicaTarefas(rr){document.querySelectorAll("#gb tr").forEach(tr=>{const e=(rr||[]).find(x=>x.aluno_id===tr.dataset.a),[t,n]=splitTar(e?e.tarefa:"");const sl=tr.querySelector("select.tp");if(t&&![...sl.options].some(o=>o.value===t))sl.add(new Option(t,t));sl.value=t;tr.querySelector("input.tnum").value=n})}
 function aplicaMarcas(f,c,rr,semFP){document.querySelectorAll("#gb tr").forEach(tr=>{let ob="";tr.querySelectorAll("input[type=checkbox]").forEach(cb=>{if(semFP&&cb.dataset.t==="FP"){cb.checked=false;return}const L=cb.dataset.k==="f"?f:c,h=L.find(x=>x.aluno_id===cb.dataset.a&&x.tipo===cb.dataset.t);cb.checked=!!h;if(h&&h.obs&&!ob)ob=h.obs});tr.querySelector(".ob").value=ob;const e=(rr||[]).find(x=>x.aluno_id===tr.dataset.a);tr.querySelectorAll("td.ev select").forEach(sl=>sl.value=e&&e[sl.dataset.r]?e[sl.dataset.r]:"");nota(tr);marca(tr)});aplicaTarefas(rr)}
+async function copiaDe(s){   // copia uma aula do mesmo dia: sumário, observações, grupos, tópicos, marcas e avaliações, exceto a falta de pontualidade
+  $("rs").value=s.sumario||"";$("ro").value=s.obs||"";TOP=new Set(s.topicos||[]);renderCT();const ok=new Set(alunosT().map(a=>a.id));GR=(s.grupos||[]).map(g=>({n:g.n,a:g.a.filter(id=>ok.has(id))}));desenhaGrupos();
+  const q=t=>db.from(t).select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao);
+  const [f,c,rb]=await Promise.all([q("faltas"),q("comportamento"),db.from("rubrica_obs").select("aluno_id,tarefa,conhecimentos,capacidades,atitudes").eq("bloco_id",s.bloco_id).eq("licao",s.licao)]);
+  aplicaMarcas(f.data||[],c.data||[],rb.data||[],true);resumoSum()}
+async function autoContinua(manterHora){   // aula nova: se a turma já teve aula neste dia, continua a partir da mais recente e põe o tempo seguinte ainda por dar
+  const d=$("rd").value,b=$("rb").value,l=parseInt($("rl").value,10);if(!d||!b||!l||SA.find(x=>x.licao===l))return false;
+  const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,data,hora,sumario,obs,grupos,topicos").eq("data",d).in("bloco_id",ids);
+  const L=(r.data||[]).filter(x=>!(x.bloco_id===b&&x.licao===l)).sort((x,y)=>(y.hora||"").localeCompare(x.hora||"")||y.licao-x.licao);if(!L.length)return false;
+  const feitos=new Set(L.map(x=>(x.hora||"").slice(0,5)).filter(Boolean)),wd=new Date(d+"T12:00:00").getDay(),tc=(turmas.find(x=>x.id===$("rt").value)||{}).codigo;
+  const slots=horarioEm(d).filter(h=>h.d===wd&&h.t===tc).flatMap(h=>TT.filter(t=>t[0]>=h.i&&t[1]<=h.f)).sort((x,y)=>x[0].localeCompare(y[0])),ult=[...feitos].sort().pop()||"";
+  const nx=manterHora?null:(slots.find(t=>t[0]>ult&&!feitos.has(t[0]))||slots.find(t=>!feitos.has(t[0]))||TT.find(t=>t[0]>ult));
+  const s=L[0],bl=BL.find(x=>x.id===s.bloco_id)||{};await copiaDe(s);if(nx)setHora(nx[0]);
+  say("rmsg","Continuação da aula das "+(s.hora||"").slice(0,5)+(bl.id!==b?" ("+bl.codigo+")":"")+": copiei tudo, exceto a falta de pontualidade"+(nx?"; hora "+nx[0]+" – "+nx[1]:(manterHora?"":"; não há mais tempos livres neste dia no horário"))+". Confirma e clica em Guardar aula.","ok");return true}
 $("cpd").onclick=async()=>{
   const d=$("rd").value,b=$("rb").value,l=parseInt($("rl").value,10),hh=$("rh").value;if(!d||!b){say("rmsg","Escolhe a UFCD e a data.","err");return}
   const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,data,hora,sumario,obs,grupos,topicos").eq("data",d).in("bloco_id",ids);
@@ -739,10 +753,7 @@ $("cpd").onclick=async()=>{
   if(L.length){   // mesmo dia: copia tudo, exceto a falta de pontualidade
     const s=L[0],bl=BL.find(x=>x.id===s.bloco_id),h1=(s.hora||"").slice(0,5)||"?";
     if(!confirm("Copiar da aula das "+h1+" ("+bl.codigo+") – mesmo dia?\n\nCopia sumário, observações, grupos, tarefas, marcas e avaliações, EXCETO a falta de pontualidade. Substitui o que está no ecrã (só grava ao clicar em Guardar aula)."))return;
-    $("rs").value=s.sumario||"";$("ro").value=s.obs||"";TOP=new Set(s.topicos||[]);renderCT();const ok=new Set(alunosT().map(a=>a.id));GR=(s.grupos||[]).map(g=>({n:g.n,a:g.a.filter(id=>ok.has(id))}));desenhaGrupos();
-    const q=t=>db.from(t).select("aluno_id,tipo,obs").eq("bloco_id",s.bloco_id).eq("licao",s.licao);
-    const [f,c,rb]=await Promise.all([q("faltas"),q("comportamento"),db.from("rubrica_obs").select("aluno_id,tarefa,conhecimentos,capacidades,atitudes").eq("bloco_id",s.bloco_id).eq("licao",s.licao)]);
-    aplicaMarcas(f.data||[],c.data||[],rb.data||[],true);let extra="";
+    await copiaDe(s);let extra="";
     if(!SA.find(x=>x.licao===l)){const mx=SA.length?Math.max(...SA.map(x=>x.licao||0)):0;$("rl").value=mx+1;
       const hs=(r.data||[]).filter(x=>!(x.bloco_id===b&&x.licao===l)&&x.hora).map(x=>x.hora.slice(0,5)).sort(),nx=hs.length?TT.find(t=>t[0]>hs[hs.length-1]):null;
       if(nx)setHora(nx[0]);extra=" Assumi a lição "+(mx+1)+(nx?" e a hora "+nx[0]+" – "+nx[1]:"")+" (podes alterar).";}
@@ -758,7 +769,8 @@ const hr=h=>{h=(h||"").slice(0,5);const t=TT.find(x=>x[0]===h);return t?t[0]+" �
 async function proximaHora(){
   const d=$("rd").value,b=$("rb").value,l=parseInt($("rl").value,10);if(!d)return"";
   const ids=BL.filter(x=>x.turmas.id===$("rt").value).map(x=>x.id),r=await db.from("sumarios").select("bloco_id,licao,hora").eq("data",d).in("bloco_id",ids);
-  const hs=(r.data||[]).filter(x=>x.hora&&!(x.bloco_id===b&&x.licao===l)).map(x=>x.hora.slice(0,5)).sort();if(!hs.length)return"";
+  const hs=(r.data||[]).filter(x=>x.hora&&!(x.bloco_id===b&&x.licao===l)).map(x=>x.hora.slice(0,5)).sort();
+  if(!hs.length){const wd=new Date(d+"T12:00:00").getDay(),tc=(turmas.find(x=>x.id===$("rt").value)||{}).codigo,h=horarioEm(d).filter(x=>x.d===wd&&x.t===tc).sort((x,y)=>x.i.localeCompare(y.i))[0];return h?h.i:""}   // dia sem aulas registadas: primeiro tempo da turma nesse dia
   const n=TT.find(t=>t[0]>hs[hs.length-1]);return n?n[0]:"";
 }
 function setHora(v){const s=$("rh");if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v,v));s.value=v||""}
@@ -872,7 +884,7 @@ $("hics").onclick=()=>{
 };
 (()=>{const s=$("dns");s.add(new Option("— disciplina —",""));Object.entries(DNOME).forEach(([k,v])=>s.add(new Option(k+" – "+v,k)))})();
 $("rd").value=hoje();chips();$("rd").onchange=chips;$("rt").onchange=()=>fillBloco();$("rb").onchange=()=>carregaAula(true);$("rl").onchange=()=>carregaAula(false);
-$("lp").onclick=()=>{$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);carregaAula(false)};$("ln").onclick=()=>{$("rl").value=(parseInt($("rl").value,10)||0)+1;carregaAula(false)};$("lnew").onclick=async()=>{await carregaAula(true);const h=await proximaHora();if(h)setHora(h)};
+$("lp").onclick=()=>{$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);carregaAula(false)};$("ln").onclick=async()=>{$("rl").value=(parseInt($("rl").value,10)||0)+1;await carregaAula(false);await autoContinua()};$("lnew").onclick=async()=>{await carregaAula(true);if(!(await autoContinua())){const h=await proximaHora();setHora(h)}};
 $("imp").onclick=()=>{if(!PV)return;if($("rs").value.trim()&&!confirm("Substituir o sumário atual pelo anterior?"))return;$("rs").value=PV.sumario||"";$("ro").value=PV.obs||""};
 $("gdel").onclick=async()=>{
   const b=$("rb").value,l=parseInt($("rl").value,10),cur=SA.find(x=>x.licao===l);if(!cur||!confirm("Apagar a lição "+l+" (sumário, grupos, faltas, comportamento e avaliações desta aula)?"))return;
@@ -965,10 +977,7 @@ $("qc").onclick=async()=>{const t=$("qt").value,b=$("qb").value;if(!b||!QOK){say
 /* ---- recuperação de faltas (Portaria 235-A/2018) ---- */
 const REC_AVISO=6,FCONTA=["FI","FJ"];   // aviso nas últimas 6 aulas; contam faltas injustificadas e justificadas
 const totAulas=b=>b.tempos_tot||Math.round((b.horas||0)*60/50)||0,limFaltas=b=>Math.round(totAulas(b)*0.1),pad2=n=>String(n).padStart(2,"0");
-function temposDe(b,data,hora){   // nº de tempos de 50 min da aula, pelo horário em vigor nesse dia (100 min = 2; 14:30–17:10 = 3)
-  if(!data)return 1;const d=new Date(data+"T12:00:00").getDay(),hs=horarioEm(data).filter(h=>h.d===d&&h.t===b.turmas.codigo&&(!b.disciplina||!h.disc||h.disc===b.disciplina));
-  const h=(hora&&hs.find(x=>x.i===hora.slice(0,5)))||(hs.length===1?hs[0]:null);if(!h)return 1;
-  const m=(+h.f.slice(0,2)*60+ +h.f.slice(3))-(+h.i.slice(0,2)*60+ +h.i.slice(3));return Math.max(1,Math.floor(m/50))}
+const temposDe=()=>1;   // cada lição registada é um tempo de 50 min (uma hora do horário): conta 1 aula / 1 falta
 async function dadosRec(ids){   // por UFCD: aulas dadas, total, limite e faltas (em tempos) de cada aluno
   if(!ids.length)return [];
   const [s,f,r]=await Promise.all([db.from("sumarios").select("bloco_id,licao,data,hora,sumario").in("bloco_id",ids),db.from("faltas").select("aluno_id,bloco_id,licao,data,tipo").in("bloco_id",ids).in("tipo",FCONTA),db.from("rubrica_obs").select("bloco_id,licao,tarefa").in("bloco_id",ids).not("tarefa","is",null)]);

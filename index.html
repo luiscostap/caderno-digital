@@ -188,7 +188,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
  <div class="card"><div class="ch" style="margin-bottom:4px"><h2>Sumários</h2><span id="sumsum" class="mut"></span><button id="sumt" class="sec mini" data-i="up">Encolher</button></div>
   <div id="sumb">
    <div><div class="ch" style="margin-bottom:3px"><b style="font-size:13px">Sumário anterior</b><span class="sp"></span><button id="imp" class="sec mini" data-i="copy">Usar</button></div><div id="sanh" class="mut" style="font-size:11.5px;white-space:nowrap;margin-bottom:3px"></div><div id="sant" class="prevt"></div></div>
-   <div><label for="rs" style="margin-top:0">Sumário desta aula</label><textarea id="rs" rows="2"></textarea><label for="ro" style="margin-top:4px">Observações da aula</label><textarea id="ro" rows="1"></textarea></div>
+   <div><div class="ch" style="margin-bottom:3px"><label for="rs" style="margin:0">Sumário desta aula</label><span class="sp"></span><button id="rsadd" type="button" class="sec mini" data-i="plus" title="Acrescenta um tópico novo (- ) numa linha nova">Tópico</button><button id="rsin" type="button" class="sec mini" data-i="right" title="Avança o tópico onde está o cursor (ou os selecionados)">Avançar</button><button id="rsout" type="button" class="sec mini" data-i="left" title="Recua o tópico onde está o cursor (ou os selecionados)">Recuar</button></div><textarea id="rs" rows="2"></textarea><label for="ro" style="margin-top:4px">Observações da aula</label><textarea id="ro" rows="1"></textarea></div>
   </div></div>
  <div class="card" id="ctcard"><div class="ch" style="margin:0 0 4px"><h2>Conteúdos da UFCD</h2><span id="ctp" class="mut"></span><button id="cts" class="sec mini" data-i="plus">Sugerir próximo</button><button id="cte" class="sec mini" data-i="edit">Editar</button><button id="ctt" class="sec mini" data-i="up">Encolher</button></div><div id="ctb"></div></div>
  <div class="card gcard"><div class="ch" style="margin:0"><h2>Grupos</h2><button id="gadd" class="sec mini" data-i="plus">Grupo</button><span class="mut" id="gmut"></span><button id="gtg" class="sec mini" data-i="up">Encolher</button></div><div id="grps"></div></div>
@@ -521,6 +521,14 @@ function togTop(c){const t=$("rs"),line="• "+c.texto;
   if(TOP.has(c.id)){TOP.delete(c.id);t.value=t.value.split("\n").filter(l=>l.trim()!==line).join("\n")}
   else{TOP.add(c.id);if(!t.value.split("\n").some(l=>l.trim()===line))t.value=(t.value&&!t.value.endsWith("\n")?t.value+"\n":t.value)+line}
   renderCT();resumoSum()}
+// Sumário: limpa tópicos vazios ("-" sozinho) e marcas repetidas ("- - texto")
+const limpaSum=s=>s.split("\n").map(l=>l.replace(/^(\s*)[-–•](\s+[-–•])+\s+/,"$1- ").replace(/\s+$/,"")).filter(l=>!/^\s*[-–•]?\s*$/.test(l)).join("\n");
+// Sumário: botões Tópico / Avançar / Recuar
+function rsLinhas(f){const t=$("rs"),v=t.value,a=v.lastIndexOf("\n",t.selectionStart-1)+1,e0=v.indexOf("\n",Math.max(t.selectionEnd-(t.selectionEnd>t.selectionStart?1:0),a)),e=e0<0?v.length:e0;
+  const novo=v.slice(a,e).split("\n").map(f).join("\n");t.value=v.slice(0,a)+novo+v.slice(e);t.focus();t.setSelectionRange(a,a+novo.length);resumoSum()}
+$("rsadd").onclick=()=>{const t=$("rs"),v=t.value.replace(/\s+$/,""),ind=((v.split("\n").pop()||"").match(/^\s*/)||[""])[0];t.value=(v?v+"\n":"")+ind+"- ";t.focus();t.setSelectionRange(t.value.length,t.value.length);resumoSum()};
+$("rsin").onclick=()=>rsLinhas(l=>"   "+l);
+$("rsout").onclick=()=>rsLinhas(l=>l.replace(/^ {1,3}|^\t/,""));
 function renderCT(){
   const box=$("ctb"),n=CT.length,done=CT.filter(c=>COV.has(c.id)||TOP.has(c.id)).length;box.replaceChildren();box.classList.toggle("ed",CTED);
   $("ctp").textContent=n?done+" / "+n+" lecionados":"";
@@ -773,7 +781,7 @@ $("gdel").onclick=async()=>{
 };
 $("gr").onclick=async()=>{
   const b=$("rb").value,d=$("rd").value,l=parseInt($("rl").value,10);if(!b||!d||!l){say("rmsg","Escolhe a UFCD, a lição e a data.","err");return}
-  say("rmsg","A guardar…");const txt=$("rs").value.trim(),cur=SA.find(x=>x.licao===l),gr=GR.filter(g=>g.a.length);
+  say("rmsg","A guardar…");$("rs").value=limpaSum($("rs").value);const txt=$("rs").value.trim(),cur=SA.find(x=>x.licao===l),gr=GR.filter(g=>g.a.length);
   if(txt||cur||gr.length||TOP.size){const row={bloco_id:b,licao:l,data:d,hora:$("rh").value||null,sumario:txt,obs:$("ro").value.trim()||null,grupos:gr,topicos:[...TOP]};
     const r=cur?await db.from("sumarios").update(row).eq("id",cur.id):await db.from("sumarios").insert(row);if(r.error){say("rmsg","Erro no sumário: "+r.error.message,"err");return}}
   const ins={f:[],c:[]},del={f:[],c:[]},up=[],RI=[],RD=[],RU=[];let sem=0;

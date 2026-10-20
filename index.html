@@ -130,6 +130,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
 .cal{max-width:none!important;width:100%;gap:4px}.cal .d{aspect-ratio:auto;min-height:76px;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:4px 7px;font-size:13px}
 .cal .dn{align-self:flex-end;font-weight:700}.cal .dl{font-size:10.5px;line-height:1.15;margin-top:2px;font-weight:600;overflow:hidden}.cal b{font-size:12px;padding:2px 0}
 .d.Municipal,.dpd.Municipal{background:#d9955f;color:#2e1a08}
+.cal .d.hj{outline:2px solid var(--acc);outline-offset:-2px}.cal .d.hj .dn{background:var(--acc);color:#fff;border-radius:99px;padding:0 6px}
 </style>
 </head>
 <body>
@@ -198,7 +199,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
 </div>
 <div id="pop" class="hide"></div><div id="dpop" class="hide"></div>
 <div id="t-tar" class="hide"><div class="card">
- <div class="ch"><h2>Tarefas e avaliações</h2><span class="mut">A nota de uma tarefa é a média de todas as avaliações feitas a essa tarefa, em qualquer lição (nota = média dos níveis × 4).</span></div>
+ <div class="ch"><h2>Tarefas e avaliações</h2><span class="mut">A nota de uma tarefa é a média de todas as avaliações feitas a essa tarefa, em qualquer lição (nota = média dos 3 níveis × 4). A nota final da UFCD é o D1 da pauta; a média das atitudes é só referência para o D2.</span></div>
  <div class="row"><select id="ut" aria-label="Turma"></select><select id="ub" aria-label="UFCD" style="max-width:300px"></select><select id="ua" aria-label="Aluno"></select><button id="ur" class="sec" data-i="refresh">Atualizar</button><button id="un" class="sec" data-i="edit">Renomear tarefa…</button></div>
  <div id="umsg" class="msg"></div>
  <div id="upes" class="pesoaviso"></div>
@@ -209,15 +210,15 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
  <h2 style="margin-top:12px">Registos de avaliação (editáveis)</h2><div class="tw"><table><thead><tr><th>Lição</th><th>Data</th><th>Aluno</th><th>Tarefa</th><th class="k">Con.</th><th class="k">Cap.</th><th class="k">Ati.</th><th class="k">Nota</th><th></th></tr></thead><tbody id="ub2"></tbody></table></div>
 </div></div>
 <div id="t-pau" class="hide"><div class="card">
- <div class="ch noprint"><h2>Pautas</h2><span class="mut">D1 (30%, até 60 pts) = Conhecimentos e capacidades, calculado a partir das tarefas (Con. e Cap.). D2 (70%, até 140 pts) = Atitudes e Valores, avaliado nos 3 critérios (a sugestão vem das atitudes dos trabalhos). Classificação = (D1 + D2) ÷ 10. Qualquer valor pode ser alterado à mão; a classificação alterada fica a amarelo.</span></div>
- <div class="row noprint"><select id="qt" aria-label="Turma"></select><select id="qb" aria-label="UFCD" style="max-width:300px"></select><label for="qd" style="margin:0">Data</label><input id="qd" type="date"><button id="qr" class="sec" data-i="refresh">Atualizar</button><button id="qp" class="go" data-i="print">Imprimir pauta</button></div>
+ <div class="ch noprint"><h2>Pautas</h2><span class="mut"><b>D1</b> (30%, até 60 pts) = média das tarefas (/20) com as 3 rubricas (Con., Cap. e Ati.) × 3, ponderada pelos pesos; podes ajustá-lo. <b>D2</b> (70%, até 140 pts) = análise tua, que não é calculada: a coluna <b>Ref. D2</b> mostra a média das atitudes como referência (clica para a usar e depois ajusta). A soma e a classificação só aparecem com D1 e D2 preenchidos; Classificação = (D1 + D2) ÷ 10, e fica a amarelo se a alterares à mão. As 3 colunas Part./Coop./Resp. são só apoio (não entram no cálculo).</span></div>
+ <div class="row noprint"><select id="qt" aria-label="Turma"></select><select id="qb" aria-label="UFCD" style="max-width:300px"></select><label for="qd" style="margin:0">Data</label><input id="qd" type="date"><button id="qr" class="sec" data-i="refresh">Atualizar</button><button id="qc" class="sec" data-i="copy" title="Preenche o D2 dos alunos que ainda não têm, com a referência (depois ajustas)">D2 ← referência (vazios)</button><button id="qp" class="go" data-i="print">Imprimir pauta</button></div>
  <div class="noprint"><div id="qm" class="msg"></div><div id="qw" class="pesoaviso errp hide"></div></div>
  <div id="pauta">
   <img id="qi" alt="Agrupamento de Escolas D. António Taipa – Escola Digital">
   <div class="pl"><b>Disciplina:</b> <input id="qs" aria-label="Disciplina"></div>
   <div class="pl"><b>Ano:</b> <span id="qa1"></span> &nbsp;&nbsp;&nbsp; <b>Turma:</b> <span id="qa2"></span></div>
   <table id="qtab"><thead>
-   <tr><th rowspan="2" style="width:30px">Nº</th><th rowspan="2">Nome</th><th rowspan="2" class="noprint" title="Participar sempre nas atividades (dentro e fora da sala de aula) cumprindo integralmente as suas responsabilidades (D; E; F; H; J)">Part.</th><th rowspan="2" class="noprint" title="Propor e/ou cooperar em atividades e projetos (C; D; E; F)">Coop.</th><th rowspan="2" class="noprint" title="Respeitar sempre os outros e zelar pelo material escolar (E; G)">Resp.</th><th colspan="4" id="qu"></th></tr>
+   <tr><th rowspan="2" style="width:30px">Nº</th><th rowspan="2">Nome</th><th rowspan="2" class="noprint" title="Participar sempre nas atividades (dentro e fora da sala de aula) cumprindo integralmente as suas responsabilidades (D; E; F; H; J)">Part.</th><th rowspan="2" class="noprint" title="Propor e/ou cooperar em atividades e projetos (C; D; E; F)">Coop.</th><th rowspan="2" class="noprint" title="Respeitar sempre os outros e zelar pelo material escolar (E; G)">Resp.</th><th rowspan="2" class="noprint" title="Referência: média das atitudes dos trabalhos, em pontos de D2 (0–140). Clica numa célula para usar o valor no D2.">Ref. D2</th><th colspan="4" id="qu"></th></tr>
    <tr><th>D1 *</th><th>D2 *</th><th colspan="2">Classificação</th></tr></thead><tbody id="qg"></tbody></table>
   <div class="pf"><span>Ass: ________________________</span><span id="qh"></span></div>
   <div class="pn"><i>D1*- Conhecimentos e capacidades</i><br><i>D2*- Atitudes e Valores</i></div>
@@ -225,9 +226,11 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
 </div></div>
 <div id="t-res" class="hide"><div class="card"><h2>Resumo por aluno</h2>
   <div class="row"><select id="st" aria-label="Turma"></select><select id="sd" aria-label="Disciplina"></select></div>
-  <div class="tw"><table><thead><tr><th>Nº</th><th>Nome</th><th>FI</th><th>FM</th><th>FP</th><th>FJ</th><th>Faltas</th><th>Comp. +</th><th>Comp. –</th></tr></thead><tbody id="tr"></tbody></table></div><div id="rsm" class="msg"></div></div></div>
+  <div class="tw"><table><thead><tr><th>Nº</th><th>Nome</th><th>FI</th><th>FM</th><th>FP</th><th>FJ</th><th>Faltas</th><th>Comp. +</th><th>Comp. –</th><th title="D1: média das notas das tarefas, com as 3 rubricas (Con., Cap. e Ati.), de 0 a 20; entre parênteses, o nº de tarefas avaliadas">D1 · Tarefas (/20)</th><th title="Referência para o D2: média de todas as atitudes (Ati.), de 0 a 20 (nível × 4); entre parênteses, o nº de avaliações">Atitudes (/20) · ref. D2</th></tr></thead><tbody id="tr"></tbody></table></div><p class="mut" style="margin:6px 0 0">As avaliações vêm do Registo de aula (editáveis em Tarefas). D1 · Tarefas = média das notas das tarefas, com as 3 rubricas (Con., Cap. e Ati.). Atitudes = média de todas as avaliações de Ati., que serve só de referência para o D2 (o D2 é uma análise tua, na Pauta). Valores de 0 a 20 (nível × 4); a vermelho abaixo de 9,5.</p><div id="rsm" class="msg"></div></div></div>
 <div id="t-disc" class="hide"><div class="card"><h2>Disciplinas / UFCD</h2>
-  <div class="tw"><table><thead><tr><th>Turma</th><th>Disciplina</th><th>Código</th><th>Designação</th><th>Horas</th><th>Dias</th></tr></thead><tbody id="tdisc"></tbody></table></div><div id="dmsg" class="msg"></div></div></div>
+  <details style="margin:8px 0"><summary>Adicionar disciplina / UFCD</summary>
+   <div class="row" style="margin-top:8px"><select id="dnt" aria-label="Turma"></select><input id="dnc" placeholder="Código (ex.: 6013)" style="width:130px"><input id="dnd" placeholder="Designação" style="width:260px"><select id="dns" aria-label="Disciplina"></select><input id="dnh" type="number" placeholder="Horas" style="width:70px"><input id="dnts" type="number" placeholder="Tempos/sem." style="width:100px"><input id="dntt" type="number" placeholder="Tempos totais" style="width:110px"><input id="dndi" placeholder="Dias (ex.: Segunda, Terça)" style="width:180px"><button id="dna" class="go" data-i="plus">Adicionar</button></div></details>
+  <div class="tw"><table><thead><tr><th>Turma</th><th>Disciplina</th><th>Código</th><th>Designação</th><th>Horas</th><th>Tempos/sem.</th><th>Tempos totais</th><th>Dias</th><th></th></tr></thead><tbody id="tdisc"></tbody></table></div><div id="dmsg" class="msg"></div></div></div>
 <div id="t-hor" class="hide"><div class="card">
  <div class="ch"><h2>Horário</h2><span class="mut">Para cada data vale o horário do período que a inclui. Os registos já feitos nunca mudam.</span></div>
  <div class="row"><label for="hp" style="margin:0">Período</label><select id="hp"></select><span class="sp"></span>
@@ -245,7 +248,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
  <div class="row"><select id="hd" aria-label="Dia"></select><select id="hi" aria-label="Início"></select><select id="hf" aria-label="Fim"></select><select id="ht" aria-label="Turma"></select><select id="hs" aria-label="Disciplina"></select><input id="hsa" placeholder="Sala" style="width:80px"><input id="hx" placeholder="Descrição (se não for aula)" style="width:200px"><button id="hg" class="go" data-i="save">Adicionar</button><button id="hc" class="sec hide" data-i="x">Cancelar</button><button id="hdl" class="dg hide" data-i="trash">Eliminar aula</button></div>
 </div></div>
 <div id="t-cal" class="hide"><div class="card"><h2>Calendário escolar</h2>
-  <div class="row"><button id="mp" class="sec sq" data-i="left" aria-label="Mês anterior"></button><b id="mt" style="min-width:150px;text-align:center"></b><button id="mn" class="sec sq" data-i="right" aria-label="Mês seguinte"></button><button data-i="download" id="ics" class="sec">Descarregar .ics</button></div>
+  <div class="row"><button id="mp" class="sec sq" data-i="left" aria-label="Mês anterior"></button><b id="mt" style="min-width:150px;text-align:center"></b><button id="mn" class="sec sq" data-i="right" aria-label="Mês seguinte"></button><button data-i="cal" id="mh" class="sec">Hoje</button><button data-i="download" id="ics" class="sec">Descarregar .ics</button></div>
   <div class="lg"><span><i style="background:#e6c79a"></i>Feriado nacional</span><span><i style="background:#d9955f"></i>Feriado municipal (Paços de Ferreira)</span><span><i style="background:#cfdcc4"></i>Interrupção</span><span><i style="background:#b7cde4"></i>Marco de período</span></div>
   <div class="cal" id="cg"></div><div id="cl" style="margin-top:12px"></div>
   <p><small>Subscrever no Outlook/Teams: <b id="subu"></b> (Outlook na web → Adicionar calendário → Subscrever da Web).</small></p></div>
@@ -376,16 +379,42 @@ $("subu").textContent=location.origin+location.pathname.replace(/[^/]*$/,"")+"ca
 let cal=[], mes=new Date(2026,8,1);
 const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const dnd=r=>r.disciplina_nome||r.disciplina||"";
+function linhaDisc(tr,r){tr.replaceChildren();[r.turmas.codigo,dnd(r),r.codigo,r.designacao,r.horas,r.tempos_sem,r.tempos_tot,r.dias].forEach(v=>tr.insertCell().textContent=v??"");
+  const c=tr.insertCell();c.style.whiteSpace="nowrap";c.append(mini("Editar",()=>editaDisc(tr,r)),mini("Eliminar",()=>apagaDisc(r)))}
+function editaDisc(tr,r){
+  tr.replaceChildren();tr.insertCell().textContent=r.turmas.codigo;
+  const sd=document.createElement("select");Object.entries(DNOME).forEach(([k,v])=>sd.add(new Option(k+" – "+v,k)));if(r.disciplina&&!(r.disciplina in DNOME))sd.add(new Option(r.disciplina,r.disciplina));sd.value=r.disciplina||"";
+  const mk=(v,t,w)=>{const i=document.createElement("input");i.value=v??"";if(t)i.type=t;i.style.width=w;return i};
+  const cod=mk(r.codigo,"","80px"),des=mk(r.designacao,"","240px"),h=mk(r.horas,"number","60px"),ts=mk(r.tempos_sem,"number","60px"),tt=mk(r.tempos_tot,"number","60px"),di=mk(r.dias,"","150px");
+  [sd,cod,des,h,ts,tt,di].forEach(x=>tr.insertCell().append(x));const c=tr.insertCell();c.style.whiteSpace="nowrap";
+  c.append(mini("Guardar",async()=>{const code=cod.value.trim(),n=des.value.trim();if(!code||!n){say("dmsg","Indica o código e a designação.","err");return}
+    const row={codigo:code,designacao:n,disciplina:sd.value||null,disciplina_nome:DNOME[sd.value]||sd.value||null,horas:h.value===""?null:+h.value,tempos_sem:ts.value===""?null:+ts.value,tempos_tot:tt.value===""?null:+tt.value,dias:di.value.trim()||null};
+    const x=await db.from("blocos").update(row).eq("id",r.id);x.error?say("dmsg",x.error.code==="23505"?"Já existe essa UFCD nesta turma.":"Erro: "+x.error.message,"err"):(say("dmsg","UFCD atualizada.","ok"),carregarDisc())}),mini("Cancelar",()=>linhaDisc(tr,r)));
+}
+async function apagaDisc(r){
+  if(!confirm("Eliminar a UFCD "+r.codigo+" – "+r.designacao+" ("+r.turmas.codigo+")?\n\nIsto apaga TODOS os sumários, faltas, comportamento, avaliações, pesos e pautas registados nesta UFCD, e não se pode desfazer."))return;
+  for(const t of ["faltas","comportamento","rubrica_obs"]){const x=await db.from(t).delete().eq("bloco_id",r.id);if(x.error){say("dmsg","Erro: "+x.error.message,"err");return}}
+  const x=await db.from("blocos").delete().eq("id",r.id);x.error?say("dmsg","Erro: "+x.error.message,"err"):(say("dmsg","UFCD eliminada.","ok"),carregarDisc());
+}
+function fillDnt(){const s=$("dnt"),v=s.value;s.replaceChildren();turmas.forEach(t=>s.add(new Option(t.nome||t.codigo,t.id)));if(v)s.value=v}
+$("dna").onclick=async()=>{
+  const t=$("dnt").value,code=$("dnc").value.trim(),n=$("dnd").value.trim(),d=$("dns").value,num=i=>$(i).value===""?null:+$(i).value;
+  if(!t||!code||!n){say("dmsg","Escolhe a turma e indica o código e a designação.","err");return}
+  const x=await db.from("blocos").insert({turma_id:t,codigo:code,designacao:n,disciplina:d||null,disciplina_nome:DNOME[d]||null,horas:num("dnh"),tempos_sem:num("dnts"),tempos_tot:num("dntt"),dias:$("dndi").value.trim()||null});
+  if(x.error){say("dmsg",x.error.code==="23505"?"Essa UFCD já existe nesta turma.":"Erro: "+x.error.message,"err");return}
+  ["dnc","dnd","dnh","dnts","dntt","dndi"].forEach(i=>$(i).value="");$("dns").value="";say("dmsg","UFCD acrescentada. Os conteúdos podem ser acrescentados no Registo de aula (cartão Conteúdos, botão Editar).","ok");carregarDisc();
+};
 async function carregarDisc(){
-  const b=await db.from("blocos").select("id,codigo,designacao,horas,dias,disciplina,disciplina_nome,turmas(id,codigo)"); const tb=$("tdisc"); tb.replaceChildren();
-  if(b.error||!b.data.length){say("dmsg","Ainda não há disciplinas. Executa o seed.sql (e o fase3.sql) no Supabase.","err");return}
-  say("dmsg",""); BL=b.data; const dn=r=>r.disciplina_nome||r.disciplina||"";
-  [...BL].sort((x,y)=>(x.turmas.codigo+dn(x)+x.codigo).localeCompare(y.turmas.codigo+dn(y)+y.codigo)).forEach(r=>{const tr=tb.insertRow();[r.turmas.codigo,dn(r),r.codigo,r.designacao,r.horas,r.dias].forEach(v=>tr.insertCell().textContent=v??"")});
-  fillReg(); fillRes(); visao();
+  const b=await db.from("blocos").select("id,codigo,designacao,horas,tempos_sem,tempos_tot,dias,disciplina,disciplina_nome,turmas(id,codigo)");const tb=$("tdisc");tb.replaceChildren();
+  if(b.error){say("dmsg","Erro: "+b.error.message,"err");return}
+  BL=b.data;if(!BL.length)say("dmsg","Ainda não há disciplinas. Usa 'Adicionar disciplina / UFCD' (ou executa o seed.sql).","err");
+  [...BL].sort((x,y)=>(x.turmas.codigo+dnd(x)+x.codigo).localeCompare(y.turmas.codigo+dnd(y)+y.codigo)).forEach(r=>linhaDisc(tb.insertRow(),r));
+  fillReg();fillRes();visao();
 }
 const FER_MUN=[["2026-11-06","Feriado municipal – Paços de Ferreira (elevação a concelho, 1836)"]];
 async function carregarCal(){
-  const c=await db.from("calendario").select("inicio,fim,tipo,descricao").order("inicio"); cal=c.data||[];for(const f of FER_MUN)if(!cal.some(e=>e.tipo==="Feriado municipal"&&e.inicio===f[0]))cal.push({inicio:f[0],fim:f[0],tipo:"Feriado municipal",descricao:f[1]});cal.sort((x,y)=>x.inicio.localeCompare(y.inicio));desenhaCal();
+  const c=await db.from("calendario").select("inicio,fim,tipo,descricao").order("inicio"); cal=c.data||[];for(const f of FER_MUN)if(!cal.some(e=>e.tipo==="Feriado municipal"&&e.inicio===f[0]))cal.push({inicio:f[0],fim:f[0],tipo:"Feriado municipal",descricao:f[1]});cal.sort((x,y)=>x.inicio.localeCompare(y.inicio));if(!carregarCal.i){carregarCal.i=1;mes=new Date();mes.setDate(1)}desenhaCal();
 }
 const k0=(x,dt,d)=>{const k=ymd(dt);return k>=x.inicio&&k<=x.fim&&(k===x.inicio||d===1)};
 function tipoDia(k){let t=null;for(const e of cal){if(k>=e.inicio&&k<=e.fim){const x=e.tipo.startsWith("Marco")?"Marco":e.tipo==="Feriado municipal"?"Municipal":e.tipo;if(x==="Feriado"||x==="Municipal")return x;if(x==="Interrupção"||!t)t=x}}return t}
@@ -395,11 +424,12 @@ function desenhaCal(){
   const lead=(new Date(mes.getFullYear(),mes.getMonth(),1).getDay()+6)%7, n=new Date(mes.getFullYear(),mes.getMonth()+1,0).getDate();
   for(let i=0;i<lead;i++)g.append(document.createElement("span"));
   for(let d=1;d<=n;d++){const dt=new Date(mes.getFullYear(),mes.getMonth(),d),e=document.createElement("div"),t=tipoDia(ymd(dt));
-    e.className="d"+(dt.getDay()%6===0?" f":"")+(t?" "+t:"");{const n=document.createElement("span");n.className="dn";n.textContent=d;e.append(n);const ev=cal.find(x=>k0(x,dt,d));if(ev){const l=document.createElement("small");l.className="dl";l.textContent=ev.descricao;e.append(l);e.title=ev.descricao}}if(!t){const A=horarioEm(ymd(dt)).filter(h=>h.d===dt.getDay()&&h.t);if(A.length){e.classList.add("al");e.title=A.map(h=>h.i+" "+h.t+" "+h.disc).join("\n")}}g.append(e)}
+    e.className="d"+(dt.getDay()%6===0?" f":"")+(t?" "+t:"");if(ymd(dt)===hoje())e.classList.add("hj");{const n=document.createElement("span");n.className="dn";n.textContent=d;e.append(n);const ev=cal.find(x=>k0(x,dt,d));if(ev){const l=document.createElement("small");l.className="dl";l.textContent=ev.descricao;e.append(l);e.title=ev.descricao}}if(!t){const A=horarioEm(ymd(dt)).filter(h=>h.d===dt.getDay()&&h.t);if(A.length){e.classList.add("al");e.title=A.map(h=>h.i+" "+h.t+" "+h.disc).join("\n")}}g.append(e)}
   const p=ymd(new Date(mes.getFullYear(),mes.getMonth(),1)), q=ymd(new Date(mes.getFullYear(),mes.getMonth(),n)), fmt=x=>x.slice(8)+"/"+x.slice(5,7);
   const ev=cal.filter(e=>e.fim>=p&&e.inicio<=q); const l=$("cl"); l.replaceChildren();
   ev.forEach(e=>{const r=document.createElement("div");r.textContent=(e.inicio===e.fim?fmt(e.inicio):fmt(e.inicio)+" a "+fmt(e.fim))+" – "+e.descricao;l.append(r)});
 }
+$("mh").onclick=()=>{mes=new Date();mes.setDate(1);desenhaCal()};
 $("mp").onclick=()=>{mes=new Date(mes.getFullYear(),mes.getMonth()-1,1);desenhaCal()};
 $("mn").onclick=()=>{mes=new Date(mes.getFullYear(),mes.getMonth()+1,1);desenhaCal()};
 $("ics").onclick=()=>{
@@ -430,7 +460,7 @@ function fillThor(){
 }
 fillThor();
 $("subh").textContent=location.origin+location.pathname.replace(/[^/]*$/,"")+"horario.ics";
-function fillReg(){const st=$("rt"),v=st.value;st.replaceChildren();turmas.forEach(t=>st.add(new Option(t.nome||t.codigo,t.id)));if(v)st.value=v;fillBloco();fillUt();fillQ()}
+function fillReg(){const st=$("rt"),v=st.value;st.replaceChildren();turmas.forEach(t=>st.add(new Option(t.nome||t.codigo,t.id)));if(v)st.value=v;fillBloco();fillUt();fillQ();fillDnt()}
 function fillBloco(skip){
   const sb=$("rb"),v=sb.value;sb.replaceChildren();const g={};
   BL.filter(b=>b.turmas.id===$("rt").value).sort((x,y)=>x.codigo.localeCompare(y.codigo)).forEach(b=>(g[dnome(b)]=g[dnome(b)]||[]).push(b));
@@ -731,6 +761,7 @@ $("hics").onclick=()=>{
   L.push("END:VCALENDAR");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([L.join("\r\n")+"\r\n"],{type:"text/calendar"}));a.download="horario.ics";a.click();
   say("hmsg","horario.ics gerado com "+n+" evento(s) semanais. Carrega-o no GitHub por cima do anterior.","ok");
 };
+(()=>{const s=$("dns");s.add(new Option("— disciplina —",""));Object.entries(DNOME).forEach(([k,v])=>s.add(new Option(k+" – "+v,k)))})();
 $("rd").value=hoje();chips();$("rd").onchange=chips;$("rt").onchange=()=>fillBloco();$("rb").onchange=()=>carregaAula(true);$("rl").onchange=()=>carregaAula(false);
 $("lp").onclick=()=>{$("rl").value=Math.max(1,(parseInt($("rl").value,10)||1)-1);carregaAula(false)};$("ln").onclick=()=>{$("rl").value=(parseInt($("rl").value,10)||0)+1;carregaAula(false)};$("lnew").onclick=async()=>{await carregaAula(true);const h=await proximaHora();if(h)setHora(h)};
 $("imp").onclick=()=>{if(!PV)return;if($("rs").value.trim()&&!confirm("Substituir o sumário atual pelo anterior?"))return;$("rs").value=PV.sumario||"";$("ro").value=PV.obs||""};
@@ -773,14 +804,13 @@ function fillQ(){
   const st=$("qt"),v=st.value;st.replaceChildren();turmas.forEach(t=>st.add(new Option(t.nome||t.codigo,t.id)));if(v)st.value=v;
   const sb=$("qb"),w=sb.value;sb.replaceChildren();BL.filter(b=>b.turmas.id===st.value).sort((x,y)=>x.codigo.localeCompare(y.codigo)).forEach(b=>sb.add(new Option(b.codigo+" – "+b.designacao,b.id)));if(w&&[...sb.options].some(o=>o.value===w))sb.value=w;
 }
-function autoD1(aid){
+function autoD1(aid){   // D1 = média das tarefas (3 rubricas: Con., Cap., Ati.), ponderada pelos pesos, em pontos (nota/20 × 3)
   const S=Object.values(QPW).reduce((p,q)=>p+q,0);if(!(S>0))return null;let acc=0,n=0;
-  for(const c in QPW){const r=QS.filter(x=>x.aluno_id===aid&&x.tarefa===c&&x.conhecimentos>0&&x.capacidades>0);if(r.length){acc+=qmean(r.map(x=>(x.conhecimentos+x.capacidades)/2*4))*QPW[c];n++}}
+  for(const c in QPW){const v=QS.filter(x=>x.aluno_id===aid&&x.tarefa===c).map(notaR).filter(x=>x!==null);if(v.length){acc+=qmean(v)*QPW[c];n++}}
   return n?Math.round(acc/20*3):null;
 }
-function autoD2(p,aid){
-  const c=p.c.filter(x=>x>0);if(c.length===3)return Math.round(qmean(c)*28);
-  const a=QS.filter(x=>x.aluno_id===aid&&x.atitudes>0).map(x=>x.atitudes);return a.length?Math.round(qmean(a)*28):null;
+function refD2(aid){   // referência do D2: média de todas as atitudes (Ati.), em pontos (nota/20 × 7). NÃO é calculada como valor final.
+  const a=QS.filter(x=>x.aluno_id===aid&&x.atitudes>0).map(x=>x.atitudes);return a.length?{pts:Math.round(qmean(a)*28),nota:qmean(a)*4}:null;
 }
 async function carregaPauta(){
   const b=$("qb").value;if(!b){QS=[];QPW={};QP={};renderPauta();return}
@@ -802,11 +832,13 @@ function renderPauta(){
   todos.filter(a=>a.turma_id===t.id&&a.ativo).sort((x,y)=>x.numero-y.numero).forEach(a=>{
     const p=QP[a.id]||(QP[a.id]={c:[null,null,null],d1:null,d2:null,cl:null}),tr=tb.insertRow();tr.insertCell().textContent=a.numero+".";tr.insertCell().textContent=a.nome;
     const sels=[0,1,2].map(k=>{const c=tr.insertCell();c.className="crit noprint";const s=document.createElement("select");s.setAttribute("aria-label","Critério "+(k+1)+" – "+a.nome);s.append(new Option("",""));[1,2,3,4,5].forEach(n=>s.add(new Option(n,n)));s.value=p.c[k]||"";c.append(s);return s});
-    const mk=cls=>{const c=tr.insertCell();if(cls)c.className=cls;const i=document.createElement("input");i.type="number";i.step=1;c.append(i);return i},i1=mk(),i2=mk(),sm=tr.insertCell(),ic=mk("cl");
-    const fill=()=>{const a1=autoD1(a.id),a2=autoD2(p,a.id),d1=p.d1!==null?p.d1:a1,d2=p.d2!==null?p.d2:a2;
-      i1.value=d1??"";i1.classList.toggle("auto",p.d1===null);i2.value=d2??"";i2.classList.toggle("auto",p.d2===null);
-      const so=d1!==null||d2!==null?(d1||0)+(d2||0):null;sm.textContent=so??"";const calc=so!==null?Math.round(so/10):null,cl=p.cl!==null?p.cl:calc;
+    const rf=tr.insertCell();rf.className="crit noprint";rf.style.cursor="pointer";const mk=cls=>{const c=tr.insertCell();if(cls)c.className=cls;const i=document.createElement("input");i.type="number";i.step=1;c.append(i);return i},i1=mk(),i2=mk(),sm=tr.insertCell(),ic=mk("cl");
+    const fill=()=>{const d1=p.d1!==null?p.d1:autoD1(a.id),d2=p.d2,rd=refD2(a.id);
+      i1.value=d1??"";i1.classList.toggle("auto",p.d1===null);i2.value=d2??"";i2.classList.remove("auto");
+      rf.textContent=rd?rd.pts:"";rf.title=rd?"Referência: média das atitudes "+rd.nota.toFixed(1)+"/20 = "+rd.pts+" pontos. Clica para usar no D2 (podes depois ajustar).":"Ainda sem avaliações de atitudes";
+      const so=d1!==null&&d2!==null?d1+d2:null;sm.textContent=so??"";const calc=so!==null?Math.round(so/10):null,cl=p.cl!==null?p.cl:calc;
       ic.value=cl??"";ic.classList.toggle("auto",p.cl===null);ic.parentNode.classList.toggle("adj",p.cl!==null&&calc!==null&&p.cl!==calc)};
+    rf.onclick=()=>{const rd=refD2(a.id);if(!rd)return;p.d2=rd.pts;fill();save()};
     const save=async()=>{if(!QOK){say("qm","Executa primeiro o fase11.sql no Supabase.","err");return}
       const x=await db.from("pautas").upsert({bloco_id:b.id,aluno_id:a.id,crit1:p.c[0],crit2:p.c[1],crit3:p.c[2],d1:p.d1,d2:p.d2,classificacao:p.cl},{onConflict:"bloco_id,aluno_id"});say("qm",x.error?"Erro: "+x.error.message:"","err")};
     const num=(i,mx)=>{const v=i.value.trim();if(v===""||isNaN(+v))return null;return Math.max(0,Math.min(mx,Math.round(+v)))};
@@ -815,6 +847,10 @@ function renderPauta(){
   });
 }
 $("qd").value=hoje();$("qd").onchange=()=>{$("qh").textContent=fmtd($("qd").value)};$("qt").onchange=()=>{fillQ();carregaPauta()};$("qb").onchange=carregaPauta;$("qr").onclick=carregaPauta;$("qp").onclick=()=>window.print();
+$("qc").onclick=async()=>{const t=$("qt").value,b=$("qb").value;if(!b||!QOK){say("qm","Escolhe a UFCD (e executa o fase11.sql, se ainda não o fizeste).","err");return}
+  let n=0;for(const a of todos.filter(x=>x.turma_id===t&&x.ativo)){const p=QP[a.id]||(QP[a.id]={c:[null,null,null],d1:null,d2:null,cl:null}),rd=refD2(a.id);if(p.d2===null&&rd){p.d2=rd.pts;n++;
+    const x=await db.from("pautas").upsert({bloco_id:b,aluno_id:a.id,crit1:p.c[0],crit2:p.c[1],crit3:p.c[2],d1:p.d1,d2:p.d2,classificacao:p.cl},{onConflict:"bloco_id,aluno_id"});if(x.error){say("qm","Erro: "+x.error.message,"err");return}}}
+  renderPauta();say("qm",n+" aluno(s) com o D2 preenchido a partir da referência. Ajusta o que for preciso.","ok")};
 /* ---- separador Tarefas: médias e edição ---- */
 let UR=[];
 const notaR=r=>[r.conhecimentos,r.capacidades,r.atitudes].every(x=>x>0)?(r.conhecimentos*RP[0]+r.capacidades*RP[1]+r.atitudes*RP[2])/(RP[0]+RP[1]+RP[2])*4:null;
@@ -861,12 +897,12 @@ $("uwadd").onclick=async()=>{const c=(prompt("Código da tarefa (ex.: TP03):")||
   if(await guardaPeso(c,0)){renderPesos();renderMedia()}};
 function renderMedia(){
   const sel=$("ua").value,codes=[...new Set([...UR.map(r=>r.tarefa).filter(Boolean),...Object.keys(PW)])].sort(nat);
-  const h=$("umh");h.replaceChildren();const hr0=h.insertRow();["Nº","Aluno",...codes.map(c=>c+(c in PW?" ("+r1(PW[c])+")":" (sem peso)")),"Nota final (/20)","Só avaliadas (/20)","Por avaliar"].forEach(t=>{const th=document.createElement("th");th.textContent=t;hr0.append(th)});
+  const h=$("umh");h.replaceChildren();const hr0=h.insertRow();["Nº","Aluno",...codes.map(c=>c+(c in PW?" ("+r1(PW[c])+")":" (sem peso)")),"D1 · Nota final (/20)","Só avaliadas (/20)","Por avaliar","Atitudes (/20) · ref. D2"].forEach(t=>{const th=document.createElement("th");th.textContent=t;hr0.append(th)});
   const b=$("umb");b.replaceChildren();
   alT().filter(a=>!sel||a.id===sel).forEach(a=>{const tr=b.insertRow();tr.insertCell().textContent=a.numero;tr.insertCell().textContent=a.nome;let acc=0,pav=0,falta=0;
     codes.forEach(c=>{const v=UR.filter(r=>r.aluno_id===a.id&&r.tarefa===c).map(notaR).filter(x=>x!==null),td=tr.insertCell(),p=PW[c]||0;
       if(v.length){const m=v.reduce((x,y)=>x+y,0)/v.length;td.textContent=m.toFixed(1)+" ("+v.length+")";acc+=m*p;pav+=p}else{td.textContent="–";if(p>0)falta++}});
-    const f=tr.insertCell(),g=tr.insertCell(),k=tr.insertCell();f.style.fontWeight="700";f.textContent=somaPW()>0?(acc/20).toFixed(1):"";g.textContent=pav>0?(acc/pav).toFixed(1):"";k.textContent=falta||"";
+    const f=tr.insertCell(),g=tr.insertCell(),k=tr.insertCell();f.style.fontWeight="700";f.textContent=somaPW()>0?(acc/20).toFixed(1):"";g.textContent=pav>0?(acc/pav).toFixed(1):"";k.textContent=falta||"";const am=UR.filter(r=>r.aluno_id===a.id&&r.atitudes>0).map(r=>r.atitudes*4),at=tr.insertCell();at.textContent=am.length?(am.reduce((p,q)=>p+q,0)/am.length).toFixed(1)+" ("+am.length+")":"";
     [f,g].forEach(x=>{if(x.textContent&&+x.textContent<9.5)x.style.color="var(--err)"})});
 }
 function renderTar(){
@@ -898,11 +934,16 @@ function fillRes(){
 async function resumo(){
   const tid=$("st").value, dn=$("sd").value, tb=$("tr"); tb.replaceChildren(); if(!tid)return;
   const ids=new Set(BL.filter(b=>b.turmas.id===tid&&(!dn||dnome(b)===dn)).map(b=>b.id));
-  let f,c; try{[f,c]=await Promise.all([todosDe("faltas","aluno_id,tipo,bloco_id"),todosDe("comportamento","aluno_id,tipo,bloco_id")])}catch(e){say("rsm","Erro ao ler os registos.","err");return}
-  say("rsm",""); const ok=x=>dn?ids.has(x.bloco_id):true;
+  let f,c,rb; try{[f,c,rb]=await Promise.all([todosDe("faltas","aluno_id,tipo,bloco_id"),todosDe("comportamento","aluno_id,tipo,bloco_id"),todosDe("rubrica_obs","aluno_id,bloco_id,tarefa,conhecimentos,capacidades,atitudes")])}catch(e){say("rsm","Erro ao ler os registos.","err");return}
+  say("rsm",""); const ok=x=>dn?ids.has(x.bloco_id):true,mean=a=>a.reduce((p,q)=>p+q,0)/a.length;
   todos.filter(a=>a.turma_id===tid&&a.ativo).sort((x,y)=>x.numero-y.numero).forEach(a=>{
     const ff=f.filter(x=>x.aluno_id===a.id&&ok(x)),n=t=>ff.filter(x=>x.tipo===t).length,cc=c.filter(x=>x.aluno_id===a.id&&ok(x));
-    const tr=tb.insertRow();[a.numero,a.nome,n("FI"),n("FM"),n("FP"),n("FJ"),ff.length,cc.filter(x=>x.tipo==="Positivo").length,cc.filter(x=>x.tipo==="Negativo").length].forEach(v=>tr.insertCell().textContent=v)});
+    const tr=tb.insertRow();[a.numero,a.nome,n("FI"),n("FM"),n("FP"),n("FJ"),ff.length,cc.filter(x=>x.tipo==="Positivo").length,cc.filter(x=>x.tipo==="Negativo").length].forEach(v=>tr.insertCell().textContent=v);
+    const rr=rb.filter(x=>x.aluno_id===a.id&&ids.has(x.bloco_id)),g={};
+    rr.filter(x=>[x.conhecimentos,x.capacidades,x.atitudes].every(v=>v>0)).forEach(x=>{const k=x.bloco_id+"|"+(x.tarefa||"");(g[k]=g[k]||[]).push((x.conhecimentos*RP[0]+x.capacidades*RP[1]+x.atitudes*RP[2])/(RP[0]+RP[1]+RP[2])*4)});
+    const gm=Object.values(g).map(mean),at=rr.filter(x=>x.atitudes>0).map(x=>x.atitudes*4);
+    const cell=(v,k)=>{const td=tr.insertCell();td.style.fontWeight="700";if(v!==null){td.textContent=v.toFixed(1)+" ("+k+")";if(v<9.5)td.style.color="var(--err)"}};
+    cell(gm.length?mean(gm):null,gm.length);cell(at.length?mean(at):null,at.length)});
 }
 $("st").onchange=()=>{fillRes();resumo()}; $("sd").onchange=resumo;
 iconify();

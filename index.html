@@ -820,11 +820,13 @@ $("gdel").onclick=async()=>{
   const r=await db.from("sumarios").delete().eq("id",cur.id);if(r.error){say("rmsg","Erro: "+r.error.message,"err");return}
   say("rmsg","Aula apagada.","ok");carregaAula(true);visao();
 };
-$("gr").onclick=async()=>{
+let GRAV=false;   // impede gravações em duplicado (dois cliques seguidos em Guardar)
+$("gr").onclick=async()=>{if(GRAV)return;GRAV=true;$("gr").disabled=true;try{await guardaAula()}finally{GRAV=false;$("gr").disabled=false}};
+async function guardaAula(){
   const b=$("rb").value,d=$("rd").value,l=parseInt($("rl").value,10);if(!b||!d||!l){say("rmsg","Escolhe a UFCD, a lição e a data.","err");return}
   say("rmsg","A guardar…");$("rs").value=limpaSum($("rs").value);const txt=$("rs").value.trim(),cur=SA.find(x=>x.licao===l),gr=GR.filter(g=>g.a.length);
   if(txt||cur||gr.length||TOP.size){const row={bloco_id:b,licao:l,data:d,hora:$("rh").value||null,sumario:txt,obs:$("ro").value.trim()||null,grupos:gr,topicos:[...TOP]};
-    const r=cur?await db.from("sumarios").update(row).eq("id",cur.id):await db.from("sumarios").insert(row);if(r.error){say("rmsg","Erro no sumário: "+r.error.message,"err");return}}
+    const r=cur?await db.from("sumarios").update(row).eq("id",cur.id):await db.from("sumarios").upsert(row,{onConflict:"bloco_id,licao"});if(r.error){say("rmsg","Erro no sumário: "+r.error.message,"err");return}}
   const ins={f:[],c:[]},del={f:[],c:[]},up=[],RI=[],RD=[],RU=[];let sem=0;
   document.querySelectorAll("#gb tr").forEach(tr=>{const cbs=[...tr.querySelectorAll("input[type=checkbox]")],aid=tr.dataset.a,ob=tr.querySelector(".ob").value.trim()||null;
     if(ob&&!cbs.some(c=>c.checked))sem++;
@@ -835,16 +837,16 @@ $("gr").onclick=async()=>{
     if(!tar&&ev.every(x=>x===null)){if(hv)RD.push(hv.id)}else if(!hv)RI.push({aluno_id:aid,bloco_id:b,licao:l,data:d,...rw});else if((hv.tarefa||null)!==tar||hv.conhecimentos!==ev[0]||hv.capacidades!==ev[1]||hv.atitudes!==ev[2])RU.push([hv.id,rw])});
   try{for(const k of ["f","c"]){const tab=k==="f"?"faltas":"comportamento";
       if(del[k].length){const r=await db.from(tab).delete().in("id",del[k]);if(r.error)throw r.error}
-      if(ins[k].length){const r=await db.from(tab).insert(ins[k]);if(r.error)throw r.error}
+      if(ins[k].length){const r=await db.from(tab).upsert(ins[k],{onConflict:"aluno_id,bloco_id,licao,tipo"});if(r.error)throw r.error}
       const r=await db.from(tab).update({data:d}).eq("bloco_id",b).eq("licao",l);if(r.error)throw r.error}
     for(const [tab,id,ob] of up){const r=await db.from(tab).update({obs:ob}).eq("id",id);if(r.error)throw r.error}
     if(RD.length){const r=await db.from("rubrica_obs").delete().in("id",RD);if(r.error)throw r.error}
-    if(RI.length){const r=await db.from("rubrica_obs").insert(RI);if(r.error)throw r.error}
+    if(RI.length){const r=await db.from("rubrica_obs").upsert(RI,{onConflict:"aluno_id,bloco_id,licao"});if(r.error)throw r.error}
     for(const [id,rw] of RU){const r=await db.from("rubrica_obs").update(rw).eq("id",id);if(r.error)throw r.error}
     const r=await db.from("rubrica_obs").update({data:d}).eq("bloco_id",b).eq("licao",l);if(r.error)throw r.error;
   }catch(e){say("rmsg","Erro ao guardar: "+e.message+" (já executaste o fase4.sql, o fase7.sql e o fase8.sql?)","err");return}
   say("rmsg","Aula guardada."+(sem?" "+sem+" observação(ões) sem marca não foram guardadas.":""),"ok");carregaAula(false);visao();
-};
+}
 
 /* ---- pautas ---- */
 let QS=[],QPW={},QP={},QOK=false;

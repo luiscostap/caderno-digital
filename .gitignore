@@ -1,0 +1,6 @@
+# So o site vai para o GitHub; versoes antigas, SQL e Excel ficam so no PC
+*
+!.gitignore
+!index.html
+!horario.ics
+!calendario.ics

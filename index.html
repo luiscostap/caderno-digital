@@ -394,7 +394,7 @@ button.ctc.cov{opacity:.55}button.ctc.now{background:#f6ecd3;border-color:#8b4f1
  <div class="ch noprint"><h2>Época extraordinária</h2><span class="mut">Plano de recuperação de Módulos/UFCD em atraso, com a tarefa combinada com o aluno. Serve para alunos atuais e para alunos que já saíram (escreve os dados diretamente no documento). Todos os planos ficam guardados na lista em baixo; <b>Copiar</b> cria um plano igual (mesma UFCD e tarefa) para outro aluno.</span></div>
  <div class="row noprint"><button id="enew" class="go" data-i="plus" title="Começar um plano novo">Novo plano</button><button id="ecop" class="sec" data-i="copy" title="Copiar este plano para outro aluno (mesma UFCD e tarefa)">Copiar este plano</button><button id="esav" class="go" data-i="save" title="Guardar o plano">Guardar</button><button id="edel" class="sec" data-i="trash" title="Eliminar este plano">Eliminar</button><button id="eprt" class="go" data-i="print" title="Imprimir o plano (ou guardar em PDF)">Imprimir / PDF</button></div>
  <div class="row noprint hide"><label style="margin:0">Preencher com</label><select id="et" aria-label="Turma"></select><select id="ea" aria-label="Aluno" style="max-width:280px"></select><select id="eb" aria-label="UFCD" style="max-width:300px"></select><button id="eapl" class="sec" data-i="check" title="Preencher o documento com o aluno e a UFCD escolhidos">Preencher</button></div>
- <div class="noprint"><div id="em" class="msg"></div></div>
+ <div class="noprint"><div id="exmsg" class="msg"></div></div>
  <div id="exf" class="exf noprint hide"><h3 class="anh" style="margin-top:4px">Dados do plano <small class="mut">(o documento em baixo vai-se preenchendo; também pode escrever diretamente nele)</small></h3>
   <div class="row"><label style="flex:1 1 260px">Nome do aluno <input id="ef_nome" style="width:100%"></label><label>Ano <select id="ef_ano"><option value="">—</option><option value="1">10.º</option><option value="2">11.º</option><option value="3">12.º</option></select></label><label>N.º do processo <input id="ef_proc" style="width:110px"></label></div>
   <div class="row"><label>Curso <select id="ef_curso" style="max-width:340px"></select></label><label>Disciplina <select id="ef_disc" style="max-width:280px"></select></label><label>Professor <input id="ef_prof" style="width:170px"></label></div>
@@ -726,7 +726,8 @@ $("dna").onclick=async()=>{
   ["dnc","dnd","dnh","dnts","dntt","dndi"].forEach(i=>$(i).value="");$("dns").value="";say("dmsg","UFCD acrescentada. Os conteúdos podem ser acrescentados no Registo de aula (cartão Conteúdos, botão Editar).","ok");carregarDisc();
 };
 async function carregarDisc(){
-  const qb=db.from("blocos").select("id,codigo,designacao,horas,tempos_sem,tempos_tot,dias,disciplina,disciplina_nome,"+(ANO?"turmas!inner(id,codigo,ano_id)":"turmas(id,codigo)")),b=await (ANO?qb.eq("turmas.ano_id",ANO.id):qb);   // só as UFCD das turmas do ano abertoconst tb=$("tdisc");tb.replaceChildren();
+  const qb=db.from("blocos").select("id,codigo,designacao,horas,tempos_sem,tempos_tot,dias,disciplina,disciplina_nome,"+(ANO?"turmas!inner(id,codigo,ano_id)":"turmas(id,codigo)")),b=await (ANO?qb.eq("turmas.ano_id",ANO.id):qb);   // só as UFCD das turmas do ano aberto
+  const tb=$("tdisc");tb.replaceChildren();
   if(b.error){say("dmsg","Erro: "+b.error.message,"err");return}
   BL=b.data;if(!BL.length)say("dmsg","Ainda não há disciplinas. Usa 'Adicionar disciplina / UFCD' (ou executa o seed.sql).","err");
   [...BL].sort((x,y)=>(x.turmas.codigo+dnd(x)+x.codigo).localeCompare(y.turmas.codigo+dnd(y)+y.codigo)).forEach(r=>linhaDisc(tb.insertRow(),r));
@@ -1954,7 +1955,7 @@ function exDef(){let pf="Luís Costa";try{pf=localStorage.getItem("rec_prof")||p
 function exCab(){const a=todos.find(x=>x.id===EXA),t=a&&turmas.find(x=>x.id===a.turma_id),cc=($("ef_curso")&&$("ef_curso").value)||(t?cursoDe(t):null);exDoc().querySelector(".rhd").replaceChildren(cabEl(cc));exDoc().querySelector(".eixo").style.display=cc?"none":""}
 function exPoe(d,soDoc){exDoc().querySelectorAll("[data-k]").forEach(e=>{e.textContent=d[e.dataset.k]??"";e.contentEditable="true";e.spellcheck=false});exDoc().classList.remove("hide");EXDIRTY=false;if(!soDoc)efPoe(d._f||{nome:d.nome,proc:d.proc,ufcd:d.ufcd||""});exCab()}
 function exDados(){const o={};exDoc().querySelectorAll("[data-k]").forEach(e=>o[e.dataset.k]=e.innerText.replace(/\n$/,""));o._f=efEstado();return o}
-function exEstado(t,c){say("em",(EXID?"":"● Por guardar · ")+(t||""),c||(EXID?"ok":"err"))}
+function exEstado(t,c){say("exmsg",(EXID?"":"● Por guardar · ")+(t||""),c||(EXID?"ok":"err"))}
 function fillE(){
   const st=$("et"),v=st.value;st.replaceChildren(new Option("— escolher turma —",""));turmas.forEach(t=>st.add(new Option(t.nome||t.codigo,t.id)));st.value=v||"";
   const sa=$("ea"),w=sa.value;sa.replaceChildren(new Option("— aluno —",""));todos.filter(a=>a.turma_id===st.value).sort((x,y)=>x.numero-y.numero).forEach(a=>sa.add(new Option(a.numero+". "+a.nome+(a.ativo?"":" (saiu)"),a.id)));if(w&&[...sa.options].some(o=>o.value===w))sa.value=w;
@@ -1968,7 +1969,7 @@ function exAplica(){   // preenche o documento com o aluno e/ou a UFCD escolhido
   if(a){const t=turmas.find(x=>x.id===a.turma_id);$("ef_nome").value=a.nome;$("ef_proc").value=a.n_processo||"";if(t){const cc=cursoDe(t);if(cc){$("ef_curso").value=cc;$("ef_ano").value=anoDe(t)}}}efDiscs();if(b){$("ef_disc").value=b.disciplina||"";efUfcds();const v=b.codigo+" - "+b.designacao;if(![...$("ef_ufcd").options].some(o=>o.value===v))$("ef_ufcd").add(new Option(v,v));$("ef_ufcd").value=v}else efUfcds();efAplica();
   EXDIRTY=true;exEstado("Dados preenchidos – confirma e guarda.")}
 async function carregaExt(){fillE();if(!PLANO.length)await carregaPlano().catch(()=>{});efCursos();const r=await db.from("extraordinarias").select("id,aluno_id,bloco_id,dados,criado,atualizado").order("atualizado",{ascending:false});
-  if(r.error){say("em","Para guardar estes planos executa o fase15.sql no Supabase.","err");EXL=[]}else EXL=(r.data||[]).filter(x=>!ANO||!x.bloco_id||BL.some(b=>b.id===x.bloco_id));renderExtL()}
+  if(r.error){say("exmsg","Para guardar estes planos executa o fase15.sql no Supabase.","err");EXL=[]}else EXL=(r.data||[]).filter(x=>!ANO||!x.bloco_id||BL.some(b=>b.id===x.bloco_id));renderExtL()}
 function renderExtL(){const q=($("eq").value||"").toLowerCase(),tb=$("el");tb.replaceChildren();
   const L=EXL.filter(x=>!q||JSON.stringify(x.dados).toLowerCase().includes(q));$("en").textContent=EXL.length?L.length+" de "+EXL.length:"";
   if(!L.length){const c=tb.insertRow().insertCell();c.colSpan=5;c.className="mut";c.textContent=EXL.length?"Nenhum plano encontrado.":"Ainda não há planos guardados.";return}
@@ -1981,17 +1982,17 @@ function exCopia(d){if(EXDIRTY&&!confirm("Há alterações por guardar neste pla
 async function exGuarda(msg){const d=exDados();if(!d.nome.trim()&&!confirm("O plano ainda não tem o nome do aluno. Guardar mesmo assim?"))return false;
   const row={aluno_id:EXA,bloco_id:EXB,dados:d,atualizado:new Date().toISOString()};
   const r=EXID?await db.from("extraordinarias").update(row).eq("id",EXID).select("id,aluno_id,bloco_id,dados,criado,atualizado"):await db.from("extraordinarias").insert(row).select("id,aluno_id,bloco_id,dados,criado,atualizado");
-  if(r.error){say("em","Erro ao guardar: "+r.error.message+" (já executaste o fase15.sql?)","err");return false}
+  if(r.error){say("exmsg","Erro ao guardar: "+r.error.message+" (já executaste o fase15.sql?)","err");return false}
   const x=r.data[0];EXID=x.id;EXL=[x,...EXL.filter(y=>y.id!==x.id)];EXDIRTY=false;renderExtL();exEstado(msg||"Alterações guardadas.");return true}
 async function exApaga(x){if(!confirm("Eliminar o plano de "+((x.dados||{}).nome||"(sem nome)")+" – "+((x.dados||{}).ufcd||"")+"? Não pode ser desfeito."))return;
-  const r=await db.from("extraordinarias").delete().eq("id",x.id);if(r.error){say("em","Erro: "+r.error.message,"err");return}
-  EXL=EXL.filter(y=>y.id!==x.id);if(EXID===x.id){EXID=null;exDoc().classList.add("hide");say("em","Plano eliminado.","ok")}renderExtL()}
+  const r=await db.from("extraordinarias").delete().eq("id",x.id);if(r.error){say("exmsg","Erro: "+r.error.message,"err");return}
+  EXL=EXL.filter(y=>y.id!==x.id);if(EXID===x.id){EXID=null;exDoc().classList.add("hide");say("exmsg","Plano eliminado.","ok")}renderExtL()}
 $("et").onchange=()=>{$("ea").value="";fillE()};$("ea").onchange=()=>{};$("eapl").onclick=exAplica;$("eq").oninput=renderExtL;
 $("enew").onclick=()=>{if(EXDIRTY&&!confirm("Há alterações por guardar. Começar um plano novo mesmo assim?"))return;EXID=null;EXA=null;EXB=null;exPoe(exDef());renderExtL();
   if($("ea").value||$("eb").value)exAplica();else {efAplica();exEstado("Plano novo – preenche os dados do plano.")}};
 $("ecop").onclick=()=>{if(exDoc().classList.contains("hide")){exEstado("Abre primeiro um plano para copiar.","err");return}EXDIRTY=false;exCopia(exDados())};
 $("esav").onclick=async()=>{if(exDoc().classList.contains("hide"))return;const fim=ocupado("A guardar o plano…");try{await exGuarda("Plano guardado.")}finally{fim()}};
-$("edel").onclick=()=>{const x=EXL.find(y=>y.id===EXID);if(x)exApaga(x);else if(!exDoc().classList.contains("hide")&&confirm("Descartar este plano por guardar?")){exDoc().classList.add("hide");EXDIRTY=false;say("em","")}};
+$("edel").onclick=()=>{const x=EXL.find(y=>y.id===EXID);if(x)exApaga(x);else if(!exDoc().classList.contains("hide")&&confirm("Descartar este plano por guardar?")){exDoc().classList.add("hide");EXDIRTY=false;say("exmsg","")}};
 exDoc().addEventListener("input",e=>{if(!e.target.closest("[data-k]"))return;EXDIRTY=true;if(e.target.closest('[data-k="prof"]'))try{localStorage.setItem("rec_prof",exQ("prof").innerText.trim())}catch(x){}});
 exDoc().addEventListener("focusout",()=>{if(EXDIRTY&&EXID)exGuarda()});
 $("eprt").onclick=async()=>{if(exDoc().classList.contains("hide"))return;exCab();if(EXDIRTY&&EXID)await exGuarda();const d=exDados(),t0=document.title;
